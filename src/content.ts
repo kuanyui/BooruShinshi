@@ -18,10 +18,12 @@ function insertStyleElement () {
         position: fixed;
         right: 20px;
         top: 20px;
-        font-size: 1.2em;
         background-color:  #fff;
         border: solid 1px #aaa;
         padding: 6px;
+    }
+    #BooruDownloader_Float * {
+        font-size: 2em;
     }
     `
     const style = document.createElement('style')
