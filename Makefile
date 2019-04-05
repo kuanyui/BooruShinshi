@@ -1,8 +1,11 @@
-.PHONY: dev build xpi xpi-server clear zip-repo
+.PHONY: dev build xpi xpi-server clear zip-repo icon
 
 NAME="BooruDownloader"
 BIN:="node_modules/.bin"
 XPI_DIR=../xpi
+
+icon:
+	convert -background transparent -geometry 256x256 img/icon.svg img/icon.png
 
 dev: clear
 	npm run dev

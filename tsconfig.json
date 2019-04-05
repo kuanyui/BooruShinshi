@@ -11,11 +11,11 @@
   ],
   "typeAcquisition": {
     "enable": true,
-    "include": ["web-ext-types"]  // Useless for .vue
+    "include": ["web-ext-types", "sanitize-filename"]  // Useless for .vue
   },
   "compilerOptions": {
     "typeRoots": ["node_modules/@types", "node_modules/web-ext-types"],  // Useless for .vue
-    "types": ["web-ext-types"],   // Useless for .vue
+    "types": ["web-ext-types", "sanitize-filename"],   // Useless for .vue
     "target": "esnext",
     "lib": [
       "esnext",

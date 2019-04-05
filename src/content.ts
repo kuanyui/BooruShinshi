@@ -3,21 +3,75 @@ import { MyMsg, msgManager, SankakuComplex, FileTags, Tag } from "./common";
 browser.runtime.onMessage.addListener((_ev: any) => {
     const ev = _ev as MyMsg
     if (ev.type === "AskTabToDownload") {
-        downloadImage()
+        showHideDownloadLinks()
         // const res: MyMsg = { type: "Success" }
         // console.log('send to background~', res)
         // return Promise.resolve(res)
     }
 })
+function insertStyleElement () {
+    if (document.getElementById('BooruDownloader_Style')) {
+        return console.log('[BooruDownloader] Style has inserted, aborted.')
+    }
+    const css = `
+    #BooruDownloader_Float {
+        position: fixed;
+        right: 20px;
+        top: 20px;
+        font-size: 1.2em;
+        background-color:  #fff;
+        border: solid 1px #aaa;
+        padding: 6px;
+    }
+    `
+    const style = document.createElement('style')
+    document.head.appendChild(style)
+    style.id = 'BooruDownloader_Style'
+    style.type = 'text/css'
+    style.appendChild(document.createTextNode(css));
+}
+function showHideDownloadLinks () {
+    const origEl = document.getElementById('BooruDownloader_Float')
+    if (origEl) {
+        origEl.remove()
+        return
+    }
+    insertStyleElement()
+    const root = document.createElement('div')
+    root.id = "BooruDownloader_Float"
+    const lo = document.querySelector('#lowres') as HTMLLinkElement | null
+    const hi = document.querySelector('#highres') as HTMLLinkElement | null
+    const closer = () => root.remove()
+    if (lo) {
+        const btn = document.createElement('button')
+        btn.textContent = 'Low Resolution'
+        btn.onclick = () => {
+            downloadImage(lo.href)
+            closer()
+        }
+        root.appendChild(btn)
+    }
+    if(hi) {
+        const btn = document.createElement('button')
+        btn.textContent = 'High Resolution'
+        btn.onclick = () => {
+            downloadImage(hi.href)
+            closer()
+        }
+        root.appendChild(btn)
+    }
+    const closeBtn = document.createElement('button')
+    closeBtn.textContent = 'X'
+    closeBtn.onclick = () => closer()
+    root.appendChild(closeBtn)
 
-function downloadImage () {
-    const lo = document.querySelector('#lowres') as HTMLLinkElement
-    const hi = document.querySelector('#highres') as HTMLLinkElement
-    console.log('lo.href', lo.href)
+    document.body.appendChild(root)
+}
+function downloadImage (imgFileUrl: string) {
     msgManager.sendToBg({
         type: 'DownloadLinkGotten',
-        url: lo.href,
-        filename: generateFileName(lo.href)
+        url: imgFileUrl,
+        filename: generateFileName(imgFileUrl)
     })
 }
 
