@@ -57,15 +57,20 @@ function collectTags (fromEl: Element, tagLiClass: string): Tag[] {
     return fin
 }
 
+const SEPARATOR = ','
+
 function generateFileBaseName (): string {
     const tmp = getFileTags()
-    let artist: string
-    if (tmp.artist[0]) {
-        artist = tmp.artist[0].key
-    } else {
-        artist = 'unknown artist'
+    const artist: string = tmp.artist[0] ? `[${tmp.artist[0].key}]` : '[unknow artist]'
+    const copyright: string = tmp.copyright[0] ? `[${tmp.copyright[0].key}]` : '[no series]'
+    const character: string = tmp.character[0] ? `[${tmp.character[0].key}]` : ''
+    const sortedGeneral = tmp.general.sort((a, b) => a.count - b.count)
+    let general: string = ''
+    for (const x of sortedGeneral) {
+        if (general.length > 50) { break }
+        general = general + SEPARATOR + x.key
     }
-    return `[${artist}]`
+    return `${artist}${copyright}${character}${general}`
 }
 
 /** Return ext without dot. */

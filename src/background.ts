@@ -2,7 +2,7 @@ import { MyStorage, msgManager, isUrlSupported, MyMsg, MyMsg_DownloadLinkGotten 
 
 
 const STORAGE: MyStorage = {
-    fileNameFormat: '({author})[{series}][{character}]{tags}',
+    fileNameFormat: '({author})[{series}][{character}]{tags}',  // site, postid
     fileNameMaxLength: 63,
     tagSeparator: ','
 }
