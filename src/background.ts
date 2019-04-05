@@ -18,7 +18,7 @@ browser.pageAction.onClicked.addListener(function (tab) {
 
 browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
     if (changeInfo.url) {
-        console.log(tabId, changeInfo)
+        // console.log(tabId, changeInfo)
         if (isUrlSupported(changeInfo.url)) {
             browser.pageAction.show(tabId)
         } else {
