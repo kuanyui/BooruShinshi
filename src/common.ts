@@ -17,6 +17,30 @@ export interface MyMsg_DownloadLinkGotten {
     filename: string
 }
 
+export interface Tag {
+    /** in English / Roman alphabets */
+    key: string,
+    /** in Japanese */
+    title: string | null,
+    /** post count */
+    count: number
+}
+
+export interface FileTags {
+    copyright: Tag[],
+    character: Tag[],
+    artist: Tag[],
+    general: Tag[],
+}
+export const SankakuComplex = {
+    tagClass: {
+        copyright: '.tag-type-copyright',
+        character: '.tag-type-character',
+        artist: '.tag-type-artist',
+        general: '.tag-type-general'
+    }
+}
+
 export class storageManager {
     static setSync (d: Partial<MyStorage>): void {
         browser.storage.sync.set(d)

@@ -1,4 +1,4 @@
-import { MyMsg, msgManager } from "./common";
+import { MyMsg, msgManager, SankakuComplex, FileTags, Tag } from "./common";
 
 browser.runtime.onMessage.addListener((_ev: any) => {
     const ev = _ev as MyMsg
@@ -17,18 +17,66 @@ function downloadImage () {
     msgManager.sendToBg({
         type: 'DownloadLinkGotten',
         url: lo.href,
-        filename: 'testdownload.jpg'
+        filename: generateFileName(lo.href)
     })
 }
 
-function downloadBlob(filename: string, blob: Blob) {
-    const a = document.createElement('a')
-    const blobUrl = URL.createObjectURL(blob)
-    a.setAttribute('href', blobUrl)
-    a.setAttribute('download', filename)
-    a.style.display = 'none'
-    document.body.appendChild(a)
-    a.click()
-    // document.body.removeChild(a)
-    // URL.revokeObjectURL(blobUrl)
+function getFileTags (): FileTags {
+    const fin: FileTags = {
+        artist: [],
+        character: [],
+        copyright: [],
+        general: [],
+    }
+    const sidebar = document.querySelector('#tag-sidebar')
+    if (!sidebar) {return fin}
+    fin.copyright = collectTags(sidebar, SankakuComplex.tagClass.copyright)
+    fin.artist = collectTags(sidebar, SankakuComplex.tagClass.artist)
+    fin.character = collectTags(sidebar, SankakuComplex.tagClass.character)
+    fin.general = collectTags(sidebar, SankakuComplex.tagClass.general)
+    console.log('file tags ==>', fin)
+    return fin
+}
+
+function collectTags (fromEl: Element, tagLiClass: string): Tag[] {
+    const fin: Tag[] = []
+    let els = fromEl.querySelectorAll(tagLiClass)
+    // console.log('els================>', els)
+    els.forEach((el) => {
+        const tagEl = el.querySelector('[itemprop="keywords"]')
+        if (!tagEl || !tagEl.textContent) {return}
+        const key = tagEl.textContent
+        const countEl = el.querySelector('.post-count')
+        if (!countEl || !countEl.textContent) {return}
+        const count = ~~countEl.textContent
+        // title may be undefined
+        const title = tagEl.getAttribute('title')
+        // console.log('======>', tagEl, countEl, title)
+        fin.push({ key, title, count })
+    })
+    return fin
+}
+
+function generateFileBaseName (): string {
+    const tmp = getFileTags()
+    let artist: string
+    if (tmp.artist[0]) {
+        artist = tmp.artist[0].key
+    } else {
+        artist = 'unknown artist'
+    }
+    return `[${artist}]`
+}
+
+/** Return ext without dot. */
+function guessExt (imgFileUrl: string): string | null {
+    const m = imgFileUrl.match(/\b[.](jpg|png|gif|bmp|webp|webm|mp4|mkv)\b/i)
+    if (m) { return m[1] }
+    return null
+}
+
+function generateFileName (imgFileUrl: string): string {
+    const base = generateFileBaseName()
+    const ext = guessExt(imgFileUrl)
+    return `${base}.${ext}`
 }
