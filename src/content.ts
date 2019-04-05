@@ -99,13 +99,11 @@ function collectTags (fromEl: Element, tagLiClass: string): Tag[] {
     els.forEach((el) => {
         const tagEl = el.querySelector('[itemprop="keywords"]')
         if (!tagEl || !tagEl.textContent) {return}
-        const key = tagEl.textContent
+        const key = tagEl.textContent.replace(/ /g, '_')  // replace space with underline
         const countEl = el.querySelector('.post-count')
         if (!countEl || !countEl.textContent) {return}
         const count = ~~countEl.textContent
-        // title may be undefined
-        const title = tagEl.getAttribute('title')
-        // console.log('======>', tagEl, countEl, title)
+        const title = tagEl.getAttribute('title')  // title may be undefined
         fin.push({ key, title, count })
     })
     return fin
@@ -124,6 +122,7 @@ function generateFileBaseName (): string {
         if (general.length > 50) { break }
         general = general + SEPARATOR + x.key
     }
+    general = general.slice(1)
     return `${artist}${copyright}${character}${general}`
 }
 

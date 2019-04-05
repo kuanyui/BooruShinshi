@@ -31,12 +31,11 @@ browser.runtime.onMessage.addListener((_msg: any) => {
     const msg = _msg as MyMsg
     console.log('msg from content_script: ', msg)
     if (msg.type === 'DownloadLinkGotten') {
-        const safeFilename = sanitizeFilename(msg.filename)
-        console.log('filename =', msg.filename)
+        const safeFilename = sanitizeFilenameForCurrentOs(msg.filename)
         console.log('sanitized filename =', safeFilename)
         browser.downloads.download({
             url: msg.url,
-            filename: msg.filename,
+            filename: safeFilename,
             saveAs: false,
             conflictAction: 'uniquify',
         }).then((id) => {
@@ -46,3 +45,25 @@ browser.runtime.onMessage.addListener((_msg: any) => {
         })
     }
 })
+
+let __OS__: browser.runtime.PlatformOs = 'android'
+browser.runtime.getPlatformInfo().then(d => {
+    __OS__ = d.os
+})
+
+// Sanitize filename for Android.
+// https://hg.mozilla.org/mozilla-central/rev/b3e21f09ee45#l1.86
+// See gConvertToSpaceRegExp
+// https://searchfox.org/mozilla-central/source/toolkit/components/downloads/DownloadPaths.jsm#26
+export function sanitizeFilenameForCurrentOs (filename: string): string {
+    let fin: string = filename
+    switch (__OS__) {
+        case 'android': {
+            fin = fin.replace(/\[/g, '(')
+            fin = fin.replace(/\]/g, ')')
+            fin = fin.replace(/[\x00-\x1f\x7f-\x9f:*?|"<>;,+=\[\]]+/g, ' ')
+            break
+        }
+    }
+    return sanitizeFilename(fin)
+}
