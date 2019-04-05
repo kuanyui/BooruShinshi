@@ -1,0 +1,47 @@
+{
+    "manifest_version": 2,
+    "name": "BooruDownloader",
+    "version": "0.1",
+    "applications": {
+        "gecko": {
+            "id": "{634d6532-4ae5-4a94-a232-37e81d4d7eec}"
+        }
+    },
+    "description": "Download image from Booru page in one click",
+    "icons": {
+        "256": "img/icon.png"
+    },
+    "page_action": {
+      "browser_style": true,
+      "default_icon": {
+        "256": "img/icon.png"
+      },
+      "default_title": "Download this image"
+    },
+    "background": {
+        "scripts": ["dist/background.js"]
+    },
+    "content_scripts": [
+        {
+            "run_at": "document_start",
+            "matches": [
+                "*://chan.sankakucomplex.com/*"
+            ],
+            "js": ["dist/content.js"]
+        }
+    ],
+    "permissions": [ "tabs", "storage" ],
+    "commands": {
+        "_execute_page_action": {
+            "suggested_key": {
+                "default": "Ctrl+Alt+N",
+                "linux": "Ctrl+Alt+N"
+            },
+            "description": "Switch to next search engine."
+        }
+    },
+    "options_ui": {
+        "page": "dist/options_ui.html",
+        "open_in_tab": true
+    }
+}
