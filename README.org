@@ -72,7 +72,9 @@ For paranoid users such as me, these are all used permissions with its usages:
   - Insert script & CSS to grab tags, grab image's link, insert HTML & CSS to show dowbload buttons.
 
 * TODOs
-- Customizable keyboard shortcuts.
-- Maybe always show buttons, without =pageAction=?.
+- Settings:
+  - Show download button permantally / via pageAction?
+  - Customizable filename formatter: site | id | artist | copyright | character | general
+  - keyboard shortcuts
 * License
 WTFPL 2.0

@@ -1,14 +1,28 @@
-import { MyMsg, msgManager, SELECTOR, FileTags, Tag, supported_hostname_t } from "./common";
+import { MyMsg, msgManager, SELECTOR, FileTags, Tag, supported_hostname_t, isUrlSupported } from "./common";
 
 browser.runtime.onMessage.addListener((_ev: any) => {
     const ev = _ev as MyMsg
     if (ev.type === "AskTabToDownload") {
         showHideDownloadLinks()
-        // const res: MyMsg = { type: "Success" }
-        // console.log('send to background~', res)
-        // return Promise.resolve(res)
     }
 })
+
+if (isUrlSupported(location.href)) {
+    const observer = new MutationObserver(function (mutations, me) {
+        console.log('document changed!')
+        var sidebar = document.querySelector('#tag-sidebar')
+        if (sidebar) {
+            me.disconnect() // stop observing
+            showHideDownloadLinks()
+            return
+        }
+    })
+    observer.observe(document, {
+        childList: true,
+        subtree: true
+    })
+}
+
 function insertStyleElement () {
     if (document.getElementById('BooruDownloader_Style')) {
         return console.log('[BooruDownloader] Style has inserted, aborted.')
