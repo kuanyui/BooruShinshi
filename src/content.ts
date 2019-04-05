@@ -22,8 +22,9 @@ function insertStyleElement () {
         border: solid 1px #aaa;
         padding: 6px;
     }
-    #BooruDownloader_Float * {
+    #BooruDownloader_Float button {
         font-size: 2em;
+        padding: 0.4em 1.2em;
     }
     `
     const style = document.createElement('style')
@@ -53,9 +54,14 @@ function showHideDownloadLinks () {
         }
         root.appendChild(btn)
     }
-    if(hi) {
+    if (hi) {
+        const rawSize = hi.innerText.match(/\((.+)\)/)
+        let size: string = ''
+        if (rawSize) {
+            size = rawSize[1]
+        }
         const btn = document.createElement('button')
-        btn.textContent = 'High Resolution'
+        btn.textContent = `High Resolution (${size})`
         btn.onclick = () => {
             downloadImage(hi.href)
             closer()

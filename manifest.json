@@ -7,7 +7,7 @@
             "id": "{634d6532-4ae5-4a94-a232-37e81d4d7eec}"
         }
     },
-    "description": "Download image from Booru page in one click",
+    "description": "Download image with comprehensible filename from Booru page in one click",
     "icons": {
         "256": "img/icon.png"
     },
@@ -27,19 +27,11 @@
             "matches": [
                 "*://chan.sankakucomplex.com/*",
                 "*://yande.re/*",
-                "*://konachan.com/*"
+                "*://konachan.com/*",
+                "*://konachan.net/*"
             ],
             "js": ["dist/content.js"]
         }
     ],
-    "permissions": [ "tabs", "storage", "downloads" ],
-    "commands": {
-        "_execute_page_action": {
-            "suggested_key": {
-                "default": "Ctrl+Alt+N",
-                "linux": "Ctrl+Alt+N"
-            },
-            "description": "Switch to next search engine."
-        }
-    }
+    "permissions": [ "tabs", "storage", "downloads" ]
 }

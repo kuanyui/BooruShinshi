@@ -70,6 +70,7 @@ export function isUrlSupported (url: string) {
     return [
         'chan.sankakucomplex.com',
         'yande.re',
-        'konachan.com'
+        'konachan.com',
+        'konachan.net',
     ].includes(urlObj.hostname) && urlObj.pathname.startsWith('/post/show/')
 }
