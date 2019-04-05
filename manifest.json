@@ -25,7 +25,9 @@
         {
             "run_at": "document_start",
             "matches": [
-                "*://chan.sankakucomplex.com/*"
+                "*://chan.sankakucomplex.com/*",
+                "*://yande.re/*",
+                "*://konachan.com/*"
             ],
             "js": ["dist/content.js"]
         }

@@ -66,5 +66,9 @@ export class msgManager {
 
 export function isUrlSupported (url: string) {
     const urlObj = new URL(url + '')
-    return urlObj.hostname === 'chan.sankakucomplex.com'
+    return [
+        'chan.sankakucomplex.com',
+        'yande.re',
+        'konachan.com'
+    ].includes(urlObj.hostname) && urlObj.pathname.startsWith('/post/show/')
 }
