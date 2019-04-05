@@ -1,4 +1,4 @@
-* Booru One Click Downloder
+* Booru One-Click Downloder
 A WebExtension to download image with comprehensible filename from Booru page in one click.
 
 Currently supported sites:
@@ -8,13 +8,13 @@ Currently supported sites:
 - Konachan.com
 - Konachan.net
 
-For more information please see [[https://github.com/kuanyui/BooruDownloader][GitHub]].
+For more information please see [[https://github.com/kuanyui/BooruOneClickDownloader][GitHub]].
 
 * Install
-- [[][Mozilla Add-ons]]
+- [[https://addons.mozilla.org/en-US/firefox/addon/booru-downloader/][Mozilla Add-ons]]
 
 * Screenshot
-[[]]
+[[https://addons.cdn.mozilla.net/user-media/previews/full/217/217427.png]]
 
 * Supported Browser
 - Firefox for Desktop >= 61
