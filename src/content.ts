@@ -1,12 +1,12 @@
-import { MyMsg } from "./common";
+import { MyMsg, msgManager } from "./common";
 
 browser.runtime.onMessage.addListener((_ev: any) => {
     const ev = _ev as MyMsg
     if (ev.type === "AskTabToDownload") {
-        const res: MyMsg = { type: "Success" }
-        console.log('send to background~', res)
         downloadImage()
-        return Promise.resolve(res)
+        // const res: MyMsg = { type: "Success" }
+        // console.log('send to background~', res)
+        // return Promise.resolve(res)
     }
 })
 
@@ -14,15 +14,11 @@ function downloadImage () {
     const lo = document.querySelector('#lowres') as HTMLLinkElement
     const hi = document.querySelector('#highres') as HTMLLinkElement
     console.log('lo.href', lo.href)
-    fetch(lo.href, {
-        credentials: 'include',
-        mode: 'no-cors'
-    }).then((r) => {
-        console.log('downloaded!!!', r)
-        r.blob().then((blob) => {
-            // downloadBlob('testdownload.jpg', blob)
-        })
-    }).catch(err => {console.error('err', err)})
+    msgManager.sendToBg({
+        type: 'DownloadLinkGotten',
+        url: lo.href,
+        filename: 'testdownload.jpg'
+    })
 }
 
 function downloadBlob(filename: string, blob: Blob) {

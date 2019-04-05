@@ -4,10 +4,17 @@ export interface MyStorage {
     tagSeparator: string
 }
 
-export type my_msg_t = 'AskTabToDownload' | 'Success'
+export type my_msg_t = 'AskTabToDownload' | 'DownloadLinkGotten'
+export type MyMsg = MyMsg_AskTabToDownload | MyMsg_DownloadLinkGotten
 
-export interface MyMsg {
-    type: my_msg_t
+export interface MyMsg_BASE {
+    type: my_msg_t,
+}
+export interface MyMsg_AskTabToDownload { type: 'AskTabToDownload' }
+export interface MyMsg_DownloadLinkGotten {
+    type: 'DownloadLinkGotten',
+    url: string
+    filename: string
 }
 
 export class storageManager {
@@ -25,8 +32,11 @@ export class storageManager {
 }
 
 export class msgManager {
-    static sendToTab (tabId: number, msg: MyMsg) {
-        return browser.tabs.sendMessage(tabId, msg) as Promise<MyMsg | void>
+    static sendToTab <T extends MyMsg> (tabId: number, msg: T) {
+        return browser.tabs.sendMessage(tabId, msg) as Promise<T | void>
+    }
+    static sendToBg <T extends MyMsg> (msg: T) {
+        return browser.runtime.sendMessage(msg)
     }
 }
 

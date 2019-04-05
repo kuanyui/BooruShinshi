@@ -1,4 +1,4 @@
-import { MyStorage, msgManager, isUrlSupported } from "./common";
+import { MyStorage, msgManager, isUrlSupported, MyMsg, MyMsg_DownloadLinkGotten } from "./common";
 
 
 const STORAGE: MyStorage = {
@@ -26,3 +26,15 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
         }
     }
 });
+
+browser.runtime.onMessage.addListener((_msg: any) => {
+    const msg = _msg as MyMsg
+    console.log('msg', msg)
+    if (msg.type === 'DownloadLinkGotten') {
+        browser.downloads.download({
+            url: msg.url,
+            filename: msg.filename,
+            saveAs: false
+        })
+    }
+})
