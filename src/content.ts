@@ -1,4 +1,4 @@
-import { MyMsg, msgManager, SankakuComplex, FileTags, Tag } from "./common";
+import { MyMsg, msgManager, SELECTOR, FileTags, Tag, supported_hostname_t } from "./common";
 
 browser.runtime.onMessage.addListener((_ev: any) => {
     const ev = _ev as MyMsg
@@ -92,27 +92,71 @@ function getFileTags (): FileTags {
     }
     const sidebar = document.querySelector('#tag-sidebar')
     if (!sidebar) {return fin}
-    fin.copyright = collectTags(sidebar, SankakuComplex.tagClass.copyright)
-    fin.artist = collectTags(sidebar, SankakuComplex.tagClass.artist)
-    fin.character = collectTags(sidebar, SankakuComplex.tagClass.character)
-    fin.general = collectTags(sidebar, SankakuComplex.tagClass.general)
+    fin.copyright = collectTags(sidebar, SELECTOR.tagClass.copyright)
+    fin.artist = collectTags(sidebar, SELECTOR.tagClass.artist)
+    fin.character = collectTags(sidebar, SELECTOR.tagClass.character)
+    fin.general = collectTags(sidebar, SELECTOR.tagClass.general)
     console.log('file tags ==>', fin)
     return fin
 }
 
 function collectTags (fromEl: Element, tagLiClass: string): Tag[] {
+    // const hostname = window.location.hostname as supported_hostname_t
+    switch (window.location.hostname as supported_hostname_t) {
+        case 'chan.sankakucomplex.com':
+        return collectTags_sankaku(fromEl, tagLiClass)
+        case 'konachan.com':
+        case 'konachan.net':
+        return collectTags_konachan(fromEl, tagLiClass)
+        case 'yande.re':
+        return collectTags_yandere(fromEl, tagLiClass)
+    }
+    console.error('[To Developer] This should not happened')
+    return []
+}
+
+function collectTags_sankaku (fromEl: Element, tagLiClass: string): Tag[] {
     const fin: Tag[] = []
     let els = fromEl.querySelectorAll(tagLiClass)
-    // console.log('els================>', els)
     els.forEach((el) => {
-        const tagEl = el.querySelector('[itemprop="keywords"]')
-        if (!tagEl || !tagEl.textContent) {return}
-        const key = tagEl.textContent.replace(/ /g, '_')  // replace space with underline
+        const keyEl = el.querySelector('a[itemprop="keywords"]')
+        if (!keyEl || !keyEl.textContent) {return}
+        const key = keyEl.textContent.replace(/ /g, '_')  // replace space with underline
         const countEl = el.querySelector('.post-count')
         if (!countEl || !countEl.textContent) {return}
         const count = ~~countEl.textContent
-        const title = tagEl.getAttribute('title')  // title may be undefined
+        const title = keyEl.getAttribute('title') || undefined  // title may be undefined
         fin.push({ key, title, count })
+    })
+    return fin
+}
+
+function collectTags_konachan (fromEl: Element, tagLiClass: string): Tag[] {
+    const fin: Tag[] = []
+    let els = fromEl.querySelectorAll(tagLiClass)
+    els.forEach((el) => {
+        const key = el.getAttribute('data-name')
+        if (!key) {return}
+        const countEl = el.querySelector('.post-count')
+        if (!countEl || !countEl.textContent) {return}
+        const count = ~~countEl.textContent
+        fin.push({ key, count })
+    })
+    return fin
+}
+
+function collectTags_yandere (fromEl: Element, tagLiClass: string): Tag[] {
+    const fin: Tag[] = []
+    let els = fromEl.querySelectorAll(tagLiClass)
+    els.forEach((el) => {
+        const aList = el.querySelectorAll('a')
+        if (aList.length < 2) { return }
+        const key = aList[1].innerText.replace(/ /g, '_')  // replace space with underline
+        if (!key) {return}
+        const countEl = el.querySelector('.post-count')
+        if (!countEl || !countEl.textContent) {return}
+        const count = ~~countEl.textContent
+        fin.push({ key, count })
     })
     return fin
 }

@@ -1,3 +1,4 @@
+export type supported_hostname_t ='chan.sankakucomplex.com' | 'yande.re' | 'konachan.com' | 'konachan.net'
 
 export interface MyStorage {
     fileNameFormat: string
@@ -22,7 +23,7 @@ export interface Tag {
     /** in English / Roman alphabets */
     key: string,
     /** in Japanese */
-    title: string | null,
+    title?: string,
     /** post count */
     count: number
 }
@@ -33,7 +34,7 @@ export interface FileTags {
     artist: Tag[],
     general: Tag[],
 }
-export const SankakuComplex = {
+export const SELECTOR = {
     tagClass: {
         copyright: '.tag-type-copyright',
         character: '.tag-type-character',
