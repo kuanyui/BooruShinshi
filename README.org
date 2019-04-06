@@ -76,5 +76,11 @@ For paranoid users such as me, these are all used permissions with its usages:
   - Show download button permantally / via pageAction?
   - Customizable filename formatter: site | id | artist | copyright | character | general
   - keyboard shortcuts
+  - (Android) Always open post with new tab?
+  - (Android) Tap on post link to popup: open, open with tab, download original, download small
+- (Android) Use {} to replace [], which is easier to rename.
+- Stop observer after url grabbed
+- Show floating buttons after user switch to that tab.
+- z-index of download buttons
 * License
 WTFPL 2.0
