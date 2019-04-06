@@ -10,8 +10,9 @@ browser.runtime.onMessage.addListener((_ev: any) => {
 if (isUrlSupported(location.href)) {
     const observer = new MutationObserver(function (mutations, me) {
         console.log('document changed!')
-        var sidebar = document.querySelector('#tag-sidebar')
-        if (sidebar) {
+        const sidebar = document.querySelector('#tag-sidebar')
+        const hires = document.querySelector('#highres')
+        if (sidebar && hires) {
             me.disconnect() // stop observing
             showHideDownloadLinks()
             return
@@ -35,6 +36,7 @@ function insertStyleElement () {
         background-color:  #fff;
         border: solid 1px #aaa;
         padding: 6px;
+        z-index: 9999;
     }
     #BooruDownloader_Float button {
         font-size: 2em;

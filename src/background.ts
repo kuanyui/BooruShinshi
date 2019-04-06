@@ -59,8 +59,8 @@ export function sanitizeFilenameForCurrentOs (filename: string): string {
     let fin: string = filename
     switch (__OS__) {
         case 'android': {
-            fin = fin.replace(/\[/g, '(')
-            fin = fin.replace(/\]/g, ')')
+            fin = fin.replace(/\[/g, '{')
+            fin = fin.replace(/\]/g, '}')
             fin = fin.replace(/[\x00-\x1f\x7f-\x9f:*?|"<>;,+=\[\]]+/g, ' ')
             break
         }
