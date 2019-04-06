@@ -24,6 +24,37 @@ if (isUrlSupported(location.href)) {
     })
 }
 
+/*
+if (location.hostname === 'chan.sankakucomplex.com') {
+    const ob = new MutationObserver(function (mutations, me) {
+        let ad = document.querySelector('.scad-i')
+        if (ad) { ad.remove() }
+        ad = document.querySelector('.scad')
+        if (ad) { ad.remove() }
+    })
+    ob.observe(document, {
+        childList: true,
+        subtree: true
+    })
+}
+ */
+
+function getImageId (): number {
+    const m = location.pathname.match(/\/post\/show\/([0-9]+)/)
+    if (m) {return ~~m[1]}
+    return -1
+}
+
+function getSiteAbbr (): string {
+    switch (window.location.hostname as supported_hostname_t) {
+        case 'chan.sankakucomplex.com': return 'SC'
+        case 'konachan.com': return 'KC'
+        case 'konachan.net': return 'KC'
+        case 'yande.re': return 'YR'
+    }
+    return 'ERROR'
+}
+
 function insertStyleElement () {
     if (document.getElementById('BooruDownloader_Style')) {
         return console.log('[BooruDownloader] Style has inserted, aborted.')
@@ -181,6 +212,7 @@ const SEPARATOR = ','
 
 function generateFileBaseName (): string {
     const tmp = getFileTags()
+    const id = getImageId()
     const artist: string = tmp.artist[0] ? `[${tmp.artist[0].key}]` : '[unknow artist]'
     const copyright: string = tmp.copyright[0] ? `[${tmp.copyright[0].key}]` : '[no series]'
     const character: string = tmp.character[0] ? `[${tmp.character[0].key}]` : ''
@@ -191,7 +223,7 @@ function generateFileBaseName (): string {
         general = general + SEPARATOR + x.key
     }
     general = general.slice(1)
-    return `${artist}${copyright}${character}${general}`
+    return `${id}${artist}${copyright}${character}${general}`
 }
 
 /** Return ext without dot. */
