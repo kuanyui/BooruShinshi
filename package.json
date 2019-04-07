@@ -1,6 +1,6 @@
 {
-  "name": "webext-engine-switcher",
-  "version": "0.0.1",
+  "name": "booru-one-click-downloader",
+  "version": "0.0.4",
   "description": "Switch search engine in one click",
   "main": "dist/index.js",
   "dependencies": {

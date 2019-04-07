@@ -1,4 +1,4 @@
-.PHONY: dev build xpi xpi-server clear zip-repo icon
+.PHONY: dev build xpi xpi-server clear zip-repo icon deploy
 
 NAME="BooruDownloader"
 BIN:="node_modules/.bin"
@@ -26,3 +26,6 @@ clear:
 
 zip-repo: clear
 	zip -r "../${NAME}-upload.zip" .    -x * node_modules/\*
+
+deploy: zip-repo xpi
+	@echo "Done!"
