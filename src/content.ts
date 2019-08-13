@@ -24,7 +24,7 @@ if (isUrlSupported(location.href)) {
     })
 }
 
-/*
+
 if (location.hostname === 'chan.sankakucomplex.com') {
     const ob = new MutationObserver(function (mutations, me) {
         let ad = document.querySelector('.scad-i')
@@ -37,7 +37,7 @@ if (location.hostname === 'chan.sankakucomplex.com') {
         subtree: true
     })
 }
- */
+
 
 function getImageId (): number {
     const m = location.pathname.match(/\/post\/show\/([0-9]+)/)
@@ -72,6 +72,8 @@ function insertStyleElement () {
     #BooruDownloader_Float button {
         font-size: 2em;
         padding: 0.4em 1.2em;
+        display: block;
+        width: 100%;
     }
     `
     const style = document.createElement('style')
@@ -91,10 +93,12 @@ function showHideDownloadLinks () {
     root.id = "BooruDownloader_Float"
     const lo = document.querySelector('#lowres') as HTMLLinkElement | null
     const hi = document.querySelector('#highres') as HTMLLinkElement | null
+    const png = document.querySelector('#png') as HTMLLinkElement | null
+    console.log('png ===', png)
     const closer = () => root.remove()
     if (lo) {
         const btn = document.createElement('button')
-        btn.textContent = 'Low Resolution'
+        btn.textContent = 'Low'
         btn.onclick = () => {
             downloadImage(lo.href)
             closer()
@@ -108,13 +112,28 @@ function showHideDownloadLinks () {
             size = rawSize[1]
         }
         const btn = document.createElement('button')
-        btn.textContent = `High Resolution (${size})`
+        btn.textContent = `High (${size})`
         btn.onclick = () => {
             downloadImage(hi.href)
             closer()
         }
         root.appendChild(btn)
     }
+    if (png) {
+        const rawSize = png.innerText.match(/\((.+)\)/)
+        let size: string = ''
+        if (rawSize) {
+            size = rawSize[1]
+        }
+        const btn = document.createElement('button')
+        btn.textContent = `High PNG (${size})`
+        btn.onclick = () => {
+            downloadImage(png.href)
+            closer()
+        }
+        root.appendChild(btn)
+    }
+    root.appendChild(document.createElement('hr'))
     const closeBtn = document.createElement('button')
     closeBtn.textContent = 'X'
     closeBtn.onclick = () => closer()
@@ -133,6 +152,7 @@ function downloadImage (imgFileUrl: string) {
 function getFileTags (): FileTags {
     const fin: FileTags = {
         artist: [],
+        studio: [],
         character: [],
         copyright: [],
         general: [],
@@ -143,6 +163,7 @@ function getFileTags (): FileTags {
     fin.artist = collectTags(sidebar, SELECTOR.tagClass.artist)
     fin.character = collectTags(sidebar, SELECTOR.tagClass.character)
     fin.general = collectTags(sidebar, SELECTOR.tagClass.general)
+    fin.studio = collectTags(sidebar, SELECTOR.tagClass.studio)
     console.log('file tags ==>', fin)
     return fin
 }
@@ -213,17 +234,19 @@ const SEPARATOR = ','
 function generateFileBaseName (): string {
     const tmp = getFileTags()
     const id = getImageId()
-    const artist: string = tmp.artist[0] ? `[${tmp.artist[0].key}]` : '[unknow artist]'
+    const artist: string = tmp.artist[0] ? `[${tmp.artist[0].key}]` : ''
+    const studio: string = tmp.studio[0] ? `[${tmp.studio[0].key}]` : ''
     const copyright: string = tmp.copyright[0] ? `[${tmp.copyright[0].key}]` : '[no series]'
     const character: string = tmp.character[0] ? `[${tmp.character[0].key}]` : ''
     const sortedGeneral = tmp.general.sort((a, b) => a.count - b.count)
+    const artistOrStudio: string = artist || studio || '[unknown artist]'
     let general: string = ''
     for (const x of sortedGeneral) {
-        if (general.length > 50) { break }
+        if (general.length > 63) { break }
         general = general + SEPARATOR + x.key
     }
     general = general.slice(1)
-    return `${id}${artist}${copyright}${character}${general}`
+    return `${id}${artistOrStudio}${copyright}${character}${general}`
 }
 
 /** Return ext without dot. */

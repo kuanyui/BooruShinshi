@@ -32,6 +32,7 @@ export interface FileTags {
     copyright: Tag[],
     character: Tag[],
     artist: Tag[],
+    studio: Tag[],
     general: Tag[],
 }
 export const SELECTOR = {
@@ -39,7 +40,8 @@ export const SELECTOR = {
         copyright: '.tag-type-copyright',
         character: '.tag-type-character',
         artist: '.tag-type-artist',
-        general: '.tag-type-general'
+        studio: '.tag-type-studio',
+        general: '.tag-type-general',
     }
 }
 
