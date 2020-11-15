@@ -21,9 +21,9 @@ export interface MyMsg_DownloadLinkGotten {
 
 export interface Tag {
     /** in English / Roman alphabets */
-    key: string,
+    en: string,
     /** in Japanese */
-    title?: string,
+    ja?: string,
     /** post count */
     count: number
 }
@@ -75,5 +75,5 @@ export function isUrlSupported (url: string) {
         'yande.re',
         'konachan.com',
         'konachan.net',
-    ].includes(urlObj.hostname) && urlObj.pathname.startsWith('/post/show/')
+    ].includes(urlObj.hostname) && urlObj.pathname.includes('/post/show/')
 }

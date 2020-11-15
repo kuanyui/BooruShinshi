@@ -24,21 +24,6 @@ if (isUrlSupported(location.href)) {
     })
 }
 
-
-if (location.hostname === 'chan.sankakucomplex.com') {
-    const ob = new MutationObserver(function (mutations, me) {
-        let ad = document.querySelector('.scad-i')
-        if (ad) { ad.remove() }
-        ad = document.querySelector('.scad')
-        if (ad) { ad.remove() }
-    })
-    ob.observe(document, {
-        childList: true,
-        subtree: true
-    })
-}
-
-
 function getImageId (): number {
     const m = location.pathname.match(/\/post\/show\/([0-9]+)/)
     if (m) {return ~~m[1]}
@@ -189,12 +174,16 @@ function collectTags_sankaku (fromEl: Element, tagLiClass: string): Tag[] {
     els.forEach((el) => {
         const keyEl = el.querySelector('a[itemprop="keywords"]')
         if (!keyEl || !keyEl.textContent) {return}
-        const key = keyEl.textContent.replace(/ /g, '_')  // replace space with underline
+        const textContent = keyEl.textContent.replace(/ /g, '_')  // replace space with underline
         const countEl = el.querySelector('.post-count')
         if (!countEl || !countEl.textContent) {return}
         const count = ~~countEl.textContent
-        const title = keyEl.getAttribute('title') || undefined  // title may be undefined
-        fin.push({ key, title, count })
+        const title = keyEl.getAttribute('title') || ''
+        if (document.documentElement.lang === 'en') {
+            fin.push({ ja: title, en: textContent, count })
+        } else {
+            fin.push({ ja: textContent, en: title, count })
+        }
     })
     return fin
 }
@@ -208,7 +197,7 @@ function collectTags_konachan (fromEl: Element, tagLiClass: string): Tag[] {
         const countEl = el.querySelector('.post-count')
         if (!countEl || !countEl.textContent) {return}
         const count = ~~countEl.textContent
-        fin.push({ key, count })
+        fin.push({ en: key, count })
     })
     return fin
 }
@@ -224,7 +213,7 @@ function collectTags_yandere (fromEl: Element, tagLiClass: string): Tag[] {
         const countEl = el.querySelector('.post-count')
         if (!countEl || !countEl.textContent) {return}
         const count = ~~countEl.textContent
-        fin.push({ key, count })
+        fin.push({ en: key, count })
     })
     return fin
 }
@@ -234,16 +223,16 @@ const SEPARATOR = ','
 function generateFileBaseName (): string {
     const tmp = getFileTags()
     const id = getImageId()
-    const artist: string = tmp.artist[0] ? `[${tmp.artist[0].key}]` : ''
-    const studio: string = tmp.studio[0] ? `[${tmp.studio[0].key}]` : ''
-    const copyright: string = tmp.copyright[0] ? `[${tmp.copyright[0].key}]` : '[no series]'
-    const character: string = tmp.character[0] ? `[${tmp.character[0].key}]` : ''
+    const artist: string = tmp.artist[0] ? `[${tmp.artist[0].en}]` : ''
+    const studio: string = tmp.studio[0] ? `[${tmp.studio[0].en}]` : ''
+    const copyright: string = tmp.copyright[0] ? `[${tmp.copyright[0].en}]` : '[no series]'
+    const character: string = tmp.character[0] ? `[${tmp.character[0].en}]` : ''
     const sortedGeneral = tmp.general.sort((a, b) => a.count - b.count)
     const artistOrStudio: string = artist || studio || '[unknown artist]'
     let general: string = ''
     for (const x of sortedGeneral) {
         if (general.length > 63) { break }
-        general = general + SEPARATOR + x.key
+        general = general + SEPARATOR + x.en
     }
     general = general.slice(1)
     return `${id}${artistOrStudio}${copyright}${character}${general}`

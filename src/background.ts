@@ -1,5 +1,5 @@
 import { MyStorage, msgManager, isUrlSupported, MyMsg, MyMsg_DownloadLinkGotten } from "./common";
-import * as sanitizeFilename from 'sanitize-filename'
+import sanitizeFilename from 'sanitize-filename'
 
 const STORAGE: MyStorage = {
     fileNameFormat: '({author})[{series}][{character}]{tags}',  // site, postid
