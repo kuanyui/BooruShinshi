@@ -6,13 +6,20 @@ browser.runtime.onMessage.addListener((_ev: any) => {
         showHideDownloadLinks()
     }
 })
-
+function getHostname(): supported_hostname_t {
+    return window.location.hostname as supported_hostname_t
+}
 if (isUrlSupported(location.href)) {
     const observer = new MutationObserver(function (mutations, me) {
-        console.log('document changed!')
-        const sidebar = document.querySelector('#tag-sidebar')
-        const hires = document.querySelector('#highres')
-        if (sidebar && hires) {
+        const watchElemArr: Array<Element | null> = []
+        if (getHostname() === 'chan.sankakucomplex.com') {
+            watchElemArr.push(document.querySelector('#image'))
+        } else {
+            watchElemArr.push(document.querySelector('#tag-sidebar'))
+            watchElemArr.push(document.querySelector('#highres'))
+        }
+        console.log('document changed!', watchElemArr)
+        if (watchElemArr.every(x => !!x)) {
             me.disconnect() // stop observing
             showHideDownloadLinks()
             return
@@ -67,6 +74,48 @@ function insertStyleElement () {
     style.type = 'text/css'
     style.appendChild(document.createTextNode(css));
 }
+
+interface ImageInfo {
+    btnText: string,
+    imgUrl: string
+}
+
+function getImageInfoArr(): ImageInfo[] {
+    const fin: ImageInfo[] = []
+    switch (window.location.hostname as supported_hostname_t) {
+        case 'chan.sankakucomplex.com': {
+            const imgEl = document.querySelector('#image') as HTMLImageElement | null
+            if (imgEl) {
+                fin.push({ btnText: 'Low', imgUrl: imgEl.src })
+            }
+            break
+        }
+        default: {
+            const lo = document.querySelector('#lowres') as HTMLLinkElement | null
+            const hi = document.querySelector('#highres') as HTMLLinkElement | null
+            const png = document.querySelector('#png') as HTMLLinkElement | null
+            if (lo) {
+                fin.push({ btnText: 'Low', imgUrl: lo.href })
+            }
+            if (hi) {
+                const rawSize = hi.innerText.match(/\((.+)\)/)
+                let size: string = ''
+                if (rawSize) { size = rawSize[1] }
+                fin.push({ btnText: `High (${size})`, imgUrl: hi.href })
+            }
+            if (png) {
+                const rawSize = png.innerText.match(/\((.+)\)/)
+                let size: string = ''
+                if (rawSize) { size = rawSize[1] }
+                fin.push({ btnText: `High PNG (${size})`, imgUrl: png.href })
+            }
+            break
+        }
+    }
+    console.log(' ==================', fin)
+    return fin
+}
+
 function showHideDownloadLinks () {
     const origEl = document.getElementById('BooruDownloader_Float')
     if (origEl) {
@@ -76,44 +125,13 @@ function showHideDownloadLinks () {
     insertStyleElement()
     const root = document.createElement('div')
     root.id = "BooruDownloader_Float"
-    const lo = document.querySelector('#lowres') as HTMLLinkElement | null
-    const hi = document.querySelector('#highres') as HTMLLinkElement | null
-    const png = document.querySelector('#png') as HTMLLinkElement | null
-    console.log('png ===', png)
+    const infoArr: ImageInfo[] = getImageInfoArr()
     const closer = () => root.remove()
-    if (lo) {
+    for (const info of infoArr) {
         const btn = document.createElement('button')
-        btn.textContent = 'Low'
+        btn.textContent = info.btnText
         btn.onclick = () => {
-            downloadImage(lo.href)
-            closer()
-        }
-        root.appendChild(btn)
-    }
-    if (hi) {
-        const rawSize = hi.innerText.match(/\((.+)\)/)
-        let size: string = ''
-        if (rawSize) {
-            size = rawSize[1]
-        }
-        const btn = document.createElement('button')
-        btn.textContent = `High (${size})`
-        btn.onclick = () => {
-            downloadImage(hi.href)
-            closer()
-        }
-        root.appendChild(btn)
-    }
-    if (png) {
-        const rawSize = png.innerText.match(/\((.+)\)/)
-        let size: string = ''
-        if (rawSize) {
-            size = rawSize[1]
-        }
-        const btn = document.createElement('button')
-        btn.textContent = `High PNG (${size})`
-        btn.onclick = () => {
-            downloadImage(png.href)
+            downloadImage(info.imgUrl)
             closer()
         }
         root.appendChild(btn)
