@@ -129,7 +129,9 @@ function showHideDownloadLinks () {
         btn.textContent = info.btnText
         btn.onclick = () => {
             downloadImage(info.imgUrl)
-            closer()
+            if (!btn.textContent!.startsWith('✔')) {
+                btn.textContent = '✔' + btn.textContent
+            }
         }
         root.appendChild(btn)
     }
@@ -148,6 +150,7 @@ function downloadImage (imgFileUrl: string) {
         filename: generateFileName(imgFileUrl)
     })
 }
+
 
 function getFileTags (): FileTags {
     const fin: FileTags = {
