@@ -14,6 +14,8 @@ if (isUrlSupported(location.href)) {
         const watchElemArr: Array<Element | null> = []
         if (getHostname() === 'chan.sankakucomplex.com') {
             watchElemArr.push(document.querySelector('#image'))
+            watchElemArr.push(document.querySelector('#tag-sidebar'))
+            watchElemArr.push(document.querySelector('#stats'))
         } else {
             watchElemArr.push(document.querySelector('#tag-sidebar'))
             watchElemArr.push(document.querySelector('#highres'))
@@ -30,6 +32,8 @@ if (isUrlSupported(location.href)) {
         subtree: true
     })
 }
+
+
 
 function getImageId (): number {
     const m = location.pathname.match(/\/post\/show\/([0-9]+)/)
@@ -82,35 +86,28 @@ interface ImageInfo {
 
 function getImageInfoArr(): ImageInfo[] {
     const fin: ImageInfo[] = []
-    switch (window.location.hostname as supported_hostname_t) {
-        case 'chan.sankakucomplex.com': {
-            const imgEl = document.querySelector('#image') as HTMLImageElement | null
-            if (imgEl) {
-                fin.push({ btnText: 'Low', imgUrl: imgEl.src })
-            }
-            break
-        }
-        default: {
-            const lo = document.querySelector('#lowres') as HTMLLinkElement | null
-            const hi = document.querySelector('#highres') as HTMLLinkElement | null
-            const png = document.querySelector('#png') as HTMLLinkElement | null
-            if (lo) {
-                fin.push({ btnText: 'Low', imgUrl: lo.href })
-            }
-            if (hi) {
-                const rawSize = hi.innerText.match(/\((.+)\)/)
-                let size: string = ''
-                if (rawSize) { size = rawSize[1] }
-                fin.push({ btnText: `High (${size})`, imgUrl: hi.href })
-            }
-            if (png) {
-                const rawSize = png.innerText.match(/\((.+)\)/)
-                let size: string = ''
-                if (rawSize) { size = rawSize[1] }
-                fin.push({ btnText: `High PNG (${size})`, imgUrl: png.href })
-            }
-            break
-        }
+
+    const lo = document.querySelector('#lowres') as HTMLLinkElement | null
+    const hi = document.querySelector('#highres') as HTMLLinkElement | null
+    const png = document.querySelector('#png') as HTMLLinkElement | null
+    const imgEl = document.querySelector('#image') as HTMLImageElement | null
+    if (lo) {
+        fin.push({ btnText: 'Low', imgUrl: lo.href })
+    }
+    if (hi) {
+        const rawSize = hi.innerText.match(/\((.+)\)/)
+        let size: string = ''
+        if (rawSize) { size = rawSize[1] }
+        fin.push({ btnText: `High (${size})`, imgUrl: hi.href })
+    }
+    if (png) {
+        const rawSize = png.innerText.match(/\((.+)\)/)
+        let size: string = ''
+        if (rawSize) { size = rawSize[1] }
+        fin.push({ btnText: `High PNG (${size})`, imgUrl: png.href })
+    }
+    if ((!lo && !hi && !png) && imgEl) {
+        fin.push({ btnText: 'Low (fallback)', imgUrl: imgEl.src })
     }
     console.log(' ==================', fin)
     return fin
