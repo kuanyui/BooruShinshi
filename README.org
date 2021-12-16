@@ -15,10 +15,14 @@ Thanks for your contribution!
 
 Currently supported sites:
 
-- SankakuComplex
-- Yande.re
-- Konachan.com
-- Konachan.net
+- `chan.sankakucomplex.com`
+- `yande.re`
+- `konachan.com`
+- `konachan.net`
+- `danbooru.donmai.us`
+- `rule34.xxx`
+- `rule34.paheal.net`
+- `rule34.us`
 
 For more information please see [[https://github.com/kuanyui/BooruOneClickDownloader][GitHub]].
 
