@@ -1,4 +1,12 @@
-export type supported_hostname_t ='chan.sankakucomplex.com' | 'yande.re' | 'konachan.com' | 'konachan.net'
+export type supported_hostname_t =
+    'chan.sankakucomplex.com' |
+    'yande.re' |
+    'konachan.com' |
+    'konachan.net' |
+    'danbooru.donmai.us' |
+    'rule34.xxx' |
+    'rule34.paheal.net' |
+    'rule34.us'
 
 export interface MyStorage {
     fileNameFormat: string
@@ -28,20 +36,23 @@ export interface Tag {
     count: number
 }
 
-export interface FileTags {
-    copyright: Tag[],
-    character: Tag[],
-    artist: Tag[],
-    studio: Tag[],
-    general: Tag[],
+export type tag_category_t = 'copyright' | 'character' | 'artist' | 'studio' | 'general' | 'meta'
+export const ALL_TAG_CATEGORY: tag_category_t[] = ['copyright', 'character', 'artist', 'studio', 'general', 'meta']
+export type FileTags = Record<tag_category_t, Tag[]>
+export type FileTagsElementClass = Record<tag_category_t, string>
+
+export function objectKeys<T, K extends keyof T>(obj: T): K {
+    return Object.keys(obj) as unknown as K
 }
-export const SELECTOR = {
+
+export const COMMON_SELECTOR = {
     tagClass: {
         copyright: '.tag-type-copyright',
         character: '.tag-type-character',
         artist: '.tag-type-artist',
         studio: '.tag-type-studio',
         general: '.tag-type-general',
+        meta: '.tag-type-meta'
     }
 }
 
@@ -68,12 +79,18 @@ export class msgManager {
     }
 }
 
-export function isUrlSupported (url: string) {
-    const urlObj = new URL(url + '')
-    return [
-        'chan.sankakucomplex.com',
-        'yande.re',
-        'konachan.com',
-        'konachan.net',
-    ].includes(urlObj.hostname) && urlObj.pathname.includes('/post/show/')
+export function isUrlSupported (url: string): boolean {
+    const u = new URL(url + '')
+    switch (u.hostname) {
+        case 'chan.sankakucomplex.com':
+        case 'yande.re':
+        case 'konachan.com':
+        case 'konachan.net':
+            return u.pathname.includes('/post/show/')
+        case 'danbooru.donmai.us': return !!u.pathname.match(/\/posts\/\d+/)
+        case 'rule34.xxx': return u.searchParams.get('page') === 'post' && u.searchParams.get('s') === 'view'
+        case 'rule34.paheal.net': return u.pathname.includes('/post/view/')
+        case 'rule34.us': return u.searchParams.get('r') === 'posts/view'
+    }
+    return false
 }
