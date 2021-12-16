@@ -9,6 +9,39 @@ browser.runtime.onMessage.addListener((_ev: any) => {
 function getHostname(): supported_hostname_t {
     return window.location.hostname as supported_hostname_t
 }
+export function makeImgAlwaysOpenedWithNewTab() {
+    let selector: string = ''
+    switch (getHostname()) {
+        case 'chan.sankakucomplex.com': selector = 'span.thumb > a'; break
+        case 'yande.re': selector = '#post-list-posts a.thumb'; break
+        case 'konachan.com': selector = '#post-list-posts a.thumb'; break
+        case 'konachan.net': selector = '#post-list-posts a.thumb'; break
+        case 'danbooru.donmai.us': selector = '.post-preview-link'; break
+        case 'rule34.xxx': selector = '#post-list .content span.thumb a'; break
+        case 'rule34.paheal.net': selector = 'a.shm-thumb-link'; break
+        case 'rule34.us': selector = '.thumbail-container a'; break
+    }
+    window.setTimeout(() => {
+        document.querySelectorAll(selector).forEach(x => { x.setAttribute('target', '_blank') })
+    }, 3000)
+    let timeoutId = -1
+    const observer = new MutationObserver(function (mutations, me) {
+        console.log('mutations', mutations)
+        // mutations.forEach(mut => mut.target.querySelectorAll(selector).forEach(x => { x.setAttribute('target', '_blank') }))
+        // Debounce timeout
+        window.clearTimeout(timeoutId)
+        window.setTimeout(() => {
+            document.querySelectorAll(selector).forEach(x => { x.setAttribute('target', '_blank') })
+        }, 2000)
+    })
+    observer.observe(window.document, {
+        childList: true,
+        subtree: true
+    })
+}
+
+makeImgAlwaysOpenedWithNewTab()
+
 if (isUrlSupported(location.href)) {
     const observer = new MutationObserver(function (mutations, me) {
         const watchElemArr: Array<Element | null> = []
