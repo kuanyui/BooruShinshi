@@ -472,11 +472,16 @@ function collectTags_rule34us (): FileTags  {
     }
     for (const tagCategory of ALL_TAG_CATEGORY) {
         const tagLiClass = meta[tagCategory]
+        if (!tagLiClass) { continue }
         const tagsOfCategory: Tag[] = []
         let els = sidebarEl.querySelectorAll(tagLiClass)
         els.forEach((el) => {
-            const enTag: string = el.querySelector('a')!.textContent!.trim()
-            const count: number = ~~el.querySelector('small')!.textContent!.trim()
+            const a = el.querySelector('a')
+            if (!a) { return }
+            const enTag: string = a.textContent!.trim()
+            const small = el.querySelector('small')
+            if (!small || !!small.textContent) { return }
+            const count: number = ~~small.textContent!.trim()
             tagsOfCategory.push({ en: enTag, count })
         })
         fileTags[tagCategory] = tagsOfCategory
