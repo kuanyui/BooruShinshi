@@ -78,7 +78,7 @@ if (isUrlSupported(location.href)) {
                 break
             }
             case 'rule34.xxx': {
-                watchElemArr.push(document.querySelector('#image'))
+                watchElemArr.push(document.querySelector('#image') || document.querySelector('#gelcomVideoContainer'))
                 watchElemArr.push(document.querySelector('#tag-sidebar'))
                 break
             }
@@ -89,7 +89,7 @@ if (isUrlSupported(location.href)) {
                 break
             }
             case 'rule34.us': {
-                watchElemArr.push(document.querySelector('.content_push > img'))
+                watchElemArr.push(document.querySelector('.content_push > img') || document.querySelector('.content_push > video'))
                 watchElemArr.push(document.querySelector('#tag-list\\ '))
                 watchElemArr.push(document.querySelector('#comment_form'))
                 break
@@ -244,17 +244,26 @@ function getImageInfoArr(): ImageInfo[] {
         fin.push({ btnText: `High (${size})`, imgUrl: imgLink.href })
     }
     if (hostName === 'rule34.us') {
-        const imgEl = document.querySelector('.content_push img') as HTMLImageElement
-        if (imgEl) {
-            fin.push({ btnText: 'Low (fallback)', imgUrl: imgEl.src })
-        }
-        document.querySelectorAll('#tag-list\\  > a').forEach((_a) => {
-            const a = _a as HTMLAnchorElement
-            if (!a.textContent) { return }
-            if (a.textContent.trim() === 'Original') {
-                fin.push({ btnText: 'High (Original)', imgUrl: a.href })
+        const videoEl = document.querySelector('.content_push > video') as HTMLVideoElement
+        const imgEl = document.querySelector('.content_push > img') as HTMLImageElement
+        if (videoEl) {
+            for (const sourceEl of Array.from(videoEl.querySelectorAll('source'))) {
+                const src = sourceEl.src
+                let fmt = 'webm'
+                if (src.includes('.webm')) { fmt = 'webm' }
+                else if (src.includes('.mp4')) { fmt = 'mp4' }
+                fin.push({ btnText: `High (.${fmt})`, imgUrl: src })
             }
-        })
+        } else if (imgEl) {
+            fin.push({ btnText: 'Low (fallback)', imgUrl: imgEl.src })
+            document.querySelectorAll('#tag-list\\  > a').forEach((_a) => {
+                const a = _a as HTMLAnchorElement
+                if (!a.textContent) { return }
+                if (a.textContent.trim() === 'Original') {
+                    fin.push({ btnText: 'High (Original)', imgUrl: a.href })
+                }
+            })
+        }
     }
 
     console.log('getImageInfoArr ==================', fin)
@@ -520,17 +529,18 @@ function collectTags_rule34us (): FileTags  {
         if (!tagLiClass) { continue }
         const tagsOfCategory: Tag[] = []
         let els = sidebarEl.querySelectorAll(tagLiClass)
-        els.forEach((el) => {
-            const a = el.querySelector('a')
+        els.forEach((li) => {
+            const a = li.querySelector('a')
             if (!a) { return }
             const enTag: string = a.textContent!.trim()
-            const small = el.querySelector('small')
-            if (!small || !!small.textContent) { return }
+            const small = li.querySelector('small')
+            if (!small || !small.textContent) { return }
             const count: number = ~~small.textContent!.trim()
             tagsOfCategory.push({ en: enTag, count })
         })
         fileTags[tagCategory] = tagsOfCategory
     }
+    // console.log('[collectTags_rule34us] fileTags=====', fileTags)
     return fileTags
 }
 
