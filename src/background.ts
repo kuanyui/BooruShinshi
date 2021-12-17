@@ -9,7 +9,7 @@ const STORAGE: MyStorage = {
 
 function askTabDownloadImage (tab: browser.tabs.Tab) {
     if (tab.id === undefined) {return}
-    msgManager.sendToTab(tab.id, { type: 'AskTabToDownload' })
+    msgManager.sendToTab(tab.id, { type: 'AskTabToDownload' })  // FIXME: Is this still needed?
 }
 
 browser.pageAction.onClicked.addListener(function (tab) {
@@ -43,6 +43,8 @@ browser.runtime.onMessage.addListener((_msg: any) => {
         }).catch((err) => {
             console.error('download failed:', err)
         })
+    } else if (msg.type === 'OpenLinkInNewTab') {
+        browser.tabs.create({ active: false, url: msg.url })
     }
 })
 

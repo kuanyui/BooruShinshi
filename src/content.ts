@@ -22,7 +22,7 @@ export function makeImgAlwaysOpenedWithNewTab() {
         case 'rule34.us': selector = '.thumbail-container a'; break
     }
     window.setTimeout(() => {
-        document.querySelectorAll(selector).forEach(x => { x.setAttribute('target', '_blank') })
+        document.querySelectorAll(selector).forEach(x => { _makeAnchorElementOpenedWithTab(x) })
     }, 3000)
     let timeoutId = -1
     const observer = new MutationObserver(function (mutations, me) {
@@ -31,7 +31,7 @@ export function makeImgAlwaysOpenedWithNewTab() {
         // Debounce timeout
         window.clearTimeout(timeoutId)
         window.setTimeout(() => {
-            document.querySelectorAll(selector).forEach(x => { x.setAttribute('target', '_blank') })
+            document.querySelectorAll(selector).forEach(x => { _makeAnchorElementOpenedWithTab(x) })
         }, 2000)
     })
     observer.observe(window.document, {
@@ -41,6 +41,18 @@ export function makeImgAlwaysOpenedWithNewTab() {
 }
 
 makeImgAlwaysOpenedWithNewTab()
+
+function _makeAnchorElementOpenedWithTab(el: Element) {
+    const a = el as HTMLAnchorElement
+    // el.setAttribute('target', '_blank')
+    if (!a.href) { return }
+    a.onclick = function (ev) {
+        // Open with new tab, but don't focus to the new tab.
+        msgManager.sendToBg({ type: 'OpenLinkInNewTab', url: a.href })
+        ev.preventDefault()
+        ev.stopPropagation()
+    }
+}
 
 if (isUrlSupported(location.href)) {
     const observer = new MutationObserver(function (mutations, me) {
