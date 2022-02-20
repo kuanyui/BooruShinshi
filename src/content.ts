@@ -54,7 +54,7 @@ function _makeAnchorElementOpenedWithTab(el: Element) {
     if (!a.href) { return }
     // @ts-ignore
     a.onclick = function (ev) {
-        console.log('按下幹', Date.now())
+        console.log('Shit', Date.now())
         ev.preventDefault()
         ev.stopPropagation()
         // Open with new tab, but don't focus to the new tab.
