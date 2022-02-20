@@ -1,4 +1,5 @@
 import { MyMsg, msgManager, COMMON_SELECTOR, FileTags, Tag, supported_hostname_t, isUrlSupported, FileTagsElementClass, objectKeys, ALL_TAG_CATEGORY } from "./common";
+import { storageManager } from "./options";
 
 browser.runtime.onMessage.addListener((_ev: any) => {
     const ev = _ev as MyMsg
@@ -6,6 +7,12 @@ browser.runtime.onMessage.addListener((_ev: any) => {
         showHideDownloadLinks()
     }
 })
+storageManager.getData().then((opts) => {
+    if (opts.openLinkWithNewTab) {
+        makeImgAlwaysOpenedWithNewTab()
+    }
+})
+
 function getHostname(): supported_hostname_t {
     return window.location.hostname as supported_hostname_t
 }
@@ -40,17 +47,18 @@ export function makeImgAlwaysOpenedWithNewTab() {
     })
 }
 
-makeImgAlwaysOpenedWithNewTab()
 
 function _makeAnchorElementOpenedWithTab(el: Element) {
     const a = el as HTMLAnchorElement
     // el.setAttribute('target', '_blank')
     if (!a.href) { return }
+    // @ts-ignore
     a.onclick = function (ev) {
-        // Open with new tab, but don't focus to the new tab.
-        msgManager.sendToBg({ type: 'OpenLinkInNewTab', url: a.href })
+        console.log('按下幹', Date.now())
         ev.preventDefault()
         ev.stopPropagation()
+        // Open with new tab, but don't focus to the new tab.
+        msgManager.sendToBg({ type: 'OpenLinkInNewTab', url: a.href })
     }
 }
 
@@ -270,7 +278,7 @@ function getImageInfoArr(): ImageInfo[] {
     return fin
 }
 
-function showHideDownloadLinks() {
+async function showHideDownloadLinks() {
     const oriEl = document.getElementById('BooruDownloader_Float')
     console.log('show hide', oriEl)
     if (oriEl) {
@@ -281,7 +289,14 @@ function showHideDownloadLinks() {
     const root = document.createElement('div')
     root.id = "BooruDownloader_Float"
     const infoArr: ImageInfo[] = getImageInfoArr()
-    const closer = () => root.remove()
+    if ((await storageManager.getData()).buttonForCloseTab) {
+        const closeTab = document.createElement('button')
+        closeTab.textContent = 'Close Tab'
+        closeTab.onclick = () => msgManager.sendToBg({ type: 'CloseTab' })
+        root.appendChild(closeTab)
+        root.appendChild(document.createElement('hr'))
+    }
+    const buttonHidder = () => root.remove()
     for (const info of infoArr) {
         const btn = document.createElement('button')
         btn.textContent = info.btnText
@@ -294,10 +309,10 @@ function showHideDownloadLinks() {
         root.appendChild(btn)
     }
     root.appendChild(document.createElement('hr'))
-    const closeBtn = document.createElement('button')
-    closeBtn.textContent = 'X'
-    closeBtn.onclick = () => closer()
-    root.appendChild(closeBtn)
+    const hideBtn = document.createElement('button')
+    hideBtn.textContent = 'Hide Buttons'
+    hideBtn.onclick = () => buttonHidder()
+    root.appendChild(hideBtn)
 
     document.body.appendChild(root)
 }

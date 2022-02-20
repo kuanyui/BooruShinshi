@@ -1,11 +1,11 @@
-const { VueLoaderPlugin } = require('vue-loader')
 const CopyPlugin = require('copy-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 const config = {
     entry: {
         background: './src/background.ts',
         content: './src/content.ts',
-        // options_ui: './options_ui/index.ts'
+        'options_ui': './src/options_ui/options_ui.ts',
     },
     output: {
         filename: '[name].js',
@@ -13,12 +13,31 @@ const config = {
     },
     module: {
         rules: [
-            { test: /\.tsx?$/, use: {
-                loader: 'ts-loader',
-                options: { appendTsSuffixTo: [/\.vue$/] } }
+            {
+                test: /\.tsx?$/, use: {
+                    loader: 'ts-loader',
+                }
             },
-            { test: /\.vue$/, use: 'vue-loader' },
-            { test: /\.pug$/, loader: 'pug-plain-loader' },
+            {
+                test: /\.pug$/,
+                // use: [
+                //     // 'html-loader',
+                //     'pug-html-loader'
+                // ],
+                use: [
+                    //{
+                    //    loader: 'html-loader',
+                    //    options: { minimize: false }
+                    //},
+                    {
+                        loader: 'raw-loader',
+                    },
+                    {
+                        loader: 'pug-html-loader',
+                        options: { pretty: true }
+                    }
+                ]
+            },
             { test: /\.styl(us)?$/, use: [ 'vue-style-loader', 'css-loader', 'stylus-loader' ] },
             { test: /\.(gif|svg|jpg|png)$/, loader: "file-loader" },
             { test: /\.css$/, use: ['style-loader', 'css-loader'] }
@@ -28,10 +47,13 @@ const config = {
       extensions: [ '.tsx', '.ts', '.js' ]
     },
     plugins: [
-      // new VueLoaderPlugin(),
-      // new CopyPlugin([
-      //   // { from: 'options_ui/index.html', to: 'options_ui.html', force: true, toType: 'file' },
-      // ]),
+        new HtmlWebpackPlugin({
+            template: './src/options_ui/options_ui.pug',
+            filename: 'options_ui.html',
+        }),
+        new CopyPlugin([
+            { from: 'src/options_ui/style/', to: 'options_ui_style/', force: true, toType: 'dir' },
+        ]),
     ]
 }
 

@@ -99,4 +99,4 @@ For paranoid users such as me, these are all used permissions with its usages:
 - [x] +Show floating buttons after user switch to that tab.+ Show download buttons only when available.
 - [x] z-index of download buttons
 * License
-WTFPL 2.0
+MPL 2.0

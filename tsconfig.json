@@ -3,8 +3,8 @@
     "*",  // What? `includes` is not same as `include` ???
     "src/*.ts",
     "src/**/*.ts",
-    "options_ui/*.ts",
-    "options_ui/*.vue",
+    "src/options_ui/*.ts",
+    "src/options_ui/*.vue",
   ],
   "exclude": [
     "node_modules"
@@ -18,9 +18,11 @@
     "types": ["web-ext-types", "sanitize-filename"],   // Useless for .vue
     "target": "esnext",
     "allowSyntheticDefaultImports": true,
+    "useDefineForClassFields": false,  // Important. See  https://www.typescriptlang.org/tsconfig#useDefineForClassFields
     "lib": [
       "esnext",
-      "dom"
+      "dom",
+      "dom.Iterable"
     ],
     "strict": true,
     "removeComments": true,

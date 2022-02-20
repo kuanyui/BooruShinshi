@@ -1,11 +1,22 @@
 import { MyStorage, msgManager, isUrlSupported, MyMsg, MyMsg_DownloadLinkGotten } from "./common";
 import sanitizeFilename from 'sanitize-filename'
+import { MyOptions, objectAssignPerfectly, storageManager } from "./options";
 
-const STORAGE: MyStorage = {
-    fileNameFormat: '({author})[{series}][{character}]{tags}',  // site, postid
-    fileNameMaxLength: 38,
-    tagSeparator: ','
-}
+
+/** This can be modify */
+const STORAGE: MyOptions = storageManager.getDefaultData()
+
+// Storage
+console.log('[background] first time to get config from storage')
+storageManager.getData().then((obj) => {
+    objectAssignPerfectly(STORAGE, obj)
+  })
+
+  storageManager.onDataChanged(async (changes) => {
+    console.log('[background] storage changed!', changes)
+    objectAssignPerfectly(STORAGE, await storageManager.getData())
+})
+
 
 function askTabDownloadImage (tab: browser.tabs.Tab) {
     if (tab.id === undefined) {return}
@@ -27,7 +38,7 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
     }
 });
 
-browser.runtime.onMessage.addListener((_msg: any) => {
+browser.runtime.onMessage.addListener((_msg: any, sender: browser.runtime.MessageSender) => {
     const msg = _msg as MyMsg
     console.log('msg from content_script: ', msg)
     if (msg.type === 'DownloadLinkGotten') {
@@ -45,6 +56,10 @@ browser.runtime.onMessage.addListener((_msg: any) => {
         })
     } else if (msg.type === 'OpenLinkInNewTab') {
         browser.tabs.create({ active: false, url: msg.url })
+    } else if (msg.type === 'CloseTab') {
+        if (!sender.tab) { return }
+        if (sender.tab.id === undefined) { return }
+        browser.tabs.remove(sender.tab.id)
     }
 })
 

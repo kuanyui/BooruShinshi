@@ -14,13 +14,14 @@ export interface MyStorage {
     tagSeparator: string
 }
 
-export type my_msg_t = 'AskTabToDownload' | 'DownloadLinkGotten' | 'OpenLinkInNewTab'
-export type MyMsg = MyMsg_AskTabToDownload | MyMsg_DownloadLinkGotten | MyMsg_OpenLinkInNewTab
+export type my_msg_t = 'AskTabToDownload' | 'DownloadLinkGotten' | 'OpenLinkInNewTab' | 'CloseTab'
+export type MyMsg = MyMsg_AskTabToDownload | MyMsg_DownloadLinkGotten | MyMsg_OpenLinkInNewTab | MyMsg_CloseCurrentTab
 
 export interface MyMsg_BASE {
     type: my_msg_t,
 }
 export interface MyMsg_AskTabToDownload { type: 'AskTabToDownload' }
+export interface MyMsg_CloseCurrentTab { type: 'CloseTab' }
 export interface MyMsg_DownloadLinkGotten {
     type: 'DownloadLinkGotten'
     url: string
