@@ -6,7 +6,9 @@ export type supported_hostname_t =
     'danbooru.donmai.us' |
     'rule34.xxx' |
     'rule34.paheal.net' |
-    'rule34.us'
+    'rule34.us' |
+    'gelbooru.com' |
+    'booru.allthefallen.moe'
 
 export interface MyStorage {
     fileNameFormat: string
@@ -84,6 +86,7 @@ export class msgManager {
     }
 }
 
+
 export function isUrlSupported (url: string): boolean {
     const u = new URL(url + '')
     switch (u.hostname) {
@@ -96,6 +99,8 @@ export function isUrlSupported (url: string): boolean {
         case 'rule34.xxx': return u.searchParams.get('page') === 'post' && u.searchParams.get('s') === 'view'
         case 'rule34.paheal.net': return u.pathname.includes('/post/view/')
         case 'rule34.us': return u.searchParams.get('r') === 'posts/view'
+        case 'gelbooru.com': return u.searchParams.get('page') === 'post'
+        case 'booru.allthefallen.moe': return !!u.pathname.match(/\/posts\/\d+/)
     }
     return false
 }

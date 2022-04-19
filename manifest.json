@@ -37,7 +37,9 @@
                 "*://danbooru.donmai.us/*",
                 "*://rule34.xxx/*",
                 "*://rule34.paheal.net/*",
-                "*://rule34.us/*"
+                "*://rule34.us/*",
+                "*://gelbooru.com/*",
+                "*://booru.allthefallen.moe/*"
             ],
             "js": ["dist/content.js"]
         }

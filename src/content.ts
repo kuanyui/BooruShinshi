@@ -27,6 +27,8 @@ export function makeImgAlwaysOpenedWithNewTab() {
         case 'rule34.xxx': selector = '#post-list .content span.thumb a'; break
         case 'rule34.paheal.net': selector = 'a.shm-thumb-link'; break
         case 'rule34.us': selector = '.thumbail-container a'; break
+        case 'gelbooru.com': selector = '.thumbnail-container a'; break
+        case 'booru.allthefallen.moe': selector = '#posts-container a'; break
     }
     window.setTimeout(() => {
         document.querySelectorAll(selector).forEach(x => { _makeAnchorElementOpenedWithTab(x) })
@@ -102,6 +104,17 @@ if (isUrlSupported(location.href)) {
                 watchElemArr.push(document.querySelector('#comment_form'))
                 break
             }
+            case 'gelbooru.com': {
+                watchElemArr.push(document.querySelector('#image') || document.querySelector('#gelcomVideoPlayer'))
+                watchElemArr.push(document.querySelector('#tag-list'))
+                break
+            }
+            case 'booru.allthefallen.moe': {
+                watchElemArr.push(document.querySelector('#image'))
+                watchElemArr.push(document.querySelector('#tag-list'))
+                watchElemArr.push(document.querySelector('#post-information'))
+                watchElemArr.push(document.querySelector('#post-options'))
+            }
         }
         console.log('document changed!', watchElemArr)
         if (watchElemArr.every(x => !!x)) {
@@ -144,6 +157,14 @@ function getImageId(): number {
         case 'rule34.us': {
             const id = u.searchParams.get('id')
             if (id) { return ~~id }
+        }
+        case 'gelbooru.com': {
+            const id = u.searchParams.get('id')
+            if (id) { return ~~id }
+        }
+        case 'booru.allthefallen.moe': {
+            const m = location.pathname.match(/\/posts\/([0-9]+)/)
+            if (m) {return ~~m[1]}
         }
     }
     return -1
@@ -273,6 +294,19 @@ function getImageInfoArr(): ImageInfo[] {
             })
         }
     }
+    if (hostName === 'gelbooru.com') {
+        const a = Array.from(document.querySelectorAll('#tag-list li a')).find(x => x.textContent!.includes('Original image')) as HTMLAnchorElement
+         if (a) {
+            const size: string = Array.from(document.querySelector('#tag-list')!.querySelectorAll('li')).find(x=>x.textContent && x.textContent.includes('Size: '))!.textContent!
+            fin.push({ btnText: `High (${size})`, imgUrl: a.href })
+        }
+    }
+    if (hostName === 'booru.allthefallen.moe') {
+        const sizeEl = document.querySelector('#post-info-size')!
+        const sizeStr = sizeEl.textContent!.match(/([0-9.]+ *[KMG]B)/)![1]
+        const a = sizeEl.querySelector('a')!
+        fin.push({ btnText: `High (${sizeStr})`, imgUrl: a.href })
+    }
 
     console.log('getImageInfoArr ==================', fin)
     return fin
@@ -352,6 +386,11 @@ function getFileTags (): FileTags {
             return collectTags_rule34paheal()
         case 'rule34.us':
             return collectTags_rule34us()
+        case 'gelbooru.com':
+            return collectTags_gelbooru()
+        case 'booru.allthefallen.moe':
+            return collectTags_allthefallen()
+
     }
     console.error('[To Developer] This should not happened')
     return makeEmptyFileTags()
@@ -558,7 +597,66 @@ function collectTags_rule34us (): FileTags  {
     // console.log('[collectTags_rule34us] fileTags=====', fileTags)
     return fileTags
 }
+function collectTags_gelbooru (): FileTags  {
+    const sidebarEl = document.querySelector('#tag-list')
+    const fileTags: FileTags = makeEmptyFileTags()
+    if (!sidebarEl) {
+        console.error('[To Developer] Not found tag')
+        return fileTags
+    }
+    const meta: FileTagsElementClass = {
+        artist: '.tag-type-artist',
+        character: '.tag-type-character',
+        copyright: '.tag-type-copyright',
+        general: '.tag-type-general',
+        studio: '',
+        meta: '.tag-type-metadata',
+    }
+    for (const tagCategory of ALL_TAG_CATEGORY) {
+        const tagLiClass = meta[tagCategory]
+        if (!tagLiClass) { continue }
+        const tagsOfCategory: Tag[] = []
+        let els = sidebarEl.querySelectorAll(tagLiClass)
+        els.forEach((el) => {
+            const tagLink = el.querySelectorAll('a')[1]
+            const enTag = tagLink.textContent!.trim()
+            const count: number = parseInt(tagLink.nextElementSibling!.textContent!.trim())
+            tagsOfCategory.push({ en: enTag, count })
+        })
+        fileTags[tagCategory] = tagsOfCategory
+    }
+    return fileTags
+}
 
+function collectTags_allthefallen (): FileTags  {
+    const sidebarEl = document.querySelector('#tag-list')
+    const fileTags: FileTags = makeEmptyFileTags()
+    if (!sidebarEl) {
+        console.error('[To Developer] Not found tag')
+        return fileTags
+    }
+    const meta: FileTagsElementClass = {
+        artist: '.tag-type-1',
+        character: '.tag-type-4',
+        copyright: '.tag-type-3',
+        general: '.tag-type-0',
+        studio: '',
+        meta: '.tag-type-5',
+    }
+    for (const tagCategory of ALL_TAG_CATEGORY) {
+        const tagLiClass = meta[tagCategory]
+        if (!tagLiClass) { continue }
+        const tagsOfCategory: Tag[] = []
+        let els = sidebarEl.querySelectorAll(tagLiClass)
+        els.forEach((el) => {
+            const count: number = parseInt(el.querySelector('.post-count')!.getAttribute('title')!)
+            const enTag: string = el.querySelector('.search-tag')!.textContent!.trim()
+            tagsOfCategory.push({ en: enTag, count })
+        })
+        fileTags[tagCategory] = tagsOfCategory
+    }
+    return fileTags
+}
 const SEPARATOR = ','
 
 function generateFileBaseName (): string {
