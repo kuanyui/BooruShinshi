@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "BooruDownloader",
-    "version": "0.8.1",
+    "version": "0.8.2",
     "applications": {
         "gecko": {
             "id": "{634d6532-4ae5-4a94-a232-37e81d4d7eec}"
