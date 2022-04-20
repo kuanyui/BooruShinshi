@@ -104,3 +104,23 @@ export function isUrlSupported (url: string): boolean {
     }
     return false
 }
+
+export interface QueryInfo {
+    hostname: supported_hostname_t,
+    queryKey: string,
+    delimiter: string,
+    queryUrl: string[],
+}
+
+export const ALL_QUERY_INFO: QueryInfo[] = [
+    { hostname: 'konachan.com'           , queryKey: 'tags', delimiter: '+', queryUrl: ['https://konachan.com/post?tags={}'] }                      ,
+    { hostname: 'konachan.net'           , queryKey: 'tags', delimiter: '+', queryUrl: ['https://konachan.net/post?tags={}'] }                      ,
+    { hostname: 'yande.re'               , queryKey: 'tags', delimiter: '+', queryUrl: ['https://yande.re/post?tags={}'] }                          , // Possibly contains additional "+"
+    { hostname: 'chan.sankakucomplex.com', queryKey: 'tags', delimiter: '+', queryUrl: ['https://chan.sankakucomplex.com/post/index?tags={}'        , 'https://chan.sankakucomplex.com/?tags={}'] },
+    { hostname: 'danbooru.donmai.us'     , queryKey: 'tags', delimiter: '+', queryUrl: ['https://danbooru.donmai.us/posts?tags={}'] }               ,
+    { hostname: 'rule34.xxx'             , queryKey: 'tags', delimiter: '+', queryUrl: ['https://rule34.xxx/index.php?page=post&s=list&tags={}']}   , // Very strict; all 3 params are required.
+    { hostname: 'rule34.paheal.net'      , queryKey: ''    , delimiter: ' ', queryUrl: ['http://rule34.paheal.net/post/list/{}/1']}                 , // awkward query method...
+    { hostname: 'rule34.us'              , queryKey: 'q'   , delimiter: '+', queryUrl: ['http://rule34.us/index.php?r=posts/index&q={}']}           ,
+    { hostname: 'gelbooru.com'           , queryKey: 'tags', delimiter: '+', queryUrl: ['https://gelbooru.com/index.php?page=post&s=list&tags={}']} ,
+    { hostname: 'booru.allthefallen.moe' , queryKey: 'tags', delimiter: '+', queryUrl: ['https://booru.allthefallen.moe/posts?tags={}']}            ,
+]
