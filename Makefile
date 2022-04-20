@@ -1,6 +1,6 @@
 .PHONY: dev build xpi xpi-server clear zip-repo icon deploy
 
-NAME="BooruDownloader"
+NAME="BooruShinshi"
 BIN:="node_modules/.bin"
 XPI_DIR=../xpi
 

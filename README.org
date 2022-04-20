@@ -1,5 +1,16 @@
-* Booru One-Click Downloder
-A WebExtension to download image with comprehensible filename from Booru page in one click.
+* Booru Shinshi
+
+#+begin_quote
+ボール紳士：ボール (Booru) サイト間をエレガントに渡り歩く。
+#+end_quote
+
+This WebExtension improve your experience of browsing [[https://booru.org/][Booru] (ボール, "board" in Japanese) sites:
+
+1. One-click to download image with comprehensible filename from a Booru site.
+2. One-click to search current keyword across different Booru sites.
+3. /(Optional)/ All image post to images will be opened with new tab /(this is very usable if you are using a touchscreen device. e.g. Microsoft Surface)./
+
+This is a 100% safe & clean FLOSS. More info about permission, issue, development is on [[https://github.com/kuanyui/BooruShinshi][Github]]
 
 #+begin_html
 <blockquote>
@@ -15,14 +26,16 @@ Thanks for your contribution!
 
 Currently supported sites:
 
-- `chan.sankakucomplex.com`
-- `yande.re`
-- `konachan.com`
-- `konachan.net`
-- `danbooru.donmai.us`
-- `rule34.xxx`
-- `rule34.paheal.net`
-- `rule34.us`
+- =chan.sankakucomplex.com=
+- =yande.re=
+- =konachan.com=
+- =konachan.net=
+- =danbooru.donmai.us=
+- =gelbooru.com=
+- =booru.allthefallen.moe=
+- =rule34.xxx=
+- =rule34.paheal.net=
+- =rule34.us=
 
 For more information please see [[https://github.com/kuanyui/BooruOneClickDownloader][GitHub]].
 

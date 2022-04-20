@@ -75,11 +75,11 @@ function _makeAnchorElementOpenedWithTab(el: Element) {
     }
 }
 function insertStyleElement () {
-    if (document.getElementById('BooruDownloader_Style')) {
-        return console.log('[BooruDownloader] Style has inserted, aborted.')
+    if (document.getElementById('BooruShinshi_Style')) {
+        return console.log('[BooruShinshi] Style has inserted, aborted.')
     }
     const css = `
-    #BooruDownloader_DivForContentPage {
+    #BooruShinshi_DivForContentPage {
         position: fixed;
         right: 20px;
         top: 20px;
@@ -88,7 +88,7 @@ function insertStyleElement () {
         padding: 6px;
         z-index: 9999;
     }
-    #BooruDownloader_DivForContentPage button {
+    #BooruShinshi_DivForContentPage button {
         cursor: pointer;
         font-size: 2em;
         background: #E9E9ED;
@@ -98,7 +98,7 @@ function insertStyleElement () {
         display: block;
         width: 100%;
     }
-    #BooruDownloader_DivForListPage {
+    #BooruShinshi_DivForListPage {
         display: flex;
         flex-direction: column;
         position: fixed;
@@ -109,7 +109,7 @@ function insertStyleElement () {
         padding: 6px;
         z-index: 9999;
     }
-    #BooruDownloader_DivForListPage button {
+    #BooruShinshi_DivForListPage button {
         cursor: pointer;
         font-size: 20px;
         background: #E9E9ED;
@@ -119,31 +119,31 @@ function insertStyleElement () {
         display: block;
         width: 100%;
     }
-    #BooruDownloader_DivForListPage .LinksContainer {
+    #BooruShinshi_DivForListPage .LinksContainer {
         display: flex;
         flex-direction: column;
     }
-    #BooruDownloader_DivForListPage .LinksContainer a {
+    #BooruShinshi_DivForListPage .LinksContainer a {
         display: flex;
         text-decoration: none;
         font-size: 14px;
         padding: 8px 8px;
         color: #3388ff;
     }
-    #BooruDownloader_DivForListPage .LinksContainer a:hover:not(.currentSite) {
+    #BooruShinshi_DivForListPage .LinksContainer a:hover:not(.currentSite) {
         background: #eeeeee;
     }
-    #BooruDownloader_DivForListPage .LinksContainer a:visited {
+    #BooruShinshi_DivForListPage .LinksContainer a:visited {
         color: #8833ff;
     }
-    #BooruDownloader_DivForListPage .LinksContainer a.currentSite {
+    #BooruShinshi_DivForListPage .LinksContainer a.currentSite {
         color: #aaaaaa;
         cursor: not-allowed;
     }
     `
     const style = document.createElement('style')
     document.head.appendChild(style)
-    style.id = 'BooruDownloader_Style'
+    style.id = 'BooruShinshi_Style'
     style.type = 'text/css'
     style.appendChild(document.createTextNode(css));
 }
@@ -190,7 +190,7 @@ function generateFileName (imgFileUrl: string): string {
 }
 
 async function showHideDownloadLinks() {
-    const oriEl = document.getElementById('BooruDownloader_DivForContentPage')
+    const oriEl = document.getElementById('BooruShinshi_DivForContentPage')
     console.log('show hide', oriEl)
     if (oriEl) {
         oriEl.remove()
@@ -198,7 +198,7 @@ async function showHideDownloadLinks() {
     }
     insertStyleElement()
     const root = document.createElement('div')
-    root.id = "BooruDownloader_DivForContentPage"
+    root.id = "BooruShinshi_DivForContentPage"
     const infoArr: ParsedImageInfo[] = curMod.collectImageInfoList()
     if ((await storageManager.getData()).buttonForCloseTab) {
         const closeTab = document.createElement('button')
@@ -229,14 +229,14 @@ async function showHideDownloadLinks() {
 }
 
 function createJumpButton() {
-    const oriEl = document.getElementById('BooruDownloader_DivForListPage')
+    const oriEl = document.getElementById('BooruShinshi_DivForListPage')
     if (oriEl) {
         oriEl.remove()
         return
     }
     insertStyleElement()
     const root = document.createElement('div')
-    root.id = "BooruDownloader_DivForListPage"
+    root.id = "BooruShinshi_DivForListPage"
 
     const jumpBtn = document.createElement('button')
     jumpBtn.textContent = 'Search in Other Sites'
