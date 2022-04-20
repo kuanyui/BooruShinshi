@@ -1,6 +1,6 @@
-import { MyStorage, msgManager, isUrlSupported, MyMsg, MyMsg_DownloadLinkGotten } from "./common";
+import { MyStorage, msgManager, MyMsg, MyMsg_DownloadLinkGotten } from "./common"
 import sanitizeFilename from 'sanitize-filename'
-import { MyOptions, objectAssignPerfectly, storageManager } from "./options";
+import { MyOptions, objectAssignPerfectly, storageManager } from "./options"
 
 
 /** This can be modify */
@@ -28,14 +28,14 @@ browser.pageAction.onClicked.addListener(function (tab) {
 })
 
 browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
-    if (changeInfo.url) {
-        // console.log(tabId, changeInfo)
-        if (isUrlSupported(changeInfo.url)) {
-            browser.pageAction.show(tabId)
-        } else {
-            browser.pageAction.hide(tabId)
-        }
-    }
+    //if (changeInfo.url) {
+    //    console.log(tabId, changeInfo)
+    //    if (isInPostContentPage(changeInfo.url)) {
+    //        browser.pageAction.show(tabId)
+    //    } else {
+    //        browser.pageAction.hide(tabId)
+    //    }
+    //}
 });
 
 browser.runtime.onMessage.addListener((_msg: any, sender: browser.runtime.MessageSender) => {

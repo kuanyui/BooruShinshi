@@ -43,6 +43,27 @@ export interface Tag {
     count: number
 }
 
+export interface ParsedImageInfo {
+    /** Low, High, High PNG, Low (fallback) */
+    btnText: string,
+    /** ex: 1920x1080 */
+    geometry?: string,
+    /** ex: 600 KB */
+    byteSize?: string,
+    imgUrl: string
+}
+
+export function makeEmptyFileTags(): FileTags {
+    return {
+        copyright: [],
+        artist: [],
+        character: [],
+        general: [],
+        studio: [],
+        meta: [],
+    }
+}
+
 export type tag_category_t = 'copyright' | 'character' | 'artist' | 'studio' | 'general' | 'meta'
 export const ALL_TAG_CATEGORY: tag_category_t[] = ['copyright', 'character', 'artist', 'studio', 'general', 'meta']
 export type FileTags = Record<tag_category_t, Tag[]>
@@ -52,15 +73,42 @@ export function objectKeys<T, K extends keyof T>(obj: T): K {
     return Object.keys(obj) as unknown as K
 }
 
-export const COMMON_SELECTOR = {
-    tagClass: {
-        copyright: '.tag-type-copyright',
-        character: '.tag-type-character',
-        artist: '.tag-type-artist',
-        studio: '.tag-type-studio',
-        general: '.tag-type-general',
-        meta: '.tag-type-meta'
+/** Used by SankakuComplex, Yande.re, Konachan. */
+export const COMMON_TAG_SELECTOR: FileTagsElementClass = {
+    copyright: '.tag-type-copyright',
+    character: '.tag-type-character',
+    artist: '.tag-type-artist',
+    studio: '.tag-type-studio',
+    general: '.tag-type-general',
+    meta: '.tag-type-meta'
+}
+
+/** Used by SankakuComplex, Yande.re, Konachan. */
+export function generalCollectImageInfoList(): ParsedImageInfo[] {
+    const fin: ParsedImageInfo[] = []
+    const lo = document.querySelector('#lowres') as HTMLLinkElement | null
+    const hi = document.querySelector('#highres') as HTMLLinkElement | null
+    const png = document.querySelector('#png') as HTMLLinkElement | null
+    const imgEl = document.querySelector('#image') as HTMLImageElement | null
+    if (lo) {
+        fin.push({ btnText: 'Low', imgUrl: lo.href })
     }
+    if (hi) {
+        const rawSize = hi.innerText.match(/\((.+)\)/)
+        let size: string = ''
+        if (rawSize) { size = rawSize[1] }
+        fin.push({ btnText: `High (${size})`, imgUrl: hi.href })
+    }
+    if (png) {
+        const rawSize = png.innerText.match(/\((.+)\)/)
+        let size: string = ''
+        if (rawSize) { size = rawSize[1] }
+        fin.push({ btnText: `High PNG (${size})`, imgUrl: png.href })
+    }
+    if ((!lo && !hi && !png) && imgEl) {
+        fin.push({ btnText: 'Low (fallback)', imgUrl: imgEl.src })
+    }
+    return fin
 }
 
 export class storageManager {
@@ -86,41 +134,9 @@ export class msgManager {
     }
 }
 
-
-export function isUrlSupported (url: string): boolean {
-    const u = new URL(url + '')
-    switch (u.hostname) {
-        case 'chan.sankakucomplex.com':
-        case 'yande.re':
-        case 'konachan.com':
-        case 'konachan.net':
-            return u.pathname.includes('/post/show/')
-        case 'danbooru.donmai.us': return !!u.pathname.match(/\/posts\/\d+/)
-        case 'rule34.xxx': return u.searchParams.get('page') === 'post' && u.searchParams.get('s') === 'view'
-        case 'rule34.paheal.net': return u.pathname.includes('/post/view/')
-        case 'rule34.us': return u.searchParams.get('r') === 'posts/view'
-        case 'gelbooru.com': return u.searchParams.get('page') === 'post'
-        case 'booru.allthefallen.moe': return !!u.pathname.match(/\/posts\/\d+/)
-    }
-    return false
-}
-
 export interface QueryInfo {
     hostname: supported_hostname_t,
     queryKey: string,
     delimiter: string,
     queryUrl: string[],
 }
-
-export const ALL_QUERY_INFO: QueryInfo[] = [
-    { hostname: 'konachan.com'           , queryKey: 'tags', delimiter: '+', queryUrl: ['https://konachan.com/post?tags={}'] }                      ,
-    { hostname: 'konachan.net'           , queryKey: 'tags', delimiter: '+', queryUrl: ['https://konachan.net/post?tags={}'] }                      ,
-    { hostname: 'yande.re'               , queryKey: 'tags', delimiter: '+', queryUrl: ['https://yande.re/post?tags={}'] }                          , // Possibly contains additional "+"
-    { hostname: 'chan.sankakucomplex.com', queryKey: 'tags', delimiter: '+', queryUrl: ['https://chan.sankakucomplex.com/post/index?tags={}'        , 'https://chan.sankakucomplex.com/?tags={}'] },
-    { hostname: 'danbooru.donmai.us'     , queryKey: 'tags', delimiter: '+', queryUrl: ['https://danbooru.donmai.us/posts?tags={}'] }               ,
-    { hostname: 'rule34.xxx'             , queryKey: 'tags', delimiter: '+', queryUrl: ['https://rule34.xxx/index.php?page=post&s=list&tags={}']}   , // Very strict; all 3 params are required.
-    { hostname: 'rule34.paheal.net'      , queryKey: ''    , delimiter: ' ', queryUrl: ['http://rule34.paheal.net/post/list/{}/1']}                 , // awkward query method...
-    { hostname: 'rule34.us'              , queryKey: 'q'   , delimiter: '+', queryUrl: ['http://rule34.us/index.php?r=posts/index&q={}']}           ,
-    { hostname: 'gelbooru.com'           , queryKey: 'tags', delimiter: '+', queryUrl: ['https://gelbooru.com/index.php?page=post&s=list&tags={}']} ,
-    { hostname: 'booru.allthefallen.moe' , queryKey: 'tags', delimiter: '+', queryUrl: ['https://booru.allthefallen.moe/posts?tags={}']}            ,
-]

@@ -1,5 +1,7 @@
-import { MyMsg, msgManager, COMMON_SELECTOR, FileTags, Tag, supported_hostname_t, isUrlSupported, FileTagsElementClass, objectKeys, ALL_TAG_CATEGORY } from "./common";
+import { FileTags, msgManager, MyMsg, ParsedImageInfo, supported_hostname_t } from "./common";
 import { storageManager } from "./options";
+import * as modules from './modules'
+import { AbstractModule } from "./modules/abstract";
 
 browser.runtime.onMessage.addListener((_ev: any) => {
     const ev = _ev as MyMsg
@@ -13,23 +15,26 @@ storageManager.getData().then((opts) => {
     }
 })
 
-function getHostname(): supported_hostname_t {
-    return window.location.hostname as supported_hostname_t
-}
-export function makeImgAlwaysOpenedWithNewTab() {
-    let selector: string = ''
-    switch (getHostname()) {
-        case 'chan.sankakucomplex.com': selector = 'span.thumb > a'; break
-        case 'yande.re': selector = '#post-list-posts a.thumb'; break
-        case 'konachan.com': selector = '#post-list-posts a.thumb'; break
-        case 'konachan.net': selector = '#post-list-posts a.thumb'; break
-        case 'danbooru.donmai.us': selector = '.post-preview-link'; break
-        case 'rule34.xxx': selector = '#post-list .content span.thumb a'; break
-        case 'rule34.paheal.net': selector = 'a.shm-thumb-link'; break
-        case 'rule34.us': selector = '.thumbail-container a'; break
-        case 'gelbooru.com': selector = '.thumbnail-container a'; break
-        case 'booru.allthefallen.moe': selector = '#posts-container a'; break
+function getModuleInstance(): AbstractModule {
+    switch (location.hostname as supported_hostname_t) {
+        case 'chan.sankakucomplex.com': return new modules.ModuleChanSankakuComplexCom()
+        case 'konachan.com': return new modules.ModuleKonachanCom()
+        case 'konachan.net': return new modules.ModuleKonachanNet()
+        case 'yande.re': return new modules.ModuleYandeRe()
+        case 'danbooru.donmai.us': return new modules.ModuleDanbooruDonmaiUs()
+        case 'rule34.xxx': return new modules.ModuleRule34XXX()
+        case 'rule34.paheal.net': return new modules.ModuleRule34PahealNet()
+        case 'rule34.us': return new modules.ModuleRule34Us()
+        case 'gelbooru.com': return new modules.ModuleGelbooruCom()
+        case 'booru.allthefallen.moe': return new modules.ModuleAllthefallenMoe()
+        default: throw new Error('Not found module for this site.')
     }
+}
+
+const curMod = getModuleInstance()
+
+function makeImgAlwaysOpenedWithNewTab() {
+    const selector: string = curMod.getPostLinkElementSelector()
     window.setTimeout(() => {
         document.querySelectorAll(selector).forEach(x => { _makeAnchorElementOpenedWithTab(x) })
     }, 3000)
@@ -64,58 +69,9 @@ function _makeAnchorElementOpenedWithTab(el: Element) {
     }
 }
 
-if (isUrlSupported(location.href)) {
+if (curMod.inPostContentPage()) {
     const observer = new MutationObserver(function (mutations, me) {
-        const watchElemArr: Array<Element | null> = []
-        switch (getHostname()) {
-            case 'chan.sankakucomplex.com': {
-                watchElemArr.push(document.querySelector('#image'))
-                watchElemArr.push(document.querySelector('#tag-sidebar'))
-                watchElemArr.push(document.querySelector('#stats'))
-                break
-            }
-            case 'konachan.com':
-            case 'konachan.net':
-            case 'yande.re': {
-                watchElemArr.push(document.querySelector('#tag-sidebar'))
-                watchElemArr.push(document.querySelector('#highres'))
-                break
-            }
-            case 'danbooru.donmai.us': {
-                watchElemArr.push(document.querySelector('#image'))
-                watchElemArr.push(document.querySelector('#tag-list'))
-                watchElemArr.push(document.querySelector('#post-info-size'))
-                break
-            }
-            case 'rule34.xxx': {
-                watchElemArr.push(document.querySelector('#image') || document.querySelector('#gelcomVideoContainer'))
-                watchElemArr.push(document.querySelector('#tag-sidebar'))
-                break
-            }
-            case 'rule34.paheal.net': {
-                watchElemArr.push(document.querySelector('#main_image'))
-                watchElemArr.push(document.querySelector('#Tagsleft'))
-                watchElemArr.push(document.querySelector('#ImageInfo'))
-                break
-            }
-            case 'rule34.us': {
-                watchElemArr.push(document.querySelector('.content_push > img') || document.querySelector('.content_push > video'))
-                watchElemArr.push(document.querySelector('#tag-list\\ '))
-                watchElemArr.push(document.querySelector('#comment_form'))
-                break
-            }
-            case 'gelbooru.com': {
-                watchElemArr.push(document.querySelector('#image') || document.querySelector('#gelcomVideoPlayer'))
-                watchElemArr.push(document.querySelector('#tag-list'))
-                break
-            }
-            case 'booru.allthefallen.moe': {
-                watchElemArr.push(document.querySelector('#image'))
-                watchElemArr.push(document.querySelector('#tag-list'))
-                watchElemArr.push(document.querySelector('#post-information'))
-                watchElemArr.push(document.querySelector('#post-options'))
-            }
-        }
+        const watchElemArr: Array<Element | null> = curMod.getPostContentPagePendingElements()
         console.log('document changed!', watchElemArr)
         if (watchElemArr.every(x => !!x)) {
             console.log('document with key elements rendered!', watchElemArr)
@@ -128,56 +84,6 @@ if (isUrlSupported(location.href)) {
         childList: true,
         subtree: true
     })
-}
-
-
-
-function getImageId(): number {
-    const u = new URL(location.href)
-    switch (getHostname()) {
-        case 'chan.sankakucomplex.com':
-        case 'konachan.com':
-        case 'konachan.net':
-        case 'yande.re': {
-            const m = location.pathname.match(/\/post\/show\/([0-9]+)/)
-            if (m) {return ~~m[1]}
-        }
-        case 'danbooru.donmai.us': {
-            const m = location.pathname.match(/\/posts\/([0-9]+)/)
-            if (m) {return ~~m[1]}
-        }
-        case 'rule34.xxx': {
-            const id = u.searchParams.get('id')
-            if (id) { return ~~id }
-        }
-        case 'rule34.paheal.net': {
-            const m = location.pathname.match(/\/post\/view\/([0-9]+)/)
-            if (m) {return ~~m[1]}
-        }
-        case 'rule34.us': {
-            const id = u.searchParams.get('id')
-            if (id) { return ~~id }
-        }
-        case 'gelbooru.com': {
-            const id = u.searchParams.get('id')
-            if (id) { return ~~id }
-        }
-        case 'booru.allthefallen.moe': {
-            const m = location.pathname.match(/\/posts\/([0-9]+)/)
-            if (m) {return ~~m[1]}
-        }
-    }
-    return -1
-}
-
-function getSiteAbbr (): string {
-    switch (getHostname()) {
-        case 'chan.sankakucomplex.com': return 'SC'
-        case 'konachan.com': return 'KC'
-        case 'konachan.net': return 'KC'
-        case 'yande.re': return 'YR'
-    }
-    return 'ERROR'
 }
 
 function insertStyleElement () {
@@ -211,107 +117,6 @@ function insertStyleElement () {
     style.appendChild(document.createTextNode(css));
 }
 
-interface ImageInfo {
-    btnText: string,
-    imgUrl: string
-}
-
-function getImageInfoArr(): ImageInfo[] {
-    const fin: ImageInfo[] = []
-
-    const lo = document.querySelector('#lowres') as HTMLLinkElement | null
-    const hi = document.querySelector('#highres') as HTMLLinkElement | null
-    const png = document.querySelector('#png') as HTMLLinkElement | null
-    const imgEl = document.querySelector('#image') as HTMLImageElement | null
-    const hostName = getHostname()
-    if (lo) {
-        fin.push({ btnText: 'Low', imgUrl: lo.href })
-    }
-    if (hi) {
-        const rawSize = hi.innerText.match(/\((.+)\)/)
-        let size: string = ''
-        if (rawSize) { size = rawSize[1] }
-        fin.push({ btnText: `High (${size})`, imgUrl: hi.href })
-    }
-    if (png) {
-        const rawSize = png.innerText.match(/\((.+)\)/)
-        let size: string = ''
-        if (rawSize) { size = rawSize[1] }
-        fin.push({ btnText: `High PNG (${size})`, imgUrl: png.href })
-    }
-    if ((!lo && !hi && !png) && imgEl) {
-        fin.push({ btnText: 'Low (fallback)', imgUrl: imgEl.src })
-    }
-    console.log('host===', hostName)
-    if (hostName === 'danbooru.donmai.us') {
-        const sizeEl = document.querySelector('#post-info-size')
-        if (sizeEl) {
-            const a = sizeEl.querySelector('a')!
-            const size: string = a.textContent!
-            fin.push({ btnText: `High (${size})`, imgUrl: a.href })
-        }
-    }
-    if (hostName === 'rule34.xxx') {
-        for (const _a of Array.from(document.querySelectorAll('.link-list a'))) {
-            const a = _a as HTMLLinkElement
-            if (!a.textContent) { continue }
-            if (a.textContent.includes('Original image')) {
-                const size: string = Array.from(document.querySelector('#stats')!.querySelectorAll('li')).find(x=>x.textContent && x.textContent.includes('Size: '))!.textContent!
-                fin.push({ btnText: `High (${size})`, imgUrl: a.href })
-            }
-        }
-    }
-    if (hostName === 'rule34.paheal.net') {
-        const mainImg = document.querySelector('#main_image') as HTMLImageElement
-        fin.push({ btnText: `Low (fallback)`, imgUrl: mainImg.src })
-        const infoEl = document.querySelector('#ImageInfo')!
-        const tds = Array.from(infoEl.querySelectorAll('td'))
-        const sizeTd = tds.find(td => td.textContent!.match(/[KMG]B/))
-        const size: string = !sizeTd ? 'Unknown Size' : sizeTd.textContent!.match(/([0-9.]+[KMG]B)/)![1]
-        const imgLinkTd = tds.find(td => td.textContent!.match(/File Only/))
-        const imgLink = imgLinkTd!.querySelector('a')!
-        fin.push({ btnText: `High (${size})`, imgUrl: imgLink.href })
-    }
-    if (hostName === 'rule34.us') {
-        const videoEl = document.querySelector('.content_push > video') as HTMLVideoElement
-        const imgEl = document.querySelector('.content_push > img') as HTMLImageElement
-        if (videoEl) {
-            for (const sourceEl of Array.from(videoEl.querySelectorAll('source'))) {
-                const src = sourceEl.src
-                let fmt = 'webm'
-                if (src.includes('.webm')) { fmt = 'webm' }
-                else if (src.includes('.mp4')) { fmt = 'mp4' }
-                fin.push({ btnText: `High (.${fmt})`, imgUrl: src })
-            }
-        } else if (imgEl) {
-            fin.push({ btnText: 'Low (fallback)', imgUrl: imgEl.src })
-            document.querySelectorAll('#tag-list\\  > a').forEach((_a) => {
-                const a = _a as HTMLAnchorElement
-                if (!a.textContent) { return }
-                if (a.textContent.trim() === 'Original') {
-                    fin.push({ btnText: 'High (Original)', imgUrl: a.href })
-                }
-            })
-        }
-    }
-    if (hostName === 'gelbooru.com') {
-        const a = Array.from(document.querySelectorAll('#tag-list li a')).find(x => x.textContent!.includes('Original image')) as HTMLAnchorElement
-         if (a) {
-            const size: string = Array.from(document.querySelector('#tag-list')!.querySelectorAll('li')).find(x=>x.textContent && x.textContent.includes('Size: '))!.textContent!
-            fin.push({ btnText: `High (${size})`, imgUrl: a.href })
-        }
-    }
-    if (hostName === 'booru.allthefallen.moe') {
-        const sizeEl = document.querySelector('#post-info-size')!
-        const sizeStr = sizeEl.textContent!.match(/([0-9.]+ *[KMG]B)/)![1]
-        const a = sizeEl.querySelector('a')!
-        fin.push({ btnText: `High (${sizeStr})`, imgUrl: a.href })
-    }
-
-    console.log('getImageInfoArr ==================', fin)
-    return fin
-}
-
 async function showHideDownloadLinks() {
     const oriEl = document.getElementById('BooruDownloader_Float')
     console.log('show hide', oriEl)
@@ -322,7 +127,7 @@ async function showHideDownloadLinks() {
     insertStyleElement()
     const root = document.createElement('div')
     root.id = "BooruDownloader_Float"
-    const infoArr: ImageInfo[] = getImageInfoArr()
+    const infoArr: ParsedImageInfo[] = curMod.collectImageInfoList()
     if ((await storageManager.getData()).buttonForCloseTab) {
         const closeTab = document.createElement('button')
         closeTab.textContent = 'Close Tab'
@@ -358,310 +163,11 @@ function downloadImage (imgFileUrl: string) {
     })
 }
 
-function makeEmptyFileTags(): FileTags {
-    return {
-        copyright: [],
-        artist: [],
-        character: [],
-        general: [],
-        studio: [],
-        meta: [],
-    }
-}
-function getFileTags (): FileTags {
-    // const hostname = window.location.hostname as supported_hostname_t
-    switch (window.location.hostname as supported_hostname_t) {
-        case 'chan.sankakucomplex.com':
-            return collectTags_sankaku()
-        case 'konachan.com':
-        case 'konachan.net':
-            return collectTags_konachan()
-        case 'yande.re':
-            return collectTags_yandere()
-        case 'danbooru.donmai.us':
-            return collectTags_danbooru()
-        case 'rule34.xxx':
-            return collectTags_rule34xxx()
-        case 'rule34.paheal.net':
-            return collectTags_rule34paheal()
-        case 'rule34.us':
-            return collectTags_rule34us()
-        case 'gelbooru.com':
-            return collectTags_gelbooru()
-        case 'booru.allthefallen.moe':
-            return collectTags_allthefallen()
-
-    }
-    console.error('[To Developer] This should not happened')
-    return makeEmptyFileTags()
-}
-
-function collectTags_sankaku(): FileTags {
-    const sidebarEl = document.querySelector('#tag-sidebar')
-    const fileTags: FileTags = makeEmptyFileTags()
-    if (!sidebarEl) {
-        console.error('[To Developer] Not found tag')
-        return fileTags
-    }
-    const meta: FileTagsElementClass = COMMON_SELECTOR.tagClass
-    for (const tagCategory of ALL_TAG_CATEGORY) {
-        const tagLiClass = meta[tagCategory]
-        const tagsOfCategory: Tag[] = []
-        let els = sidebarEl.querySelectorAll(tagLiClass)
-        els.forEach((el) => {
-            const keyEl = el.querySelector('a[itemprop="keywords"]')
-            if (!keyEl || !keyEl.textContent) {return}
-            const textContent = keyEl.textContent.replace(/ /g, '_')  // replace space with underline
-            const countEl = el.querySelector('.post-count')
-            if (!countEl || !countEl.textContent) {return}
-            const count = ~~countEl.textContent
-            const title = keyEl.getAttribute('title') || ''
-            if (document.documentElement.lang === 'en') {
-                tagsOfCategory.push({ ja: title, en: textContent, count })
-            } else {
-                tagsOfCategory.push({ ja: textContent, en: title, count })
-            }
-        })
-        fileTags[tagCategory] = tagsOfCategory
-    }
-    return fileTags
-}
-
-function collectTags_konachan(): FileTags {
-    const sidebarEl = document.querySelector('#tag-sidebar')
-    const fileTags: FileTags = makeEmptyFileTags()
-    if (!sidebarEl) {
-        console.error('[To Developer] Not found tag')
-        return fileTags
-    }
-    const meta: FileTagsElementClass = COMMON_SELECTOR.tagClass
-    for (const tagCategory of ALL_TAG_CATEGORY) {
-        const tagLiClass = meta[tagCategory]
-        const tagsOfCategory: Tag[] = []
-        let els = sidebarEl.querySelectorAll(tagLiClass)
-        els.forEach((el) => {
-            const key = el.getAttribute('data-name')
-            if (!key) { return }
-            const countEl = el.querySelector('.post-count')
-            if (!countEl || !countEl.textContent) { return }
-            const count = ~~countEl.textContent
-            tagsOfCategory.push({ en: key, count })
-        })
-        fileTags[tagCategory] = tagsOfCategory
-    }
-    return fileTags
-}
-
-function collectTags_yandere(): FileTags {
-    const sidebarEl = document.querySelector('#tag-sidebar')
-    const fileTags: FileTags = makeEmptyFileTags()
-    if (!sidebarEl) {
-        console.error('[To Developer] Not found tag')
-        return fileTags
-    }
-    const meta: FileTagsElementClass = COMMON_SELECTOR.tagClass
-    for (const tagCategory of ALL_TAG_CATEGORY) {
-        const tagLiClass = meta[tagCategory]
-        const tagsOfCategory: Tag[] = []
-        let els = sidebarEl.querySelectorAll(tagLiClass)
-        els.forEach((el) => {
-            const aList = el.querySelectorAll('a')
-            if (aList.length < 2) { return }
-            const key = aList[1].innerText.replace(/ /g, '_')  // replace space with underline
-            if (!key) { return }
-            const countEl = el.querySelector('.post-count')
-            if (!countEl || !countEl.textContent) { return }
-            const count = ~~countEl.textContent
-            tagsOfCategory.push({ en: key, count })
-        })
-        fileTags[tagCategory] = tagsOfCategory
-    }
-    return fileTags
-}
-
-function collectTags_danbooru (): FileTags  {
-    const sidebarEl = document.querySelector('#tag-list')
-    const fileTags: FileTags = makeEmptyFileTags()
-    if (!sidebarEl) {
-        console.error('[To Developer] Not found tag')
-        return fileTags
-    }
-    const meta: FileTagsElementClass = {
-        artist: '.tag-type-1',
-        character: '.tag-type-4',
-        copyright: '.tag-type-3',
-        general: '.tag-type-0',
-        studio: '',
-        meta: '.tag-type-5',
-    }
-    for (const tagCategory of ALL_TAG_CATEGORY) {
-        const tagLiClass = meta[tagCategory]
-        if (!tagLiClass) { continue }
-        const tagsOfCategory: Tag[] = []
-        let els = sidebarEl.querySelectorAll(tagLiClass)
-        els.forEach((el) => {
-            const count: number = parseInt(el.querySelector('.post-count')!.getAttribute('title')!)
-            const enTag: string = el.querySelector('.search-tag')!.textContent!.trim()
-            tagsOfCategory.push({ en: enTag, count })
-        })
-        fileTags[tagCategory] = tagsOfCategory
-    }
-    return fileTags
-}
-function collectTags_rule34xxx (): FileTags  {
-    const sidebarEl = document.querySelector('#tag-sidebar')
-    const fileTags: FileTags = makeEmptyFileTags()
-    if (!sidebarEl) {
-        console.error('[To Developer] Not found tag')
-        return fileTags
-    }
-    const meta: FileTagsElementClass = COMMON_SELECTOR.tagClass
-    for (const tagCategory of ALL_TAG_CATEGORY) {
-        const tagLiClass = meta[tagCategory]
-        if (!tagLiClass) { continue }
-        const tagsOfCategory: Tag[] = []
-        let els = sidebarEl.querySelectorAll(tagLiClass)
-        els.forEach((el) => {
-            const a = el.querySelector('a')
-            if (!a || !a.textContent) {return}
-            const enTag: string = a.textContent.trim()
-            const span = el.querySelector('span')
-            if (!span || !span.textContent) {return}
-            const count: number = ~~span.textContent
-            tagsOfCategory.push({ en: enTag, count })
-        })
-        fileTags[tagCategory] = tagsOfCategory
-    }
-    return fileTags
-}
-function collectTags_rule34paheal (): FileTags  {
-    const sidebarEl = document.querySelector('#Tagsleft')
-    const fileTags: FileTags = makeEmptyFileTags()
-    if (!sidebarEl) {
-        console.error('[To Developer] Not found tag')
-        return fileTags
-    }
-    const meta: FileTagsElementClass = {
-        artist: '',
-        character: '',
-        copyright: '',
-        general: 'td a.tag_name',
-        studio: '',
-        meta: '',
-    }
-    for (const tagCategory of ALL_TAG_CATEGORY) {
-        const tagLiClass = meta[tagCategory]
-        if (!tagLiClass) { continue }
-        const tagsOfCategory: Tag[] = []
-        let els = sidebarEl.querySelectorAll(tagLiClass)
-        els.forEach((a) => {
-            const count: number = ~~a.parentElement!.nextElementSibling!.textContent!.trim()
-            const enTag: string = a.textContent!
-            tagsOfCategory.push({ en: enTag, count })
-        })
-        fileTags[tagCategory] = tagsOfCategory
-    }
-    return fileTags
-}
-function collectTags_rule34us (): FileTags  {
-    const sidebarEl = document.querySelector('#tag-list\\ ')
-    const fileTags: FileTags = makeEmptyFileTags()
-    if (!sidebarEl) {
-        console.error('[To Developer] Not found tag')
-        return fileTags
-    }
-    const meta: FileTagsElementClass = {
-        artist: '.artist-tag',
-        character: '.character-tag',
-        copyright: '.copyright-tag',
-        general: '.general-tag',
-        studio: '',
-        meta: '',
-    }
-    for (const tagCategory of ALL_TAG_CATEGORY) {
-        const tagLiClass = meta[tagCategory]
-        if (!tagLiClass) { continue }
-        const tagsOfCategory: Tag[] = []
-        let els = sidebarEl.querySelectorAll(tagLiClass)
-        els.forEach((li) => {
-            const a = li.querySelector('a')
-            if (!a) { return }
-            const enTag: string = a.textContent!.trim()
-            const small = li.querySelector('small')
-            if (!small || !small.textContent) { return }
-            const count: number = ~~small.textContent!.trim()
-            tagsOfCategory.push({ en: enTag, count })
-        })
-        fileTags[tagCategory] = tagsOfCategory
-    }
-    // console.log('[collectTags_rule34us] fileTags=====', fileTags)
-    return fileTags
-}
-function collectTags_gelbooru (): FileTags  {
-    const sidebarEl = document.querySelector('#tag-list')
-    const fileTags: FileTags = makeEmptyFileTags()
-    if (!sidebarEl) {
-        console.error('[To Developer] Not found tag')
-        return fileTags
-    }
-    const meta: FileTagsElementClass = {
-        artist: '.tag-type-artist',
-        character: '.tag-type-character',
-        copyright: '.tag-type-copyright',
-        general: '.tag-type-general',
-        studio: '',
-        meta: '.tag-type-metadata',
-    }
-    for (const tagCategory of ALL_TAG_CATEGORY) {
-        const tagLiClass = meta[tagCategory]
-        if (!tagLiClass) { continue }
-        const tagsOfCategory: Tag[] = []
-        let els = sidebarEl.querySelectorAll(tagLiClass)
-        els.forEach((el) => {
-            const tagLink = el.querySelectorAll('a')[1]
-            const enTag = tagLink.textContent!.trim()
-            const count: number = parseInt(tagLink.nextElementSibling!.textContent!.trim())
-            tagsOfCategory.push({ en: enTag, count })
-        })
-        fileTags[tagCategory] = tagsOfCategory
-    }
-    return fileTags
-}
-
-function collectTags_allthefallen (): FileTags  {
-    const sidebarEl = document.querySelector('#tag-list')
-    const fileTags: FileTags = makeEmptyFileTags()
-    if (!sidebarEl) {
-        console.error('[To Developer] Not found tag')
-        return fileTags
-    }
-    const meta: FileTagsElementClass = {
-        artist: '.tag-type-1',
-        character: '.tag-type-4',
-        copyright: '.tag-type-3',
-        general: '.tag-type-0',
-        studio: '',
-        meta: '.tag-type-5',
-    }
-    for (const tagCategory of ALL_TAG_CATEGORY) {
-        const tagLiClass = meta[tagCategory]
-        if (!tagLiClass) { continue }
-        const tagsOfCategory: Tag[] = []
-        let els = sidebarEl.querySelectorAll(tagLiClass)
-        els.forEach((el) => {
-            const count: number = parseInt(el.querySelector('.post-count')!.getAttribute('title')!)
-            const enTag: string = el.querySelector('.search-tag')!.textContent!.trim()
-            tagsOfCategory.push({ en: enTag, count })
-        })
-        fileTags[tagCategory] = tagsOfCategory
-    }
-    return fileTags
-}
 const SEPARATOR = ','
 
 function generateFileBaseName (): string {
-    const tmp = getFileTags()
-    const id = getImageId()
+    const tmp = curMod.collectTags()
+    const id = curMod.getPostId()
     const artist: string = tmp.artist[0] ? `[${tmp.artist[0].en}]` : ''
     const studio: string = tmp.studio[0] ? `[${tmp.studio[0].en}]` : ''
     const copyright: string = tmp.copyright[0] ? `[${tmp.copyright[0].en}]` : '[no series]'
