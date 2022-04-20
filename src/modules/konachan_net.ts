@@ -17,6 +17,6 @@ export class ModuleKonachanNet extends ModuleKonachanCom {
     }
     makeQueryUrl(queryList: string[]): string {
         const fmtted = queryList.filter(x => x).map(x=>x.trim()).join(' ')
-        return `'https://konachan.com/post?tags=${fmtted}`
+        return `https://konachan.net/post?tags=${fmtted}`
     }
 }

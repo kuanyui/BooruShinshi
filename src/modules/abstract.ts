@@ -6,7 +6,7 @@ export abstract class AbstractModule {
     public abstract abbrev(): string
     public abstract inPostListPage(): boolean
     public abstract inPostContentPage(): boolean
-    /** return tag list if available (usually in post list page) */
+    /** return tag list (usually from GET params) if available (usually in post list page) */
     public abstract getCurrentQueryList(): string[]
     /** generate URL toward post list page. */
     public abstract makeQueryUrl(queryList: string[]): string
