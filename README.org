@@ -4,7 +4,7 @@
 ボール紳士：ボール (Booru) サイト間をエレガントに渡り歩く。
 #+end_quote
 
-This WebExtension improve your experience of browsing [[https://booru.org/][Booru] (ボール, "board" in Japanese) sites:
+This WebExtension improve your experience of browsing [[https://booru.org/][Booru]] (ボール, "board" in Japanese) sites:
 
 1. One-click to download image with comprehensible filename from a Booru site.
 2. One-click to search current keyword across different Booru sites.
