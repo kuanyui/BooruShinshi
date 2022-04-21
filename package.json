@@ -1,6 +1,6 @@
 {
   "name": "booru-one-click-downloader",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "Switch search engine in one click",
   "main": "dist/index.js",
   "dependencies": {

@@ -32,15 +32,17 @@ Currently supported sites:
 - =konachan.net=
 - =danbooru.donmai.us=
 - =gelbooru.com=
+- =safebooru.org=
+- =tbib.org=
 - =booru.allthefallen.moe=
 - =rule34.xxx=
 - =rule34.paheal.net=
 - =rule34.us=
 
-For more information please see [[https://github.com/kuanyui/BooruOneClickDownloader][GitHub]].
+For more information please see [[https://github.com/kuanyui/BooruShinshi][GitHub]].
 
 * Install
-- [[https://addons.mozilla.org/en-US/firefox/addon/booru-downloader/][Mozilla Add-ons]]
+- [[https://addons.mozilla.org/en-US/firefox/addon/booru-shinshi/][Mozilla Add-ons]]
 
 * Screenshot
 [[https://addons.cdn.mozilla.net/user-media/previews/full/217/217427.png]]
