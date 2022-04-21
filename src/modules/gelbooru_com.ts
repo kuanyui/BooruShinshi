@@ -24,7 +24,9 @@ export class ModuleGelbooruCom extends AbstractModule {
     }
     inPostContentPage(): boolean {
         const searchParams = new URLSearchParams(location.search)
-        return searchParams.get('page') === 'post'
+        return searchParams.get('page') === 'post' &&
+               searchParams.get('s') === 'view' &&
+               searchParams.get('id') !== null
     }
     getCurrentQueryList(): string[] {
         const params = new URLSearchParams(location.search)
