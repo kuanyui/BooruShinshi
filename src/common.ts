@@ -6,6 +6,7 @@ export type supported_hostname_t =
     'danbooru.donmai.us' |
     'gelbooru.com' |
     'safebooru.org' |
+    'tbib.org' |
     'booru.allthefallen.moe' |
     'rule34.xxx' |
     'rule34.paheal.net' |

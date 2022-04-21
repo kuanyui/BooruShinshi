@@ -11,6 +11,7 @@ const ALL_MODULES: AbstractModule[] = [
      new modules.ModuleDanbooruDonmaiUs(),
      new modules.ModuleGelbooruCom(),
      new modules.ModuleSafebooruOrg(),
+     new modules.ModuleTbibOrg(),
      new modules.ModuleAllthefallenMoe(),
      new modules.ModuleRule34XXX(),
      new modules.ModuleRule34PahealNet(),
@@ -47,7 +48,8 @@ function makeImgAlwaysOpenedWithNewTab() {
     }, 3000)
     let timeoutId = -1
     const observer = new MutationObserver(function (mutations, me) {
-        console.log('mutations', mutations)
+        // TODO: The advertisements will trigger lots of unwanted mutations here. Maybe try to limit query within post link area.
+        // console.log('mutations ===>', mutations.map(x=>x.target))
         // mutations.forEach(mut => mut.target.querySelectorAll(selector).forEach(x => { x.setAttribute('target', '_blank') }))
         // Debounce timeout
         window.clearTimeout(timeoutId)
