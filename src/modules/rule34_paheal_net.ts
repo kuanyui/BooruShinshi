@@ -22,9 +22,8 @@ export class ModuleRule34PahealNet extends AbstractModule {
         return location.pathname.includes('/post/view/')
     }
     getCurrentQueryList(): string[] {
-        const params = new URLSearchParams(location.search)
-        const raw = params.get('tags')
-        if (raw) { return raw.split(' ') }
+        const m = location.pathname.match(/[/]post[/]list[/]([^/]+?)[/]/)
+        if (m) { return m[1].split(' ') }
         return []
     }
     makeQueryUrl(queryList: string[]): string {

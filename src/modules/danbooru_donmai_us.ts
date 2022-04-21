@@ -16,10 +16,10 @@ export class ModuleDanbooruDonmaiUs extends AbstractModule {
         return 'DBR'
     }
     inPostListPage(): boolean {
-        return !!location.pathname.match(/^[/]post[/]?$/)
+        return !!location.pathname.match(/^[/]posts[/]?$/)
     }
     inPostContentPage(): boolean {
-        return !!location.pathname.match(/\/posts\/\d+/)
+        return !!location.pathname.match(/[/]posts[/]\d+/)
     }
     getCurrentQueryList(): string[] {
         const params = new URLSearchParams(location.search)

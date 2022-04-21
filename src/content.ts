@@ -107,9 +107,16 @@ function insertStyleElement () {
         background-color:  #fff;
         border: solid 1px #aaa;
         padding: 6px;
-        z-index: 9999;
+        z-index: 999999999;
     }
-    #BooruShinshi_DivForListPage button {
+    #BooruShinshi_DivForListPage.moved {
+        left: unset;
+        right: 20px;
+    }
+    #BooruShinshi_DivForListPage .ButtonsContainer {
+        display: flex;
+    }
+    #BooruShinshi_DivForListPage .ButtonsContainer button {
         cursor: pointer;
         font-size: 20px;
         background: #E9E9ED;
@@ -117,7 +124,6 @@ function insertStyleElement () {
         color: #000000;
         padding: 10px 20px;
         display: block;
-        width: 100%;
     }
     #BooruShinshi_DivForListPage .LinksContainer {
         display: flex;
@@ -238,13 +244,19 @@ function createJumpButton() {
     const root = document.createElement('div')
     root.id = "BooruShinshi_DivForListPage"
 
-    const jumpBtn = document.createElement('button')
-    jumpBtn.textContent = 'Search in Other Sites'
+    const foldBtn = document.createElement('button')
+    foldBtn.textContent = 'Search in Other Sites'
+    const moveBtn = document.createElement('button')
+    moveBtn.textContent = 'Move'
+    const buttonsContainer = document.createElement('div')
+    buttonsContainer.className = 'ButtonsContainer'
+    buttonsContainer.append(foldBtn)
+    buttonsContainer.append(moveBtn)
     const linksContainer = document.createElement('div')
     linksContainer.className = 'LinksContainer'
     linksContainer.style.display = 'none'
     root.appendChild(linksContainer)
-    root.appendChild(jumpBtn)
+    root.appendChild(buttonsContainer)
 
     const queriedTags = curMod.getCurrentQueryList()
     for (const mod of ALL_MODULES) {
@@ -258,11 +270,17 @@ function createJumpButton() {
         linksContainer.appendChild(a)
     }
     let expanded = false
-    jumpBtn.onclick = () => {
+    foldBtn.onclick = () => {
         expanded = !expanded
         linksContainer.style.display = expanded ? 'flex' : 'none'
     }
-    root.appendChild(jumpBtn)
+    moveBtn.onclick = () => {
+        if (root.classList.contains('moved')) {
+            root.classList.remove('moved')
+        } else {
+            root.classList.add('moved')
+        }
+    }
 
     document.body.appendChild(root)
 }
@@ -299,8 +317,19 @@ function setupPostListPage() {
     })
 }
 
-if (curMod.inPostContentPage()) {
-    setupPostContentPage()
-} else if (curMod.inPostListPage()) {
-    setupPostListPage()
+function main() {
+    const isList = curMod.inPostListPage()
+    const isContent = curMod.inPostContentPage()
+    if (isList && isContent) {
+        console.error('[To Developer] This should not be happened. This may cause potential error.')
+    }
+    if (isList) {
+        setupPostListPage()
+    } else if (isContent) {
+        setupPostContentPage()
+    } else {
+        console.warn(`[module::${curMod.hostname()}] Not supported page.`)
+    }
 }
+
+main()

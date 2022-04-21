@@ -16,7 +16,10 @@ export class ModuleChanSankakuComplexCom extends AbstractModule {
         return 'SC'
     }
     inPostListPage(): boolean {
-        return !!location.pathname.match(/^[/]post[/]?$/) || location.pathname === '/'
+        return location.pathname === '/' ||
+            !!location.pathname.match(/^[/]post[/]?$/) ||
+            !!location.pathname.match(/^[/]post[/]index[/]?$/)
+
     }
     inPostContentPage(): boolean {
         return location.pathname.includes('/post/show/')

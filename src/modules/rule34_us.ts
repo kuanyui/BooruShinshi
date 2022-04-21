@@ -27,7 +27,7 @@ export class ModuleRule34Us extends AbstractModule {
     }
     getCurrentQueryList(): string[] {
         const params = new URLSearchParams(location.search)
-        const raw = params.get('tags')
+        const raw = params.get('q')
         if (raw) { return raw.split(' ') }
         return []
     }
