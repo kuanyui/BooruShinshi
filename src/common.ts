@@ -4,11 +4,12 @@ export type supported_hostname_t =
     'konachan.com' |
     'konachan.net' |
     'danbooru.donmai.us' |
+    'gelbooru.com' |
+    'safebooru.org' |
+    'booru.allthefallen.moe' |
     'rule34.xxx' |
     'rule34.paheal.net' |
-    'rule34.us' |
-    'gelbooru.com' |
-    'booru.allthefallen.moe'
+    'rule34.us'
 
 export interface MyStorage {
     fileNameFormat: string

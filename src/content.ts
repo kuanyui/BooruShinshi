@@ -9,11 +9,12 @@ const ALL_MODULES: AbstractModule[] = [
      new modules.ModuleKonachanNet(),
      new modules.ModuleYandeRe(),
      new modules.ModuleDanbooruDonmaiUs(),
+     new modules.ModuleGelbooruCom(),
+     new modules.ModuleSafebooruOrg(),
+     new modules.ModuleAllthefallenMoe(),
      new modules.ModuleRule34XXX(),
      new modules.ModuleRule34PahealNet(),
      new modules.ModuleRule34Us(),
-     new modules.ModuleGelbooruCom(),
-     new modules.ModuleAllthefallenMoe(),
 ]
 
 function getModuleInstance(): AbstractModule {
