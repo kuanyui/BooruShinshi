@@ -397,7 +397,10 @@ function preprocessDOM() {
     q("#fileName_fileNameTemplate").after(resetFilenameTemplateBtn)
     tippy(q('#fileName_fileNameTemplate'), {content: 'Length range is 8 ~ 240. Required.'})
     q<HTMLButtonElement>('#resetAllBtn').onclick = resetToDefault
-
+    // Ui Help
+    const uiHelp = q<HTMLElement>('.alert.uiSetting')
+    uiHelp.innerHTML = `If you found it's annoying that Firefox always show the build-in download popup at top-right corner when download start, you can consider to change the setting <code>browser.download.alwaysOpenPanel</code> to <code>false</code> in <code>about:config</code>. See <a href="https://support.mozilla.org/en-US/questions/1370262">here</a> for more information.`
+    uiHelp.querySelector('button')
 }
 
 function validateInput(el: HTMLInputElement) {

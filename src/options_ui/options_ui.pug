@@ -123,8 +123,9 @@ html
     div
       h2 UI
       +checkbox('ui_showNotificationWhenStartingToDownload'): span Show notification when starting to download.
-      +checkbox('ui_openLinkWithNewTab'): span Always open image links with a new tab.
-      +checkbox('ui_buttonForCloseTab'): span An extra button for closing current tab.
+      +checkbox('ui_openLinkWithNewTab'): span Always open image links with a new tab. (Recommended for touchscreen)
+      +checkbox('ui_buttonForCloseTab'): span An extra button for closing current tab. (Recommended for touchscreen)
+      .alert.uiSetting
       h2 File Name
       -var id = 'fileName_fileNameMaxCharacterLength'
       +sub_block(id, "Max Filename Character Length"): input(id=id type="number" min="40" max="250" autovalidator)
