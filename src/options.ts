@@ -98,9 +98,10 @@ export interface MyOptions_Folder {
 }
 
 export type options_ui_input_id_t =
-    `ui_${keyof MyOptions_Ui}` |
-    `fileName_${keyof MyOptions_FileName}` |
-    `folder_${keyof MyOptions_Folder}`
+`ui_${keyof MyOptions_Ui}` |
+`fileName_${keyof MyOptions_FileName}` |
+`folder_${keyof MyOptions_Folder}`
+export type options_ui_input_query_t = `#${options_ui_input_id_t}`
 
 export function assertUnreachable (x: never) { x }
 export function objectAssignPerfectly<T>(target: T, newValue: T) {
