@@ -1,5 +1,3 @@
-import { MyOptions } from "./options"
-
 export type supported_hostname_t =
     'chan.sankakucomplex.com' |
     'yande.re' |
@@ -64,6 +62,9 @@ export function makeEmptyFileTags(): FileTags {
 
 export type tag_category_t = 'copyright' | 'character' | 'artist' | 'studio' | 'general' | 'meta'
 export const ALL_TAG_CATEGORY: tag_category_t[] = ['copyright', 'character', 'artist', 'studio', 'general', 'meta']
+export type options_tag_category_t = tag_category_t | '__any__'
+export const ALL_OPTIONS_TAG_CATEGORY: options_tag_category_t[] = ['__any__', ...ALL_TAG_CATEGORY]
+
 export type FileTags = Record<tag_category_t, Tag[]>
 export type FileTagsElementClass = Record<tag_category_t, string>
 

@@ -99,3 +99,7 @@ pre {
 @keyframes blinker {
     50% { opacity: 0.5; }
 }
+
+.monospace {
+    font-family: monospace;
+}

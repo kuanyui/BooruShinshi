@@ -28,31 +28,43 @@ export type filename_template_t = `${string}${filename_template_token_t}${string
  *
  * - 根據 artist 名稱分資料假
  */
-/** Order sensitive */
-export type folder_classify_rule_type_custom_t = 'CustomTagMatcher'
-export type folder_classify_rule_type_auto_t = 'TagCategory'
-/** If none of the above rule matched, use fallback, and save to fallback folder. */
-export type folder_classify_rule_type_fallback_t = `Fallback`
+interface SelectOptionData {
+    value: string,
+    label: string,
+    doc: string,
+}
 
+/** Rules are ordering-sensitive */
+export const ALL_RULE_TYPE = [
+    {value: 'CustomTagMatcher', label: "Custom Tag Matcher", doc: 'Custom your rule. When an image match the conditions you set, save it to a specific folder.'},
+    {value: 'TagCategory',      label: "Tag Category",       doc: 'Notice, when an image has multiple tags in one category (for example, multiple "artist" tags), it will choose the shortest one. So the result may not be what you want.'},
+    {value: 'Fallback',         label: "Fallback",           doc: 'When none of above rule matched, save to this folder.'},
+] as const
+// type _infer_value_in_arr<T> = T extends {value: infer U}[] ? U : unknown
+export type rule_type_t = 'CustomTagMatcher' | 'TagCategory' | 'Fallback'
+export type logic_gate_t = 'AND' | 'OR'
 export interface FolderClassifyRule__custom {
-    ruleType: folder_classify_rule_type_custom_t,
+    ruleType: 'CustomTagMatcher',
+    logicGate: logic_gate_t,
     ifContainsTag: string[],
     folderName: string,
 }
 export interface FolderClassifyRule__auto {
-    ruleType: folder_classify_rule_type_auto_t
+    ruleType: 'TagCategory'
     tagCategory: tag_category_t
 }
-/** This rules must be the last one and existed forever. */
+/** This rules must be the last one and existed forever.
+ * If none of the above rule matched, use fallback, and save to fallback folder.
+ */
 export interface FolderClassifyRule__fallback {
-    ruleType: folder_classify_rule_type_fallback_t,
+    ruleType: 'Fallback',
     folderName: string,
 }
 export type FolderClassifyRule =  FolderClassifyRule__custom | FolderClassifyRule__auto | FolderClassifyRule__fallback
 export const DEFAULT_FOLDER_CLASSIFY_RULES: FolderClassifyRule[] = [
     {ruleType: 'TagCategory', tagCategory: 'copyright'},
     {ruleType: 'TagCategory', tagCategory: 'artist'},
-    {ruleType: 'Fallback', folderName: '_NoCategory' },
+    {ruleType: 'Fallback', folderName: '__NoCategory__' },
 ]
 
 

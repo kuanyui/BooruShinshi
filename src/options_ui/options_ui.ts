@@ -12,7 +12,10 @@
  * remedy known factual inaccuracies. (Cited from MPL - 2.0, chapter 3.3)
  */
 
-import { FolderClassifyRule, options_ui_input_query_t, storageManager } from "../options"
+import { tag_category_t } from "../common"
+import { ALL_RULE_TYPE, FolderClassifyRule, FolderClassifyRule__custom, options_ui_input_query_t, rule_type_t, storageManager } from "../options"
+import * as elHelper from './components'
+
 
 
 function q<T extends HTMLElement, U extends string = string>(query: U): T {
@@ -68,45 +71,23 @@ function setContentEditableValue<T extends options_ui_input_query_t>(id: T, valu
     q<HTMLDivElement>(id).innerText =value
 }
 
-async function loadFromLocalStorage() {
-    const d = await storageManager.getData()
-    setCheckboxValue('#ui_openLinkWithNewTab', d.ui.openLinkWithNewTab)
-    setCheckboxValue('#ui_buttonForCloseTab', d.ui.buttonForCloseTab)
-    setTextAreaValue('#fileName_fileNameMaxCharacterLength', d.fileName.fileNameMaxCharacterLength+'')
-    setTextAreaValue('#fileName_fileNameTemplate', d.fileName.fileNameTemplate)
-    setSelectValue('#fileName_tagSeparator', d.fileName.tagSeparator)
-    setSelectValue('#folder_downloadFolderName', d.folder.downloadFolderName)
-}
-
-async function resetToDefault() {
-    storageManager.setDataPartially(storageManager.getDefaultData())
-    await loadFromLocalStorage()
-}
-q<HTMLButtonElement>('#resetBtn').onclick=resetToDefault
-
-async function saveFormToLocalStorage() {
-    storageManager.setDataPartially({
-        ui: {
-            openLinkWithNewTab: getCheckboxValue('#ui_openLinkWithNewTab'),
-            buttonForCloseTab: getCheckboxValue('#ui_buttonForCloseTab'),
-        },
-        fileName: {
-            fileNameMaxCharacterLength: ~~getTextAreaValue('#fileName_fileNameMaxCharacterLength'),
-            fileNameTemplate: getTextAreaValue('#fileName_fileNameTemplate'),
-            tagSeparator: getSelectValue('#fileName_tagSeparator') as any,
-        },
-        folder: {
-            downloadFolderName: getTextAreaValue('#folder_downloadFolderName'),
-            enableClassify: getCheckboxValue('#folder_enableClassify'),
-            classifyRules: rth.model
-        }
-    })
-}
-
 function swap<T>(arr: T[], i: number, j: number): void {
     const tmp = arr[i]
     arr[i] = arr[j]
     arr[j] = tmp
+}
+function objectShaper<T, U>(ori: T, wishedShape: U): void {
+    for (const k in ori) {
+        if (!Object.keys(wishedShape).includes(k)) {
+            delete ori[k]
+        }
+    }
+    for (const k in wishedShape) {
+        if (!Object.keys(ori).includes(k)) {
+            // @ts-expect-error
+            ori[k] = wishedShape[k]
+        }
+    }
 }
 type rule_index_t = number
 class RuleTableHandler {
@@ -131,10 +112,8 @@ class RuleTableHandler {
         this.model = newArr
         this.buildTable()
     }
-    private selectEngine(id: rule_index_t) {
-        this.selectedIndex = this.selectedIndex === id ? -1 : id
-        console.log('click on tr:', id)
-        this.rerender()
+    private selectRuleByIndex(index: rule_index_t) {
+        this.selectedIndex = this.selectedIndex === index ? -1 : index
     }
     private rerender() {
         this.renderTable()
@@ -235,18 +214,96 @@ class RuleTableHandler {
     private buildTable() {
         console.log('buildTable()')
         this.tbodyRef.innerHTML = ''
-        for (const x of this.model) {
-            const tr = document.createElement('TR')
-            tr.classList.add('modelRow')
-
+        for (const rule of this.model) {
+            this.initTr(rule)
         }
         this.rerender()
+    }
+    private initTr(rule: FolderClassifyRule) {
+        const tr = document.createElement('tr')
+        tr.onclick = () => this.selectRuleByIndex(this.model.indexOf(rule))
+        tr.classList.add('ruleRow')
+        tr.appendChild(elHelper.mkelTd(elHelper.mkelRuleTypeSelect(rule.ruleType, (nv) => {
+            rule.ruleType = nv
+            this.renderTrParameters(tr, rule)
+        })))
+        this.renderTrParameters(tr, rule)
+        this.tbodyRef.appendChild(tr)
+    }
+    private renderTrParameters(tr: HTMLTableRowElement, rule: FolderClassifyRule) {
+        while (tr.childElementCount > 1) {
+            tr.lastElementChild!.remove()
+        }
+        switch (rule.ruleType) {
+            case 'CustomTagMatcher': {
+                objectShaper<any, typeof rule>(rule, { ruleType: 'CustomTagMatcher', folderName: '',ifContainsTag: [], logicGate: 'OR' })
+                tr.appendChild(elHelper.mkelTd(
+                    elHelper.mkelRuleLogicGateSelect(rule.logicGate, (nv) => { rule.logicGate = nv }),
+                    elHelper.mkelRuleCustomTagInput(rule.ifContainsTag, (nv) => { rule.ifContainsTag = nv })
+                ))
+                tr.appendChild(elHelper.mkelTd(
+                    elHelper.mkelRuleDirNameInput(rule.folderName, (nv) => { rule.folderName = nv })
+                ))
+                break
+            }
+            case 'TagCategory': {
+                objectShaper<any, typeof rule>(rule, { ruleType: 'TagCategory', tagCategory: 'artist' })
+                tr.appendChild(elHelper.mkelTd(
+                    elHelper.mkelRuleTagCategoriesSelect(rule.tagCategory, (nv) => { rule.tagCategory = nv })
+                ))
+                tr.appendChild(elHelper.mkelTd(elHelper.mkelTextContent('span', 'N/A')))
+                break
+            }
+            case 'Fallback': {
+                objectShaper<any, typeof rule>(rule, { ruleType: 'Fallback', folderName: '' })
+                tr.appendChild(elHelper.mkelTd(elHelper.mkelTextContent('span', 'N/A')))
+                tr.appendChild(elHelper.mkelTd(
+                    elHelper.mkelRuleDirNameInput(rule.folderName, (nv) => { rule.folderName = nv })
+                ))
+            }
+        }
     }
 }
 
 var rth = new RuleTableHandler()
 rth.onchange = (newVal) => {
     saveFormToLocalStorage()
+}
+
+async function loadFromLocalStorage() {
+    const d = await storageManager.getData()
+    setCheckboxValue('#ui_openLinkWithNewTab', d.ui.openLinkWithNewTab)
+    setCheckboxValue('#ui_buttonForCloseTab', d.ui.buttonForCloseTab)
+    setTextAreaValue('#fileName_fileNameMaxCharacterLength', d.fileName.fileNameMaxCharacterLength+'')
+    setTextAreaValue('#fileName_fileNameTemplate', d.fileName.fileNameTemplate)
+    setSelectValue('#fileName_tagSeparator', d.fileName.tagSeparator)
+    setSelectValue('#folder_downloadFolderName', d.folder.downloadFolderName)
+    rth.setModel(d.folder.classifyRules)
+}
+
+async function resetToDefault() {
+    storageManager.setDataPartially(storageManager.getDefaultData())
+    await loadFromLocalStorage()
+}
+q<HTMLButtonElement>('#resetBtn').onclick=resetToDefault
+
+async function saveFormToLocalStorage() {
+    storageManager.setDataPartially({
+        ui: {
+            openLinkWithNewTab: getCheckboxValue('#ui_openLinkWithNewTab'),
+            buttonForCloseTab: getCheckboxValue('#ui_buttonForCloseTab'),
+        },
+        fileName: {
+            fileNameMaxCharacterLength: ~~getTextAreaValue('#fileName_fileNameMaxCharacterLength'),
+            fileNameTemplate: getTextAreaValue('#fileName_fileNameTemplate'),
+            tagSeparator: getSelectValue('#fileName_tagSeparator') as any,
+        },
+        folder: {
+            downloadFolderName: getTextAreaValue('#folder_downloadFolderName'),
+            enableClassify: getCheckboxValue('#folder_enableClassify'),
+            classifyRules: rth.model
+        }
+    })
 }
 
 

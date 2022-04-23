@@ -58,6 +58,9 @@ html
     meta(name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no")
     link(rel="stylesheet" type="text/css" href="./options_ui_style/options_ui.css")
   style.
+    * {
+      font-size: 0.75rem;
+    }
     #classifyRuleTableContainer {
       display: flex;
     }
@@ -111,10 +114,10 @@ html
       +checkbox('ui_buttonForCloseTab'): span An extra button for closing current tab.
       h2 File Name
       -var id = 'fileName_fileNameMaxCharacterLength'
-      +sub_block(id, "Max Filename Length"): input(id=id type="number" min="32" max="255")
+      +sub_block(id, "Max Filename Length (40-255)"): input(id=id type="number" min="40" max="255")
       -var id = 'fileName_fileNameTemplate'
       +sub_block(id, "Filename Template")
-        input(id=id type="text" minlength="0" maxlength="240")
+        textarea.monospace(id=id type="text" minlength="0" maxlength="240")
         button() Reset
         div.alert
           div: i Available Tokens:
@@ -129,7 +132,7 @@ html
         input(id=id type="text" min="0" max="240" placeholder="(Optional)")
         .alert
           ul
-            li Empty means download to the default "Download" directory of your OS.
+            li Left empty means download to the default "Download" directory of your OS.
             li You can use relative path like #[code foo/bar], means #[code {OS_DOWNLOAD_DIR}/foo/bar/]. (But due to the security restriction of Firefox, you cannot use #[code ../] )
       h3 Classification
       +checkbox('folder_enableClassify'): span Automatically classify images to #[b different folders] by their tags.
@@ -149,6 +152,8 @@ html
               th Matcher
               th Folder Name
           tbody
+            tr
+              td: rule-type-select
       .alert #[b Be careful!] The rules are #[b order-sensitive]. The first one will be matched first.
     h2 Default Values
     button(id="resetBtn") Reset to Defaults
