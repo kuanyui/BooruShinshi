@@ -315,13 +315,12 @@ async function loadFromLocalStorage() {
     rth.setModel(d.folder.classifyRules)
 }
 
-async function resetToDefault() {
+function resetToDefault() {
     storageManager.setDataPartially(storageManager.getDefaultData())
-    await loadFromLocalStorage()
+    loadFromLocalStorage()
 }
-q<HTMLButtonElement>('#resetBtn').onclick=resetToDefault
 
-async function saveFormToLocalStorage() {
+function saveFormToLocalStorage() {
     storageManager.setDataPartially({
         ui: {
             showNotificationWhenStartingToDownload: getCheckboxValue('#ui_showNotificationWhenStartingToDownload'),
@@ -364,12 +363,13 @@ function preprocessDOM() {
     const container = q('#availableTokensContainer')
     for (const [k, doc] of Object.entries(FilenameTemplateTokenDict)) {
         const val = `%${k}%`
-        const el = document.createElement('button')
-        el.className = 'availableFilenameToken'
-        el.textContent = val
-        el.onclick = () => navigator.clipboard.writeText(val)
-        tippy(el, { allowHTML: true, content: doc + '<br/><br/>Click to copy to clipboard.' })
-        container.append(el)
+        const btn = document.createElement('button')
+        btn.type = "button"  // to prevent to submit <form>
+        btn.className = 'availableFilenameToken'
+        btn.textContent = val
+        btn.onclick = () => navigator.clipboard.writeText(val)
+        tippy(btn, { allowHTML: true, content: doc + '<br/><br/>Click to copy to clipboard.' })
+        container.append(btn)
     }
     tippy(q('#fileName_fileNameMaxCharacterLength'),
         {
@@ -385,6 +385,18 @@ function preprocessDOM() {
          <tr><td><code>NTFS</code></td>    <td>255 characters</td></tr>
          <tr><td><code>XFS</code></td>     <td>255 bytes</td></tr>
         </table>` })
+    const resetFilenameTemplateBtn = document.createElement('button')
+    resetFilenameTemplateBtn.type = "button" // prevent submitting <form>
+    resetFilenameTemplateBtn.textContent = "Reset Template"
+    resetFilenameTemplateBtn.onclick = () => {
+        const defaultValue = storageManager.getDefaultData().fileName.fileNameTemplate
+        setTextAreaValue("#fileName_fileNameTemplate", defaultValue)
+        saveFormToLocalStorage()
+    }
+    q("#fileName_fileNameTemplate").after(resetFilenameTemplateBtn)
+    tippy(q('#fileName_fileNameTemplate'), {content: 'Length range is 8 ~ 240. Required.'})
+    q<HTMLButtonElement>('#resetAllBtn').onclick = resetToDefault
+
 }
 
 function validateInput(el: HTMLInputElement) {
@@ -396,7 +408,9 @@ function validateInput(el: HTMLInputElement) {
             if (parseInt(el.value) > parseInt(el.max)) { el.value = el.max; return }
             return
         }
+        case 'textarea':
         case 'text': {
+            el.value = el.value.trim()
             if (parseInt(el.value) < el.minLength) { el.value ; return }
             if (parseInt(el.value) > el.maxLength) { el.value = el.value.slice(0, el.maxLength); return }
             return

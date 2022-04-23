@@ -102,7 +102,7 @@ html
     .availableFilenameToken {
       margin-right: 2px;
     }
-    input:invalid {
+    form :invalid {
       border: 1px solid #770000;
       background: #ffdddd;
       color: #770000;
@@ -129,9 +129,8 @@ html
       -var id = 'fileName_fileNameMaxCharacterLength'
       +sub_block(id, "Max Filename Character Length"): input(id=id type="number" min="40" max="250" autovalidator)
       -var id = 'fileName_fileNameTemplate'
-      +sub_block(id, "Filename Template")
-        textarea.monospace(id=id type="text" minlength="0" maxlength="240" autovalidator)
-        button() Reset
+      +sub_block(id, "Filename Template (not include file extension)")
+        textarea.monospace(id=id type="text" minlength="8" maxlength="240" required autovalidator spellcheck="false")
         div.alert
           div: i Available Tokens:
           #availableTokensContainer
@@ -171,5 +170,5 @@ html
               td: rule-type-select
         .alert #[b Be careful!] The rules are #[b order-sensitive]. The first one will be matched first.
     h2 Default Values
-    button(id="resetBtn") Reset to Defaults
+    button(id="resetAllBtn") Reset to Defaults
   script(src='./options_ui.js')

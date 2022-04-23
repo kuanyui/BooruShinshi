@@ -150,7 +150,7 @@ class StorageManager {
                 tagSeparator: ','
             },
             folder: {
-                downloadFolderName: '_BooruShinshi',
+                downloadFolderName: '__BooruShinshi__',
                 enableClassify: true,
                 classifyRules: DEFAULT_FOLDER_CLASSIFY_RULES,
             }
