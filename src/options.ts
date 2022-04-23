@@ -144,7 +144,7 @@ class StorageManager {
                 buttonForCloseTab: false,
             },
             fileName: {
-                fileNameMaxCharacterLength: 40,
+                fileNameMaxCharacterLength: 180,
                 fileNameTemplate: '[%siteabbrev%](%postid%)[%artist%][%series%][%character%]%generals%',
                 tagSeparator: ','
             },

@@ -26,7 +26,7 @@ export function inPageNotify(title: string, msg: string) {
     rootEl.onclick = close
     window.setTimeout(() => {
         close()
-    }, 3000)
+    }, 5000)
     // title
     if (title) {
         const titleEl = document.createElement('b')
@@ -49,6 +49,7 @@ export function inPageNotify(title: string, msg: string) {
     contentEl.style.fontFamily = 'monospace'
     contentEl.style.fontSize = '12px'
     contentEl.style.lineHeight = '14px'
+    contentEl.style.background = 'transparent'
     contentEl.innerText = msg
     // final
     rootEl.appendChild(contentEl)

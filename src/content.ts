@@ -1,5 +1,5 @@
 import { FileTags, msgManager, MyMsg, ParsedImageInfo, supported_hostname_t, Tag } from "./common";
-import { filename_template_token_t, storageManager } from "./options";
+import { filename_template_token_t, MyOptions, storageManager } from "./options";
 import * as modules from './modules'
 import { AbstractModule } from "./modules/abstract";
 import { inPageNotify } from "./inpage-notify";
@@ -43,6 +43,11 @@ storageManager.getData().then((opts) => {
         makeImgAlwaysOpenedWithNewTab()
     }
 })
+function fetchOptions(): Promise<MyOptions> {
+    return storageManager.getData().then((opts) => {
+        return OPTIONS = opts
+    })
+}
 
 function makeImgAlwaysOpenedWithNewTab() {
     const selector: string = curMod.getPostLinkElementSelector()
@@ -160,7 +165,8 @@ function insertStyleElement () {
     style.appendChild(document.createTextNode(css));
 }
 
-function downloadImage(imgFileUrl: string) {
+async function downloadImage(imgFileUrl: string) {
+    await fetchOptions()
     const fileInfo = analyzeFileInfo(imgFileUrl)
     console.log('[DEBUG] fileInfo ===>', fileInfo)
     msgManager.sendToBg({
