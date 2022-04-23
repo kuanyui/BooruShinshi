@@ -1,3 +1,5 @@
+import { MyOptions } from "./options"
+
 export type supported_hostname_t =
     'chan.sankakucomplex.com' |
     'yande.re' |
@@ -11,12 +13,6 @@ export type supported_hostname_t =
     'rule34.xxx' |
     'rule34.paheal.net' |
     'rule34.us'
-
-export interface MyStorage {
-    fileNameFormat: string
-    fileNameMaxLength: number
-    tagSeparator: string
-}
 
 export type my_msg_t = 'AskTabToDownload' | 'DownloadLinkGotten' | 'OpenLinkInNewTab' | 'CloseTab'
 export type MyMsg = MyMsg_AskTabToDownload | MyMsg_DownloadLinkGotten | MyMsg_OpenLinkInNewTab | MyMsg_CloseCurrentTab
@@ -111,20 +107,6 @@ export function generalCollectImageInfoList(): ParsedImageInfo[] {
         fin.push({ btnText: 'Low (fallback)', imgUrl: imgEl.src })
     }
     return fin
-}
-
-export class storageManager {
-    static setSync (d: Partial<MyStorage>): void {
-        browser.storage.sync.set(d)
-    }
-    static getSync (): Promise<MyStorage | null> {
-        return browser.storage.sync.get().then((d) => {
-            return d as unknown as MyStorage
-        }).catch((err) => {
-            console.error('Error when getting settings from browser.storage.sync:', err)
-            return null
-        })
-    }
 }
 
 export class msgManager {

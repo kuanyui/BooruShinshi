@@ -1,4 +1,4 @@
-import { MyStorage, msgManager, MyMsg, MyMsg_DownloadLinkGotten } from "./common"
+import { msgManager, MyMsg, MyMsg_DownloadLinkGotten } from "./common"
 import sanitizeFilename from 'sanitize-filename'
 import { MyOptions, objectAssignPerfectly, storageManager } from "./options"
 

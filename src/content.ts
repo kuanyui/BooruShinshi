@@ -36,7 +36,7 @@ browser.runtime.onMessage.addListener((_ev: any) => {
     }
 })
 storageManager.getData().then((opts) => {
-    if (opts.openLinkWithNewTab) {
+    if (opts.ui.openLinkWithNewTab) {
         makeImgAlwaysOpenedWithNewTab()
     }
 })
@@ -209,7 +209,7 @@ async function showHideDownloadLinks() {
     const root = document.createElement('div')
     root.id = "BooruShinshi_DivForContentPage"
     const infoArr: ParsedImageInfo[] = curMod.collectImageInfoList()
-    if ((await storageManager.getData()).buttonForCloseTab) {
+    if ((await storageManager.getData()).ui.buttonForCloseTab) {
         const closeTab = document.createElement('button')
         closeTab.textContent = 'Close Tab'
         closeTab.onclick = () => msgManager.sendToBg({ type: 'CloseTab' })

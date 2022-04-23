@@ -63,8 +63,8 @@ function setContentEditableValue(id: string, value: string) {
 
 async function loadFromLocalStorage() {
     const d = await storageManager.getData()
-    setCheckboxValue('openLinkWithNewTab', d.openLinkWithNewTab)
-    setCheckboxValue('buttonForCloseTab', d.buttonForCloseTab)
+    setCheckboxValue('openLinkWithNewTab', d.ui.openLinkWithNewTab)
+    setCheckboxValue('buttonForCloseTab', d.ui.buttonForCloseTab)
 }
 
 async function resetToDefault() {
@@ -75,8 +75,10 @@ q<HTMLButtonElement>('resetBtn').onclick=resetToDefault
 
 async function saveFormToLocalStorage() {
     storageManager.setDataPartially({
-        openLinkWithNewTab: getCheckboxValue('openLinkWithNewTab'),
-        buttonForCloseTab: getCheckboxValue('buttonForCloseTab'),
+        ui: {
+            openLinkWithNewTab: getCheckboxValue('openLinkWithNewTab'),
+            buttonForCloseTab: getCheckboxValue('buttonForCloseTab'),
+        }
     })
 }
 
