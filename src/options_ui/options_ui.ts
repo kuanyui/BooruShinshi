@@ -19,6 +19,12 @@ import tippy from 'tippy.js'
 import 'tippy.js/dist/tippy.css'
 import { inPageNotify } from "../inpage-notify"
 
+// Syntax Highlighter Library
+// @ts-ignore
+import Parser from '../kueblc_ldt/Parser.js'
+// @ts-ignore
+import TextareaDecorator from '../kueblc_ldt/TextareaDecorator.js'
+import  '../kueblc_ldt/TextareaDecorator.css'
 
 function q<T extends HTMLElement, U extends string = string>(query: U): T {
     const el = document.querySelector(query)
@@ -424,10 +430,24 @@ function setupAutoValidator() {
         }
     })
 }
+
+function installSyntaxHighlighter() {
+    const parser = new Parser({
+        whitespace: /\s+/,
+        orange: /orange/,
+        violet: /violet/,
+        other: /\S/ }, true );
+    // get the textarea
+    const textarea = q("#fileName_fileNameTemplate")
+    // start the decorator
+    const decorator = new TextareaDecorator(textarea, parser);
+    return decorator
+}
 async function main() {
     preprocessDOM()
     setupAutoValidator()
     await loadFromLocalStorage()
+    const textareaDecorator = installSyntaxHighlighter()
     watchForm()
 }
 

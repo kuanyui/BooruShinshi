@@ -87,7 +87,7 @@ pre, code {
     padding: 0 1px;
 }
 pre {
-    padding: 0 0.4rem;
+    /* padding: 0 0.4rem; */
 }
 
 .label-highlight:hover {
