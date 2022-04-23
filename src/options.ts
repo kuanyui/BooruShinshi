@@ -17,10 +17,9 @@ export const FilenameTemplateTokenDict = {
     'character': `The tag "character". If not found, show <code>no_character</code>. If found multiple, use the one with the most posts count.`,
     'generals': `The tag "generals". This always pick multiple tags with <b>least</b> posts count, until the file name length limit reached.`,
 }
-type filename_template_token_t = keyof typeof FilenameTemplateTokenDict
+export type filename_template_token_t = keyof typeof FilenameTemplateTokenDict
 export const ALL_FILENAME_TEMPLATE_TOKEN: filename_template_token_t[] = Object.keys(FilenameTemplateTokenDict).filter(x=>typeof x !== 'number') as any[]
 
-export type filename_template_t = `${string}${filename_template_token_t}${string}`
 
 
 /**

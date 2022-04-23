@@ -312,6 +312,7 @@ async function loadFromLocalStorage() {
     setTextAreaValue('#fileName_fileNameTemplate', d.fileName.fileNameTemplate)
     setSelectValue('#fileName_tagSeparator', d.fileName.tagSeparator)
     setSelectValue('#folder_downloadFolderName', d.folder.downloadFolderName)
+    setCheckboxValue('#folder_enableClassify', d.folder.enableClassify)
     rth.setModel(d.folder.classifyRules)
 }
 

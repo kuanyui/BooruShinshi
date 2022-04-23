@@ -1,7 +1,8 @@
-import { FileTags, msgManager, MyMsg, ParsedImageInfo, supported_hostname_t } from "./common";
-import { storageManager } from "./options";
+import { FileTags, msgManager, MyMsg, ParsedImageInfo, supported_hostname_t, Tag } from "./common";
+import { filename_template_token_t, storageManager } from "./options";
 import * as modules from './modules'
 import { AbstractModule } from "./modules/abstract";
+import { inPageNotify } from "./inpage-notify";
 
 const ALL_MODULES: AbstractModule[] = [
      new modules.ModuleChanSankakuComplexCom(),
@@ -35,7 +36,9 @@ browser.runtime.onMessage.addListener((_ev: any) => {
         showHideDownloadLinks()
     }
 })
+let OPTIONS = storageManager.getDefaultData()
 storageManager.getData().then((opts) => {
+    OPTIONS = opts
     if (opts.ui.openLinkWithNewTab) {
         makeImgAlwaysOpenedWithNewTab()
     }
@@ -157,32 +160,52 @@ function insertStyleElement () {
     style.appendChild(document.createTextNode(css));
 }
 
-function downloadImage (imgFileUrl: string) {
+function downloadImage(imgFileUrl: string) {
+    const fileInfo = analyzeFileInfo(imgFileUrl)
+    console.log('[DEBUG] fileInfo ===>', fileInfo)
     msgManager.sendToBg({
         type: 'DownloadLinkGotten',
         url: imgFileUrl,
-        filename: generateFileName(imgFileUrl)
+        filename: fileInfo.filePath
     })
+    if (OPTIONS.ui.showNotificationWhenStartingToDownload) {
+        inPageNotify('Download Image', fileInfo.filePath)
+    }
 }
 
-const SEPARATOR = ','
+function templateReplacer(templateStr: string, token: filename_template_token_t, replaceValue: string): string {
+    return templateStr.replaceAll(`%${token}%`, replaceValue)
+}
+function TAG_DESC_SORTER<T extends {count: number}> (a:T, b: T) { return b.count - a.count }
 
-function generateFileBaseName (): string {
-    const tmp: FileTags = curMod.collectTags()
-    const id = curMod.getPostId()
-    const artist: string = tmp.artist[0] ? `[${tmp.artist[0].en}]` : ''
-    const studio: string = tmp.studio[0] ? `[${tmp.studio[0].en}]` : ''
-    const copyright: string = tmp.copyright[0] ? `[${tmp.copyright[0].en}]` : '[no series]'
-    const character: string = tmp.character[0] ? `[${tmp.character[0].en}]` : ''
-    const sortedGeneral = tmp.general.sort((a, b) => a.count - b.count)
-    const artistOrStudio: string = artist || studio || '[unknown artist]'
-    let general: string = ''
-    for (const x of sortedGeneral) {
-        if (general.length > 63) { break }
-        general = general + SEPARATOR + x.en
+function generateFileBaseName(tagDict: FileTags): string {
+    // template
+    let fname = OPTIONS.fileName.fileNameTemplate
+    const fnLenLimit = OPTIONS.fileName.fileNameMaxCharacterLength
+    const tagSeparator = OPTIONS.fileName.tagSeparator
+    fname = templateReplacer(fname, 'siteabbrev', curMod.abbrev())
+    fname = templateReplacer(fname, 'sitefullname', curMod.fullName())
+    // tags
+    const postId = curMod.getPostId()
+    fname = templateReplacer(fname, 'postid', postId + '')
+    const artist: string = tagDict.artist[0] ? tagDict.artist[0].en : ''
+    const studio: string = tagDict.studio[0] ? tagDict.studio[0].en : ''
+    fname = templateReplacer(fname, 'artist', artist || studio || 'unknown_artist')
+    const copyright: string = tagDict.copyright[0] ? tagDict.copyright[0].en : 'no series'
+    fname = templateReplacer(fname, 'series', copyright)
+    const character: string = tagDict.character[0] ? tagDict.character[0].en : ''
+    fname = templateReplacer(fname, 'character', character)
+    const generalsArr: string[] = []
+    for (const x of tagDict.general) {
+        if (generalsArr.join(tagSeparator).length + fname.length > fnLenLimit) {
+            generalsArr.pop()
+            break
+         }
+        generalsArr.push(x.en)
     }
-    general = general.slice(1)
-    return `${id}${artistOrStudio}${copyright}${character}${general}`
+    const generals = generalsArr.join(tagSeparator)
+    fname = templateReplacer(fname, 'generals', generals)
+    return fname
 }
 
 /** Return ext without dot. */
@@ -192,10 +215,80 @@ function guessExt (imgFileUrl: string): string | null {
     return null
 }
 
-function generateFileName (imgFileUrl: string): string {
-    const base = generateFileBaseName()
-    const ext = guessExt(imgFileUrl)
-    return `${base}.${ext}`
+interface FileInfo {
+    /** file name without ext */
+    fileBaseName: string
+    fileExt: string
+    /** basename + ext */
+    fileFullName: string
+    /** Relative path in ~/Downloads/ */
+    folderPath: string
+    /** Relative path in ~/Downloads/.
+     * `{folderRelPath}/{fileFullName}` */
+    filePath: string
+}
+
+function analyzeFileInfo(imgFileUrl: string): FileInfo {
+    const fileTags: FileTags = curMod.collectTags()
+    for (const [category, tags] of Object.entries(fileTags)) {
+        tags.sort(TAG_DESC_SORTER)
+    }
+    fileTags.general.reverse()
+
+    const basename = generateFileBaseName(fileTags)
+    const ext = guessExt(imgFileUrl) || 'jpg'
+    const fileFullName = `${basename}.${ext}`
+    const folderPath = generateFolderPath(fileTags)
+    const filePath = folderPath + "/" + fileFullName
+    return {
+        fileBaseName: basename,
+        fileExt: ext,
+        fileFullName: fileFullName,
+        folderPath: folderPath,
+        filePath: filePath,
+    }
+}
+
+/** Always without `/` suffix */
+function generateFolderPath(tagDict: FileTags): string {
+    const final: string[] = []
+    const ROOT_DIR_NAME = OPTIONS.folder.downloadFolderName
+    if (ROOT_DIR_NAME) { final.push(ROOT_DIR_NAME) }
+    if (!OPTIONS.folder.enableClassify) { return final.join('/') }
+    const FILE_ALL_TAGS: Tag[] = Object.values(tagDict).flat(1)
+    const RULES = OPTIONS.folder.classifyRules
+    console.log('RULES====', RULES)
+    rulesLoop:
+    for (const r of RULES) {
+        switch (r.ruleType) {
+            case 'TagCategory': {
+                const tags = tagDict[r.tagCategory]
+                if (tags.length) {
+                    final.push(tags[0].en)
+                    break rulesLoop
+                }
+                continue rulesLoop
+            }
+            case 'CustomTagMatcher': {
+                let matched: boolean
+                if (r.logicGate === 'AND') {
+                    matched = r.ifContainsTag.every(x => FILE_ALL_TAGS.includes(x as any))
+                } else {
+                    matched = r.ifContainsTag.some(x => FILE_ALL_TAGS.includes(x as any))
+                }
+                if (matched) {
+                    final.push(r.folderName)
+                    break rulesLoop
+                }
+                continue rulesLoop
+            }
+            case 'Fallback': {
+                final.push(r.folderName)
+                break rulesLoop
+            }
+        }
+    }
+    return final.filter(x=>x).join('/')
 }
 
 async function showHideDownloadLinks() {

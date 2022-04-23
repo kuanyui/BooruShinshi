@@ -1,5 +1,5 @@
-import { msgManager, MyMsg, MyMsg_DownloadLinkGotten } from "./common"
-import sanitizeFilename from 'sanitize-filename'
+import { msgManager, MyMsg, MyMsg_DownloadLinkGotten, sanitizeFilePath } from "./common"
+// import sanitizeFilename from 'sanitize-filename'
 import { MyOptions, objectAssignPerfectly, storageManager } from "./options"
 
 
@@ -42,7 +42,7 @@ browser.runtime.onMessage.addListener((_msg: any, sender: browser.runtime.Messag
     const msg = _msg as MyMsg
     console.log('msg from content_script: ', msg)
     if (msg.type === 'DownloadLinkGotten') {
-        const safeFilename = sanitizeFilenameForCurrentOs(msg.filename)
+        const safeFilename = sanitizeFilePathForCurrentOs(msg.filename)
         console.log('sanitized filename =', safeFilename)
         browser.downloads.download({
             url: msg.url,
@@ -72,7 +72,7 @@ browser.runtime.getPlatformInfo().then(d => {
 // https://hg.mozilla.org/mozilla-central/rev/b3e21f09ee45#l1.86
 // See gConvertToSpaceRegExp
 // https://searchfox.org/mozilla-central/source/toolkit/components/downloads/DownloadPaths.jsm#26
-export function sanitizeFilenameForCurrentOs (filename: string): string {
+export function sanitizeFilePathForCurrentOs (filename: string): string {
     let fin: string = filename
     switch (__OS__) {
         case 'android': {
@@ -82,5 +82,5 @@ export function sanitizeFilenameForCurrentOs (filename: string): string {
             break
         }
     }
-    return sanitizeFilename(fin)
+    return sanitizeFilePath(fin)
 }
