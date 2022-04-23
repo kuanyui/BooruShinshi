@@ -15,7 +15,8 @@
 import { tag_category_t } from "../common"
 import { ALL_RULE_TYPE, FolderClassifyRule, FolderClassifyRule__custom, options_ui_input_query_t, rule_type_t, storageManager } from "../options"
 import * as elHelper from './components'
-
+import tippy from 'tippy.js'
+import 'tippy.js/dist/tippy.css'
 
 
 function q<T extends HTMLElement, U extends string = string>(query: U): T {
@@ -236,11 +237,13 @@ class RuleTableHandler {
         }
         switch (rule.ruleType) {
             case 'CustomTagMatcher': {
-                objectShaper<any, typeof rule>(rule, { ruleType: 'CustomTagMatcher', folderName: '',ifContainsTag: [], logicGate: 'OR' })
-                tr.appendChild(elHelper.mkelTd(
+                objectShaper<any, typeof rule>(rule, { ruleType: 'CustomTagMatcher', folderName: '', ifContainsTag: [], logicGate: 'OR' })
+                const tmp = elHelper.mkelTd(
                     elHelper.mkelRuleLogicGateSelect(rule.logicGate, (nv) => { rule.logicGate = nv }),
                     elHelper.mkelRuleCustomTagInput(rule.ifContainsTag, (nv) => { rule.ifContainsTag = nv })
-                ))
+                )
+                tmp.style.display = 'flex'
+                tr.appendChild(tmp);
                 tr.appendChild(elHelper.mkelTd(
                     elHelper.mkelRuleDirNameInput(rule.folderName, (nv) => { rule.folderName = nv })
                 ))

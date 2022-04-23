@@ -63,13 +63,18 @@ html
     }
     #classifyRuleTableContainer {
       display: flex;
+      flex-direction: column;
     }
     .actionButtonContainer {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       justify-content: center;
       align-items: center;
       margin: 8px;
+    }
+    .spacer {
+      width: 6px;
+      height: 6px;
     }
     .actionButtonContainer button {
       width: 75px;
@@ -106,6 +111,9 @@ html
       border-bottom: 1px solid #888;
       padding: 8px 0;
     }
+    select {
+      min-width: 20px !important;
+    }
 
   form
     div
@@ -141,9 +149,12 @@ html
           //- type="button" to avoid <form> submitting
           button.actBtn.add(type="button") #[.emoji ➕] Add
           button.actBtn.delete(type="button") #[.emoji ❌] Delete
+          .spacer
           button.actBtn.moveTop(type="button") #[.emoji ⏫] Top
+          .spacer
           button.actBtn.moveUp(type="button") #[.emoji ⬆️] Up
           button.actBtn.moveDown(type="button") #[.emoji ⬇️] Down
+          .spacer
           button.actBtn.moveBottom(type="button") #[.emoji ⏬] Bottom
         table
           thead

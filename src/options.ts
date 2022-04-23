@@ -36,9 +36,9 @@ interface SelectOptionData {
 
 /** Rules are ordering-sensitive */
 export const ALL_RULE_TYPE = [
-    {value: 'CustomTagMatcher', label: "Custom Tag Matcher", doc: 'Custom your rule. When an image match the conditions you set, save it to a specific folder.'},
-    {value: 'TagCategory',      label: "Tag Category",       doc: 'Notice, when an image has multiple tags in one category (for example, multiple "artist" tags), it will choose the shortest one. So the result may not be what you want.'},
-    {value: 'Fallback',         label: "Fallback",           doc: 'When none of above rule matched, save to this folder.'},
+    {value: 'CustomTagMatcher', label: "Custom",     doc: '<b>Custom tag matcher</b>. Custom your rule. When an image match the conditions you set, save it to a specific folder.'},
+    {value: 'TagCategory',      label: "Auto",       doc: '<b>Auto choose tag category as folder name</b>. Notice, when an image has multiple tags in one category (for example, multiple "artist" tags), it will choose the shortest one. So the result may not be what you want.'},
+    {value: 'Fallback',         label: "Fallback",   doc: '<b>Default rule</b>. When none of above rule matched, save to this folder. This is the default rule, which cannot be removed nor moved.'},
 ] as const
 // type _infer_value_in_arr<T> = T extends {value: infer U}[] ? U : unknown
 export type rule_type_t = 'CustomTagMatcher' | 'TagCategory' | 'Fallback'
