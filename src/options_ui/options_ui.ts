@@ -17,6 +17,7 @@ import { ALL_FILENAME_TEMPLATE_TOKEN, ALL_RULE_TYPE, FilenameTemplateTokenDict, 
 import * as elHelper from './components'
 import tippy from 'tippy.js'
 import 'tippy.js/dist/tippy.css'
+import { inPageNotify } from "../inpage-notify"
 
 
 function q<T extends HTMLElement, U extends string = string>(query: U): T {
@@ -304,6 +305,7 @@ rth.onchange = (newVal) => {
 
 async function loadFromLocalStorage() {
     const d = await storageManager.getData()
+    setCheckboxValue('#ui_showNotificationWhenStartingToDownload', d.ui.showNotificationWhenStartingToDownload)
     setCheckboxValue('#ui_openLinkWithNewTab', d.ui.openLinkWithNewTab)
     setCheckboxValue('#ui_buttonForCloseTab', d.ui.buttonForCloseTab)
     setTextAreaValue('#fileName_fileNameMaxCharacterLength', d.fileName.fileNameMaxCharacterLength+'')
@@ -322,6 +324,7 @@ q<HTMLButtonElement>('#resetBtn').onclick=resetToDefault
 async function saveFormToLocalStorage() {
     storageManager.setDataPartially({
         ui: {
+            showNotificationWhenStartingToDownload: getCheckboxValue('#ui_showNotificationWhenStartingToDownload'),
             openLinkWithNewTab: getCheckboxValue('#ui_openLinkWithNewTab'),
             buttonForCloseTab: getCheckboxValue('#ui_buttonForCloseTab'),
         },
@@ -336,6 +339,7 @@ async function saveFormToLocalStorage() {
             classifyRules: rth.model
         }
     })
+    inPageNotify('Settings Saved', 'Modifications to settings are saved.')
 }
 
 function handleVisibilityOfTable() {
@@ -368,8 +372,33 @@ function preprocessDOM() {
         container.append(el)
     }
 }
+
+function validateInput(el: HTMLInputElement) {
+    console.log('validateInput', el.value, el.min, el.max)
+    switch (el.type) {
+        case 'number': {
+            if (el.value === '') { el.value = el.min; return }
+            if (parseInt(el.value) < parseInt(el.min)) { el.value = el.min; return }
+            if (parseInt(el.value) > parseInt(el.max)) { el.value = el.max; return }
+            return
+        }
+        case 'text': {
+            if (parseInt(el.value) < el.minLength) { el.value ; return }
+            if (parseInt(el.value) > el.maxLength) { el.value = el.value.slice(0, el.maxLength); return }
+            return
+        }
+    }
+}
+function setupAutoValidator() {
+    qs<HTMLInputElement>('[autovalidator]').forEach(inputEl => {
+        inputEl.onchange = (ev) => {
+            validateInput(ev.target as any)
+        }
+    })
+}
 async function main() {
     preprocessDOM()
+    setupAutoValidator()
     await loadFromLocalStorage()
     watchForm()
 }

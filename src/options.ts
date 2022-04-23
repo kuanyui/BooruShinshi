@@ -77,6 +77,7 @@ export interface MyOptions {
 }
 
 export interface MyOptions_Ui {
+    showNotificationWhenStartingToDownload: boolean,
     /** Design for touchscreen */
     openLinkWithNewTab: boolean,
     /** Design for touchscreen */
@@ -139,6 +140,7 @@ class StorageManager {
         return {
             apiLevel: 2,
             ui: {
+                showNotificationWhenStartingToDownload: true,
                 openLinkWithNewTab: false,
                 buttonForCloseTab: false,
             },

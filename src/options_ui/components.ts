@@ -90,22 +90,3 @@ export function mkelRuleLogicGateSelect(modelValue: logic_gate_t, changeCb: (nv:
     selectEl.onchange = () => { changeCb(selectEl.value as any) }
     return selectEl
 }
-
-
-// function validateInput(el: HTMLInputElement) {
-//     switch (el.type) {
-//         case 'number': {
-//             if (el.value === '') { el.value = el.min; return }
-//             if(parseInt(el.value) < parseInt(el.min)) { el.value = el.min; return }
-//             if(parseInt(el.value) > parseInt(el.max)) { el.value = el.max; return }
-//         }
-//         case 'text': {
-//             if(parseInt(el.value) < el.minLength) { el.value ; return }
-//             if(parseInt(el.value) > el.maxLength) { el.value = el.value.slice(0, el.maxLength) ; return }
-//         }
-//     }
-// }
-// function setupValidator() {
-//     const input = q<HTMLInputElement, options_ui_input_query_t>('fileName_fileNameMaxCharacterLength')
-//     input.onblur = () => { validateInput(input) }
-// }

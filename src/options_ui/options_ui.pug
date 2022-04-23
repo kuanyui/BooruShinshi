@@ -122,14 +122,15 @@ html
   form
     div
       h2 UI
+      +checkbox('ui_showNotificationWhenStartingToDownload'): span Show notification when starting to download.
       +checkbox('ui_openLinkWithNewTab'): span Always open image links with a new tab.
       +checkbox('ui_buttonForCloseTab'): span An extra button for closing current tab.
       h2 File Name
       -var id = 'fileName_fileNameMaxCharacterLength'
-      +sub_block(id, "Max Filename Length (40-255)"): input(id=id type="number" min="40" max="255")
+      +sub_block(id, "Max Filename Length (40-255)"): input(id=id type="number" min="40" max="255" autovalidator)
       -var id = 'fileName_fileNameTemplate'
       +sub_block(id, "Filename Template")
-        textarea.monospace(id=id type="text" minlength="0" maxlength="240")
+        textarea.monospace(id=id type="text" minlength="0" maxlength="240" autovalidator)
         button() Reset
         div.alert
           div: i Available Tokens:
@@ -140,7 +141,7 @@ html
       h3 Basic
       -var id = 'folder_downloadFolderName'
       +sub_block(id, "Download Folder Name")
-        input(id=id type="text" min="0" max="240" placeholder="(Optional)")
+        input(id=id type="text" minlength="0" maxlength="240" placeholder="(Optional)" autovalidator)
         .alert
           ul
             li Left empty means download to the default "Download" directory of your OS.
