@@ -20,6 +20,14 @@ mixin checkbox(id)
     label(for=id)
       input(id=id type='checkbox')
       block
+
+mixin tablerow_2cols(id, label)
+  tr.row
+    td
+      label(for=id)= label
+    td
+      block
+
 mixin tablerow_checkbox(id)
   tr.row
     td(colspan="100%")
@@ -38,11 +46,6 @@ mixin tablerow_select(id, optsObj={})
         each text, key in optsObj
           option(value=key)= text
 
-mixin tablerow_1_column(id, label)
-  tr.row
-    td
-      label(for=id)= label
-      block
 
 mixin line_radio(radioGroupName, value)
   div
@@ -56,27 +59,81 @@ html
     meta(charset='utf-8')
     meta(name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no")
     link(rel="stylesheet" type="text/css" href="./options_ui_style/options_ui.css")
+  style.
+    #classifyRuleTableContainer {
+      display: flex;
+    }
+    .actionButtonContainer {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 8px;
+    }
+    .actionButtonContainer button {
+      width: 75px;
+    }
+    .actionButtonContainer button .emoji {
+      display: inline;
+      text-shadow: 1px 0px 0px #ffffff, -1px 0px 0px #ffffff, 0px 1px 0px #ffffff, 0px -1px 0px #ffffff;
+    }
+    .tableContainer {
+      height: 400px;
+      width: calc(100vw - 100px - 8 * 2px);
+      border: 1px solid #888;
+    }
+    .tableContainer table td {
+      height: 30px;
+    }
+    .availableFilenameToken {
+      margin-right: 2px;
+    }
+    input:invalid {
+      border: 1px solid #770000;
+      background: #ffdddd;
+      color: #770000;
+    }
+
   form
     div
-      h2 Touchscreen Optimization (Experimental)
-      +checkbox('openLinkWithNewTab'): span Open image links with new tab.
-      +checkbox('buttonForCloseTab'): span An extra button for closing current tab.
-        //tr.row: td:
-    //div
-      h2 Advanced
-      label(for='titleSubstitution').
-        Title Substitution -- line separated texts which will be removed from title text (supports #[a(href='https://regex101.com/') regular expressions] if the line starts and ends with / e.g. #[code /^number:\d$/]
-      textarea#titleSubstitution(rows='5')
-      input#embedImage(type='checkbox')
-      label(for='embedImage')
-        | Embed
-        code img
-        | s (.gif, .jpg, .jpeg, .png, and .webp) as base64 text as possible -- images will be encoded as base64 text, instead of URL, and added at the end of copied text.
-        strong
-          | Ask for the permission to access all websites when clicking Save button, since sometimes referenced images are hosted other than current active tab so
-          code activeTab
-          |  permission is not sufficient.
-        |  Unchecking this removes the additional permission.
+      h2 UI
+      +checkbox('ui_openLinkWithNewTab'): span Always open image links with a new tab.
+      +checkbox('ui_buttonForCloseTab'): span An extra button for closing current tab.
+      h2 File Name
+      table
+        -var id = 'fileName_fileNameMaxCharacterLength'
+        +tablerow_2cols(id, "Max Filename Length"): input(id=id type="number" min="32" max="255")
+        -var id = 'fileName_fileNameTemplate'
+        +tablerow_2cols(id, "Filename Template")
+          input(id=id type="text" minlength="0" maxlength="240")
+          button() Reset
+        tr: td(colspan=2)
+          for x in ['siteabbrev', 'sitefullname', 'postid', 'artist', 'copyright', 'character', 'generals']
+            code.availableFilenameToken=x
+        -var id = 'fileName_tagSeparator'
+        +tablerow_select(id, {' ': '(Space)', ',': ','}): span Tag Separator
+      h2 Folder
+      h3 Basic
+      -var id = 'folder_downloadFolderName'
+      +tablerow_2cols(id, "Download Folder Name"): input(id=id type="text" min="0" max="240")
+      h3 Classification
+      +checkbox('folder_enableClassify'): span Automatically classify images to different folders by their tags.
+      #classifyRuleTableContainer
+        .actionButtonContainer
+          //- type="button" to avoid <form> submitting
+          button.actBtn#add(type="button") #[.emoji ➕] Add
+          button.actBtn#delete(type="button") #[.emoji ❌] Delete
+          button.actBtn#moveTop(type="button") #[.emoji ⏫] Top
+          button.actBtn#moveUp(type="button") #[.emoji ⬆️] Up
+          button.actBtn#moveDown(type="button") #[.emoji ⬇️] Down
+          button.actBtn#moveBottom(type="button") #[.emoji ⏬] Bottom
+        table
+          thead
+            tr
+              th Rule Type
+              th Matcher
+              th Folder Name
+          tbody
     h2 Default Values
     button(id="resetBtn") Reset to Defaults
   script(src='./options_ui.js')

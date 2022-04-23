@@ -85,6 +85,7 @@ pre, code {
     background: var(--in-content-button-background-mixed);
     border: 1px solid var(--in-content-border-hover-mixed);
     color: var(--in-content-text-color);
+    padding: 0 1px;
 }
 pre {
     padding: 0 0.4rem;

@@ -8,17 +8,19 @@ type TypedStorageChange<T> = {
  * T is the custom storage interface
  */
 type TypedChangeDict<T> = { [K in keyof T]: TypedStorageChange<T[K]> }
-type __filename_fmt_template_token_t =
-    'siteabbrev' |
-    'sitefullname' |
-    'postid' |
-    'artist' |
-    'copyright' |
-    'character' |
-    'general'
-type filename_fmt_template_token_t = `%${__filename_fmt_template_token_t}%`
+enum __FilenameTemplateToken {
+    'siteabbrev',
+    'sitefullname',
+    'postid',
+    'artist',
+    'copyright',
+    'character',
+    'generals'
+}
+type filename_template_token_t = keyof typeof __FilenameTemplateToken
+export const ALL_FILENAME_TEMPLATE_TOKEN: filename_template_token_t[] = Object.keys(__FilenameTemplateToken).filter(x=>typeof x !== 'number') as any[]
 
-export type filename_template_t = `${string}${filename_fmt_template_token_t}${string}`
+export type filename_template_t = `${string}${filename_template_token_t}${string}`
 
 
 /**
@@ -27,8 +29,8 @@ export type filename_template_t = `${string}${filename_fmt_template_token_t}${st
  * - 根據 artist 名稱分資料假
  */
 /** Order sensitive */
-export type folder_classify_rule_type_custom_t = 'CustomTag'
-export type folder_classify_rule_type_auto_t = `AutoTag::${tag_category_t}`
+export type folder_classify_rule_type_custom_t = 'CustomTagMatcher'
+export type folder_classify_rule_type_auto_t = 'TagCategory'
 /** If none of the above rule matched, use fallback, and save to fallback folder. */
 export type folder_classify_rule_type_fallback_t = `Fallback`
 
@@ -38,7 +40,8 @@ export interface FolderClassifyRule__custom {
     folderName: string,
 }
 export interface FolderClassifyRule__auto {
-    ruleType: folder_classify_rule_type_auto_t,
+    ruleType: folder_classify_rule_type_auto_t
+    tagCategory: tag_category_t
 }
 /** This rules must be the last one and existed forever. */
 export interface FolderClassifyRule__fallback {
@@ -47,8 +50,8 @@ export interface FolderClassifyRule__fallback {
 }
 export type FolderClassifyRule =  FolderClassifyRule__custom | FolderClassifyRule__auto | FolderClassifyRule__fallback
 export const DEFAULT_FOLDER_CLASSIFY_RULES: FolderClassifyRule[] = [
-    {ruleType: 'AutoTag::copyright'},
-    {ruleType: 'AutoTag::artist'},
+    {ruleType: 'TagCategory', tagCategory: 'copyright'},
+    {ruleType: 'TagCategory', tagCategory: 'artist'},
     {ruleType: 'Fallback', folderName: '_NoCategory' },
 ]
 
@@ -93,6 +96,11 @@ export interface MyOptions_Folder {
     enableClassify: boolean,
     classifyRules: FolderClassifyRule[],
 }
+
+export type options_ui_input_id_t =
+    `ui_${keyof MyOptions_Ui}` |
+    `fileName_${keyof MyOptions_FileName}` |
+    `folder_${keyof MyOptions_Folder}`
 
 export function assertUnreachable (x: never) { x }
 export function objectAssignPerfectly<T>(target: T, newValue: T) {
