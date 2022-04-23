@@ -83,7 +83,7 @@ export class ModuleTbibOrg extends AbstractModule {
             let els = sidebarEl.querySelectorAll(tagLiClass)
             els.forEach((el) => {
                 const tagLink = el.querySelector('a')!
-                const enTag = tagLink.textContent!.trim()
+                const enTag = tagLink.textContent!.trim().replaceAll(' ', '_')
                 const count: number = parseInt(tagLink.nextElementSibling!.textContent!.trim())
                 tagsOfCategory.push({ en: enTag, count })
             })

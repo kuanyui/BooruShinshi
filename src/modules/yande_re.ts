@@ -63,7 +63,7 @@ export class ModuleYandeRe extends AbstractModule {
             els.forEach((el) => {
                 const aList = el.querySelectorAll('a')
                 if (aList.length < 2) { return }
-                const key = aList[1].innerText.replace(/ /g, '_')  // replace space with underline
+                const key = aList[1].innerText.trim().replaceAll(' ', '_')  // replace space with underline
                 if (!key) { return }
                 const countEl = el.querySelector('.post-count')
                 if (!countEl || !countEl.textContent) { return }

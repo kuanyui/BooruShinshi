@@ -255,8 +255,9 @@ function generateFolderPath(tagDict: FileTags): string {
     const ROOT_DIR_NAME = OPTIONS.folder.downloadFolderName
     if (ROOT_DIR_NAME) { final.push(ROOT_DIR_NAME) }
     if (!OPTIONS.folder.enableClassify) { return final.join('/') }
-    const FILE_ALL_TAGS: Tag[] = Object.values(tagDict).flat(1)
+    const FILE_ALL_TAGS: string[] = Object.values(tagDict).flat(1).map(x=>x.en)
     const RULES = OPTIONS.folder.classifyRules
+    console.log('FILE_ALL_TAGS====', FILE_ALL_TAGS)
     console.log('RULES====', RULES)
     rulesLoop:
     for (const r of RULES) {
@@ -272,9 +273,9 @@ function generateFolderPath(tagDict: FileTags): string {
             case 'CustomTagMatcher': {
                 let matched: boolean
                 if (r.logicGate === 'AND') {
-                    matched = r.ifContainsTag.every(x => FILE_ALL_TAGS.includes(x as any))
+                    matched = r.ifContainsTag.every(x => FILE_ALL_TAGS.includes(x))
                 } else {
-                    matched = r.ifContainsTag.some(x => FILE_ALL_TAGS.includes(x as any))
+                    matched = r.ifContainsTag.some(x => FILE_ALL_TAGS.includes(x))
                 }
                 if (matched) {
                     final.push(r.folderName)

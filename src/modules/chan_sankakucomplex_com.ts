@@ -67,7 +67,7 @@ export class ModuleChanSankakuComplexCom extends AbstractModule {
             els.forEach((el) => {
                 const keyEl = el.querySelector('a[itemprop="keywords"]')
                 if (!keyEl || !keyEl.textContent) {return}
-                const textContent = keyEl.textContent.replace(/ /g, '_')  // replace space with underline
+                const textContent = keyEl.textContent.trim().replace(/ /g, '_')  // replace space with underline
                 const countEl = el.querySelector('.post-count')
                 if (!countEl || !countEl.textContent) {return}
                 const count = ~~countEl.textContent

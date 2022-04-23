@@ -97,7 +97,7 @@ export class ModuleRule34Us extends AbstractModule {
             els.forEach((li) => {
                 const a = li.querySelector('a')
                 if (!a) { return }
-                const enTag: string = a.textContent!.trim()
+                const enTag: string = a.textContent!.trim().replaceAll(' ', '_')
                 const small = li.querySelector('small')
                 if (!small || !small.textContent) { return }
                 const count: number = ~~small.textContent!.trim()

@@ -61,7 +61,7 @@ export class ModuleKonachanCom extends AbstractModule {
             const tagsOfCategory: Tag[] = []
             let els = sidebarEl.querySelectorAll(tagLiClass)
             els.forEach((el) => {
-                const key = el.getAttribute('data-name')
+                const key = el.getAttribute('data-name')!.trim().replaceAll(' ', '_')
                 if (!key) { return }
                 const countEl = el.querySelector('.post-count')
                 if (!countEl || !countEl.textContent) { return }

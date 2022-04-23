@@ -80,7 +80,7 @@ export class ModuleRule34PahealNet extends AbstractModule {
             let els = sidebarEl.querySelectorAll(tagLiClass)
             els.forEach((a) => {
                 const count: number = ~~a.parentElement!.nextElementSibling!.textContent!.trim()
-                const enTag: string = a.textContent!
+                const enTag: string = a.textContent!.trim().replaceAll(' ', '_')
                 tagsOfCategory.push({ en: enTag, count })
             })
             fileTags[tagCategory] = tagsOfCategory

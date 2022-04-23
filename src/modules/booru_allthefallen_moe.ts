@@ -79,7 +79,7 @@ export class ModuleAllthefallenMoe extends AbstractModule {
             let els = sidebarEl.querySelectorAll(tagLiClass)
             els.forEach((el) => {
                 const count: number = parseInt(el.querySelector('.post-count')!.getAttribute('title')!)
-                const enTag: string = el.querySelector('.search-tag')!.textContent!.trim()
+                const enTag: string = el.querySelector('.search-tag')!.textContent!.trim().replaceAll(' ', '_')
                 tagsOfCategory.push({ en: enTag, count })
             })
             fileTags[tagCategory] = tagsOfCategory

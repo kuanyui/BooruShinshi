@@ -21,6 +21,7 @@ export abstract class AbstractModule {
     public abstract getPostContentPagePendingElements(): Array<Element | null>
     public abstract getPostId(): number
     public abstract collectImageInfoList(): ParsedImageInfo[]
+    /** Remember to `str.trim().replaceAll(' ', '_')` */
     public abstract collectTags(): FileTags
 }
 
