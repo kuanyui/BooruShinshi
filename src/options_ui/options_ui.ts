@@ -371,6 +371,20 @@ function preprocessDOM() {
         tippy(el, { allowHTML: true, content: doc + '<br/><br/>Click to copy to clipboard.' })
         container.append(el)
     }
+    tippy(q('#fileName_fileNameMaxCharacterLength'),
+        {
+            allowHTML: true, content: `
+        Range is 40~250. <br/><br/>
+        Notice: this depends on your OS and file system, if you set too long, it may cause error or cannot work correctly. <br/><br/>
+        References of some common file system file name length limit:<br/>
+        <table>
+         <tr><td><code>BTRFS</code></td>   <td>255 bytes</td></tr>
+         <tr><td><code>exFAT</code></td>   <td>255 UTF-16 characters</td></tr>
+         <tr><td><code>ext3</code></td>    <td>255 bytes</td></tr>
+         <tr><td><code>ext4</code></td>    <td>255 bytes</td></tr>
+         <tr><td><code>NTFS</code></td>    <td>255 characters</td></tr>
+         <tr><td><code>XFS</code></td>     <td>255 bytes</td></tr>
+        </table>` })
 }
 
 function validateInput(el: HTMLInputElement) {

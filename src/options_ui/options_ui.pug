@@ -127,7 +127,7 @@ html
       +checkbox('ui_buttonForCloseTab'): span An extra button for closing current tab.
       h2 File Name
       -var id = 'fileName_fileNameMaxCharacterLength'
-      +sub_block(id, "Max Filename Length (40-255)"): input(id=id type="number" min="40" max="255" autovalidator)
+      +sub_block(id, "Max Filename Character Length"): input(id=id type="number" min="40" max="250" autovalidator)
       -var id = 'fileName_fileNameTemplate'
       +sub_block(id, "Filename Template")
         textarea.monospace(id=id type="text" minlength="0" maxlength="240" autovalidator)
