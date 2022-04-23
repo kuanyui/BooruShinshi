@@ -159,11 +159,20 @@
     box-shadow: 0 0 0 1px var(--in-content-border-active),
                 0 0 0 4px var(--in-content-border-active-shadow);
   }
+  button:not(:disabled),
+  select:not(:disabled) {
+  }
   button,
   select {
     background: var(--in-content-button-background-mixed);
     border: 1px solid var(--in-content-border-hover-mixed);
     color: var(--in-content-text-color);
+    cursor: pointer;
+  }
+  button:disabled,
+  select:disabled {
+    filter: saturate(0) opacity(0.3);
+    cursor: not-allowed;
   }
   button:hover,
   select:hover {

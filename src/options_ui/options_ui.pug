@@ -73,8 +73,8 @@ html
       margin: 8px;
     }
     .spacer {
-      width: 6px;
-      height: 6px;
+      width: 8px;
+      height: 8px;
     }
     .actionButtonContainer button {
       width: 75px;
@@ -114,6 +114,10 @@ html
     select {
       min-width: 20px !important;
     }
+    tr.highlighted td {
+      background-color: var(--blue-50);
+      color: #fff;
+    }
 
   form
     div
@@ -149,7 +153,7 @@ html
           //- type="button" to avoid <form> submitting
           button.actBtn.add(type="button") #[.emoji ➕] Add
           button.actBtn.delete(type="button") #[.emoji ❌] Delete
-          .spacer
+          .spacer(style="flex-grow: 1;")
           button.actBtn.moveTop(type="button") #[.emoji ⏫] Top
           .spacer
           button.actBtn.moveUp(type="button") #[.emoji ⬆️] Up
@@ -160,7 +164,7 @@ html
           thead
             tr
               th Rule Type
-              th Matcher
+              th(style="width: 100%;") Matcher
               th Folder Name
           tbody
             tr

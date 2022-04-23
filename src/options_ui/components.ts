@@ -18,7 +18,13 @@ export function mkelTd(...children: HTMLElement[]): HTMLTableCellElement {
 export function mkelRuleCustomTagInput(modelValue: string[], changeCb: (nv: string[]) => void): HTMLInputElement {
     const input = document.createElement('input')
     input.value = modelValue.join(' ')
-    input.onchange = () => { changeCb(input.value.split(' ')) }
+    input.onchange = () => {
+        input.value = input.value.trim().replace(/  +/g, ' ')  // remove duplicated spaces
+        changeCb(input.value.split(' '))
+    }
+    input.placeholder = "(Tags list separated by space)"
+    tippy(input, { allowHTML: true, content: "Please input tags separated by space. Example: <code>hayasaka_ai maid</code>. Notice that if left empty, this rule will be ignored." })
+    input.required = true
     input.style.minWidth = '0px'
     input.style.width = '100%'
     return input
@@ -26,9 +32,14 @@ export function mkelRuleCustomTagInput(modelValue: string[], changeCb: (nv: stri
 export function mkelRuleDirNameInput(modelValue: string, changeCb: (nv: string) => void): HTMLInputElement {
     const input = document.createElement('input')
     input.value = modelValue
-    input.onchange = () => { changeCb(input.value) }
+    input.onchange = () => {
+        input.value = input.value.trim()
+        changeCb(input.value)
+    }
     input.style.minWidth = '0px'
     input.style.width = '120px'
+    input.placeholder = '(Optional)'
+    tippy(input, { content: "Empty means saved in root folder." })
     return input
 }
 export function mkelRuleTypeSelect(modelValue: rule_type_t, changeCb: (nv: rule_type_t) => void): HTMLSelectElement {
@@ -61,7 +72,7 @@ export function mkelRuleTagCategoriesSelect(modelValue: tag_category_t, changeCb
         opt.textContent = x
         selectEl.add(opt)
     }
-    selectEl.style.width = '60px'
+    selectEl.style.width = '90px'
     selectEl.value = modelValue
     selectEl.onchange = () => { changeCb(selectEl.value as any) }
     return selectEl
@@ -79,3 +90,22 @@ export function mkelRuleLogicGateSelect(modelValue: logic_gate_t, changeCb: (nv:
     selectEl.onchange = () => { changeCb(selectEl.value as any) }
     return selectEl
 }
+
+
+// function validateInput(el: HTMLInputElement) {
+//     switch (el.type) {
+//         case 'number': {
+//             if (el.value === '') { el.value = el.min; return }
+//             if(parseInt(el.value) < parseInt(el.min)) { el.value = el.min; return }
+//             if(parseInt(el.value) > parseInt(el.max)) { el.value = el.max; return }
+//         }
+//         case 'text': {
+//             if(parseInt(el.value) < el.minLength) { el.value ; return }
+//             if(parseInt(el.value) > el.maxLength) { el.value = el.value.slice(0, el.maxLength) ; return }
+//         }
+//     }
+// }
+// function setupValidator() {
+//     const input = q<HTMLInputElement, options_ui_input_query_t>('fileName_fileNameMaxCharacterLength')
+//     input.onblur = () => { validateInput(input) }
+// }
