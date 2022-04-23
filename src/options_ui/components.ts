@@ -23,7 +23,7 @@ export function mkelRuleCustomTagInput(modelValue: string[], changeCb: (nv: stri
         changeCb(input.value.split(' '))
     }
     input.placeholder = "(Tags list separated by space)"
-    tippy(input, { allowHTML: true, content: "Please input tags separated by space. Example: <code>hayasaka_ai maid</code>. Notice that if left empty, this rule will be ignored." })
+    tippy(input, { allowHTML: true, content: "Please input tags separated by space. Example: <code>hayasaka_ai maid highres</code>. <br/>Notice that if left empty, this rule will be ignored." })
     input.required = true
     input.style.minWidth = '0px'
     input.style.width = '100%'

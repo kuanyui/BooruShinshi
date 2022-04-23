@@ -13,7 +13,7 @@
  */
 
 import { tag_category_t } from "../common"
-import { ALL_RULE_TYPE, FolderClassifyRule, FolderClassifyRule__custom, options_ui_input_query_t, rule_type_t, storageManager } from "../options"
+import { ALL_FILENAME_TEMPLATE_TOKEN, ALL_RULE_TYPE, FilenameTemplateTokenDict, FolderClassifyRule, FolderClassifyRule__custom, options_ui_input_query_t, rule_type_t, storageManager } from "../options"
 import * as elHelper from './components'
 import tippy from 'tippy.js'
 import 'tippy.js/dist/tippy.css'
@@ -338,15 +338,38 @@ async function saveFormToLocalStorage() {
     })
 }
 
+function handleVisibilityOfTable() {
+    if (getCheckboxValue('#folder_enableClassify')) {
+        q('#classifyRuleTableContainer').style.display = 'unset'
+    } else {
+        q('#classifyRuleTableContainer').style.display = 'none'
+    }
+}
 
 function watchForm() {
     const form = document.querySelector('form')!
+    handleVisibilityOfTable()
     form.addEventListener('change', (ev) => {
         console.log('form.change', ev)
+        handleVisibilityOfTable()
         saveFormToLocalStorage()
     })
 }
+
+function preprocessDOM() {
+    const container = q('#availableTokensContainer')
+    for (const [k, doc] of Object.entries(FilenameTemplateTokenDict)) {
+        const val = `%${k}%`
+        const el = document.createElement('button')
+        el.className = 'availableFilenameToken'
+        el.textContent = val
+        el.onclick = () => navigator.clipboard.writeText(val)
+        tippy(el, { allowHTML: true, content: doc + '<br/><br/>Click to copy to clipboard.' })
+        container.append(el)
+    }
+}
 async function main() {
+    preprocessDOM()
     await loadFromLocalStorage()
     watchForm()
 }

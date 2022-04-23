@@ -8,17 +8,17 @@ type TypedStorageChange<T> = {
  * T is the custom storage interface
  */
 type TypedChangeDict<T> = { [K in keyof T]: TypedStorageChange<T[K]> }
-enum __FilenameTemplateToken {
-    'siteabbrev',
-    'sitefullname',
-    'postid',
-    'artist',
-    'copyright',
-    'character',
-    'generals'
+export const FilenameTemplateTokenDict = {
+    'siteabbrev': "Site's abbreviated name. For example, SankakuComplex is <code>SCX</code> ",
+    'sitefullname': "Site's full name. For example, <code>SankakuComplex</code>",
+    'postid': "Post's ID number it that site. For example: <code>123456</code>",
+    'artist': `The tag "artist" or "studio". If not found, show <code>unknown_artist</code>. If found multiple, use artist first, or use the one with the most posts count.`,
+    'series': `The canonical Booru tag is "copyright", that is "series" (ex: <code>k-on!</code>). If not found, show <code>no_series</code>. If found multiple, use the one with the most posts count.`,
+    'character': `The tag "character". If not found, show <code>no_character</code>. If found multiple, use the one with the most posts count.`,
+    'generals': `The tag "generals". This always pick multiple tags with <b>least</b> posts count, until the file name length limit reached.`,
 }
-type filename_template_token_t = keyof typeof __FilenameTemplateToken
-export const ALL_FILENAME_TEMPLATE_TOKEN: filename_template_token_t[] = Object.keys(__FilenameTemplateToken).filter(x=>typeof x !== 'number') as any[]
+type filename_template_token_t = keyof typeof FilenameTemplateTokenDict
+export const ALL_FILENAME_TEMPLATE_TOKEN: filename_template_token_t[] = Object.keys(FilenameTemplateTokenDict).filter(x=>typeof x !== 'number') as any[]
 
 export type filename_template_t = `${string}${filename_template_token_t}${string}`
 
@@ -144,7 +144,7 @@ class StorageManager {
             },
             fileName: {
                 fileNameMaxCharacterLength: 40,
-                fileNameTemplate: '{postid}[{artist}][{series}][{character}]{general}',
+                fileNameTemplate: '[%siteabbrev%](%postid%)[%artist%][%series%][%character%]%generals%',
                 tagSeparator: ','
             },
             folder: {

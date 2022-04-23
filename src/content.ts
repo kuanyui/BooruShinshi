@@ -168,7 +168,7 @@ function downloadImage (imgFileUrl: string) {
 const SEPARATOR = ','
 
 function generateFileBaseName (): string {
-    const tmp = curMod.collectTags()
+    const tmp: FileTags = curMod.collectTags()
     const id = curMod.getPostId()
     const artist: string = tmp.artist[0] ? `[${tmp.artist[0].en}]` : ''
     const studio: string = tmp.studio[0] ? `[${tmp.studio[0].en}]` : ''
