@@ -1,4 +1,4 @@
-.PHONY: dev build xpi xpi-server clear zip-repo icon deploy
+.PHONY: dev build xpi xpi-server clear zip-repo icon deploy test
 
 NAME="BooruShinshi"
 BIN:="node_modules/.bin"
@@ -12,6 +12,10 @@ watch: clear
 
 build: clear
 	npm run build
+
+test:
+	clear
+	${BIN}/mocha --require ts-node/register test/*.ts --exit
 
 xpi: clear build
 	mkdir -p ${XPI_DIR}

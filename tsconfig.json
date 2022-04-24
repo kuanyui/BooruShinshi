@@ -1,6 +1,7 @@
 {
   "include": [
     "*",  // What? `includes` is not same as `include` ???
+    "test/*.ts",
     "src/*.ts",
     "src/**/*.ts",
     "src/options_ui/*.ts",

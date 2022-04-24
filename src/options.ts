@@ -123,6 +123,29 @@ export type options_ui_input_id_t =
 `folder_${keyof MyOptions_Folder}`
 export type options_ui_input_query_t = `#${options_ui_input_id_t}`
 
+export const MY_STORAGE_ROOT_DEFAULT: MyStorageRoot = {
+    apiLevel: 2,
+    options: {
+        ui: {
+            showNotificationWhenStartingToDownload: true,
+            openLinkWithNewTab: false,
+            buttonForCloseTab: false,
+        },
+        fileName: {
+            fileNameMaxCharacterLength: 180,
+            fileNameTemplate: '[%siteabbrev%](%postid%)[%artist%][%series%][%character%]%generals%',
+            tagSeparator: ','
+        },
+        folder: {
+            downloadFolderName: '__BooruShinshi__',
+            enableClassify: true,
+            classifyRules: DEFAULT_FOLDER_CLASSIFY_RULES,
+        }
+    },
+    statistics: {
+        downloadCount: 0,
+    },
+}
 
 class StorageManager {
     // tsconfig: useDefineForClassFields = false
@@ -138,29 +161,7 @@ class StorageManager {
         this.initAndGetRoot()
     }
     getDefaultRoot(): MyStorageRoot {
-        return {
-            apiLevel: 2,
-            options: {
-                ui: {
-                    showNotificationWhenStartingToDownload: true,
-                    openLinkWithNewTab: false,
-                    buttonForCloseTab: false,
-                },
-                fileName: {
-                    fileNameMaxCharacterLength: 180,
-                    fileNameTemplate: '[%siteabbrev%](%postid%)[%artist%][%series%][%character%]%generals%',
-                    tagSeparator: ','
-                },
-                folder: {
-                    downloadFolderName: '__BooruShinshi__',
-                    enableClassify: true,
-                    classifyRules: DEFAULT_FOLDER_CLASSIFY_RULES,
-                }
-            },
-            statistics: {
-                downloadCount: 0,
-            },
-        }
+        return deepCopy(MY_STORAGE_ROOT_DEFAULT)
     }
     /** Set data object (can be deeply partial) into LocalStorage. */
     setRootPartially(_newRoot: DeepPartial<MyStorageRoot>): Promise<void> {
@@ -219,4 +220,4 @@ class StorageManager {
 
 }
 
-export const storageManager = new StorageManager()
+export const storageManager = (typeof browser !== 'undefined' ? new StorageManager() : null) as StorageManager
