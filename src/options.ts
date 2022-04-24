@@ -57,6 +57,9 @@ export interface FolderClassifyRule__custom {
 export interface FolderClassifyRule__auto {
     ruleType: 'TagCategory'
     tagCategory: tag_category_t
+    /** for example, if tagCategory is "artist", then the picture will be saved
+     * into `DOWNLOAD_ROOT/FOLDER_NAME/ARTIST_NAME/` */
+    folderName: `__AUTO__${tag_category_t}`
 }
 /** This rules must be the last one and existed forever.
  * If none of the above rule matched, use fallback, and save to fallback folder.
@@ -71,9 +74,10 @@ export const DEFAULT_FOLDER_CLASSIFY_RULES: FolderClassifyRule[] = [
     {ruleType: 'CustomTagMatcher', logicGate: 'AND', ifContainsTag: ['hayasaka_ai'], folderName: 'hayasaka_ai' },
     {ruleType: 'CustomTagMatcher', logicGate: 'OR', ifContainsTag: ['shani', 'shani_(the_witcher)'], folderName: 'the_witcher/shani' },
     {ruleType: 'CustomTagMatcher', logicGate: 'OR', ifContainsTag: ['the_witcher*'], folderName: 'the_witcher' },
-    {ruleType: 'TagCategory', tagCategory: 'artist'},
-    {ruleType: 'TagCategory', tagCategory: 'copyright'},
-    {ruleType: 'Fallback', folderName: '__NoCategory__' },
+    {ruleType: 'TagCategory', tagCategory: 'artist', folderName: '__AUTO__artist' },
+    {ruleType: 'TagCategory', tagCategory: 'character', folderName: '__AUTO__character' },
+    {ruleType: 'TagCategory', tagCategory: 'copyright', folderName: '__AUTO__copyright' },
+    {ruleType: 'Fallback', folderName: '__NO_CATEGORY__' },
 ]
 
 

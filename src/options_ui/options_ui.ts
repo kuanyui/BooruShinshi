@@ -177,6 +177,7 @@ class RuleTableHandler {
         this.model.unshift({
             ruleType: 'TagCategory',
             tagCategory: 'artist',
+            folderName: '__AUTO__artist'
         })
         this.createRuleTr(this.model[0], 'prepend')
         this.curIdx = 0
@@ -268,11 +269,17 @@ class RuleTableHandler {
                 break
             }
             case 'TagCategory': {
-                deepObjectShaper<any, typeof rule>(rule, { ruleType: 'TagCategory', tagCategory: 'artist' })
+                deepObjectShaper<any, typeof rule>(rule, { ruleType: 'TagCategory', tagCategory: 'artist', folderName: '__AUTO__artist' })
                 tr.appendChild(elHelper.mkelTd(
-                    elHelper.mkelRuleTagCategoriesSelect(rule.tagCategory, (nv) => { rule.tagCategory = nv })
+                    elHelper.mkelRuleTagCategoriesSelect(rule.tagCategory, (nv) => {
+                        rule.tagCategory = nv
+                        rule.folderName = `__AUTO__${nv}`  // This affect the other components, so needs rerender <tr>
+                        this.renderRuleTrParameters(tr, rule)
+                    })
                 ))
-                tr.appendChild(elHelper.mkelTd(elHelper.mkelTextContent('span', 'N/A')))
+                tr.appendChild(elHelper.mkelTd(
+                    elHelper.mkelRuleDirNameInput(rule.folderName, (nv) => { rule.folderName = nv as any })
+                ))
                 break
             }
             case 'Fallback': {

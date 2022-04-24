@@ -238,6 +238,10 @@ function analyzeFileInfo(imgFileUrl: string): FileInfo {
     const fileTags: FileTags = curMod.collectTags()
     for (const [category, tags] of Object.entries(fileTags)) {
         tags.sort(TAG_DESC_SORTER)
+        // To ensure maximum compatibility across different booru sites, lower case all tags.
+        for (const tag of tags) {
+            tag.en = tag.en.toLowerCase()
+        }
     }
     fileTags.general.reverse()
 
@@ -282,6 +286,7 @@ function generateFolderPath(tagDict: FileTags): string {
             case 'TagCategory': {
                 const tags = tagDict[r.tagCategory]
                 if (tags.length) {
+                    final.push(r.folderName)
                     final.push(tags[0].en)
                     break rulesLoop
                 }
