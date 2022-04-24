@@ -203,3 +203,16 @@ export function objectAssignPerfectly<T>(target: T, newValue: T) {
 export function deepCopy<T>(x: T): T {
     return JSON.parse(JSON.stringify(x))
 }
+
+export function toHtmlEntities (unsafeHtml: string) {
+    return unsafeHtml.replace(/./gm, function(s) {
+        return (s.match(/[a-z0-9\s]+/i)) ? s : "&#" + s.charCodeAt(0) + ";"
+    });
+}
+export function fromHtmlEntities (htmlStringContainingEntities: string) {
+    return (htmlStringContainingEntities + "").replace(/&#\d+;/gm, (s) => {
+        const m = s.match(/\d+/gm)!
+        const code: number = ~~m[0]
+        return String.fromCharCode(code)
+    })
+}

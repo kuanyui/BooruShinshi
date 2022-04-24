@@ -1,4 +1,4 @@
-import { FileTags, msgManager, MyMsg, ParsedImageInfo, supported_hostname_t, Tag } from "./common";
+import { FileTags, msgManager, MyMsg, ParsedImageInfo, supported_hostname_t, Tag, toHtmlEntities } from "./common";
 import { filename_template_token_t, MyOptions, MyStorageRoot, storageManager } from "./options";
 import * as modules from './modules'
 import { AbstractModule } from "./modules/abstract";
@@ -175,7 +175,10 @@ async function downloadImage(imgFileUrl: string) {
         filename: fileInfo.filePath
     })
     if (OPTIONS.ui.showNotificationWhenStartingToDownload) {
-        inPageNotify('Download Image', fileInfo.filePath)
+        const dirPathHtml = fileInfo.folderPath.split('/').map(seg => `<div>${toHtmlEntities(seg)}<b>${toHtmlEntities('/')}</b></div>`).join('')
+        const fileNameHtml = `<div>${fileInfo.fileFullName}</div>`
+        const msgHtml = dirPathHtml + fileNameHtml
+        inPageNotify('Download Image', msgHtml, true, 6000)
     }
 }
 
