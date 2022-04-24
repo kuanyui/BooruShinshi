@@ -43,9 +43,13 @@ export function mkelRuleDirNameInput(modelValue: string, changeCb: (nv: string) 
         changeCb(input.value)
     }
     input.style.minWidth = '0px'
-    input.style.width = '120px'
+    input.style.width = '150px'
     input.placeholder = '(Optional)'
-    tippy(input, { content: "Empty means saved in root folder." })
+    tippy(input, {
+        allowHTML: true,
+        content: `Empty means saved in root folder.<br/><br/>
+     You can use relative path like <code>the_witcher/shani</code>, it will automatically create children folders if need. <br/><br/>
+     But <code>../</code> is not allowed due to security restriction of browser.` })
     return input
 }
 export function mkelRuleTypeSelect(modelValue: rule_type_t, changeCb: (nv: rule_type_t) => void): HTMLSelectElement {
@@ -85,6 +89,8 @@ export function mkelRuleTagCategoriesSelect(modelValue: tag_category_t, changeCb
 }
 export function mkelRuleLogicGateSelect(modelValue: logic_gate_t, changeCb: (nv: logic_gate_t) => void): HTMLSelectElement {
     const selectEl = document.createElement('select')
+    const docs = '<ul>' + ALL_LOGIC_GATE.map(x => `<li><code>${x.label}</code>: ${x.doc}</li>`).join('\n') + '</ul>'
+    tippy(selectEl, { allowHTML: true, content: docs })
     for (const x of ALL_LOGIC_GATE) {
         const opt = document.createElement('option')
         opt.value = x.value

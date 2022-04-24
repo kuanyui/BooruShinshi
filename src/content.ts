@@ -255,6 +255,17 @@ function analyzeFileInfo(imgFileUrl: string): FileInfo {
     }
 }
 
+function tagPatternToRegexp(tagPattern: string): RegExp {
+    const tmp = tagPattern
+        .trim()
+        .replaceAll('.', '[.]')
+        .replaceAll('(', '\\(')
+        .replaceAll(')', '\\)')
+        .replaceAll('[', '\\[')
+        .replaceAll(']', '\\]')
+        .replaceAll('*', '.*')
+    return new RegExp('^' + tmp + '$', '')
+}
 /** Always without `/` suffix */
 function generateFolderPath(tagDict: FileTags): string {
     const final: string[] = []
@@ -279,9 +290,13 @@ function generateFolderPath(tagDict: FileTags): string {
             case 'CustomTagMatcher': {
                 let matched: boolean
                 if (r.logicGate === 'AND') {
-                    matched = r.ifContainsTag.every(x => FILE_ALL_TAGS.includes(x))
+                    matched = r.ifContainsTag.every(tagPat => {
+                        return FILE_ALL_TAGS.some(fileTag => fileTag.match(tagPatternToRegexp(tagPat)))
+                    })
                 } else {
-                    matched = r.ifContainsTag.some(x => FILE_ALL_TAGS.includes(x))
+                    matched = r.ifContainsTag.some(tagPat => {
+                        return FILE_ALL_TAGS.some(fileTag => fileTag.match(tagPatternToRegexp(tagPat)))
+                    })
                 }
                 if (matched) {
                     final.push(r.folderName)

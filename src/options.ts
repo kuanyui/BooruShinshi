@@ -43,8 +43,8 @@ export const ALL_RULE_TYPE: SelectOptionData<rule_type_t>[] = [
 export type rule_type_t = 'CustomTagMatcher' | 'TagCategory' | 'Fallback'
 export type logic_gate_t = 'AND' | 'OR'  // | 'CONTAINS_AND' | 'CONTAINS_OR'
 export const ALL_LOGIC_GATE: SelectOptionData<logic_gate_t>[] = [
-    {value: 'AND'   , label: "AND"   , doc: `<b>Exact string match + AND.</b> The image must have <b>all</b> tags in this list.`}      ,
-    {value: 'OR'    , label: "OR"    , doc: `<b>Exact string match + OR.</b> The image matches <b>at least one</b> tag in this list.`} ,
+    {value: 'AND'   , label: "AND"   , doc: `The image must have matched by <b>all</b> tag patterns in this list.`}      ,
+    {value: 'OR'    , label: "OR"    , doc: `The image matches <b>at least 1</b> tag pattern in this list.`} ,
     // {value: 'CONTAINS_AND', label: "CONTAINS+AND", doc: `<b>Partial string match + AND.</b> The image must have <b>all</b> tags in this list.`}    ,
     // {value: 'CONTAINS_OR' , label: "CONTAINS+OR" , doc: `<b>Partial string match + OR.</b> The image <b>at least one</b> tag in this list.`}       ,
 ]
