@@ -1,7 +1,7 @@
 {
-  "name": "booru-one-click-downloader",
-  "version": "0.9.1",
-  "description": "Switch search engine in one click",
+  "name": "booru-shinshi",
+  "version": "0.9.9",
+  "description": "ボール紳士：紳士のような（?）ボール (Booru) サイト間をエレガントに渡り歩く。Just one-click to download image with comprehensible filename & auto classify from Booru page, or search across different Booru sites.",
   "main": "dist/index.js",
   "dependencies": {
     "bootstrap": "^4.3.1",
