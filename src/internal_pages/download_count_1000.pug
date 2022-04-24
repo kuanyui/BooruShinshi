@@ -1,0 +1,47 @@
+include ./mixin.pug
+
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no")
+    link(rel="stylesheet" type="text/css" href="./common_style.css")
+  body
+  .root.i18nArea(lang="ja")
+    .banner
+      .logo: img(src="../../img/icon.png")
+      .title: h4 君はもうボール紳士で #[b 1000 枚目]の画像 / 動画がダウンロードされました！
+      .subtitle: i どう？ボール紳士が悪くないでしょう〜
+    article
+      hr
+      p 私は#ひどく#[b 珍しい休日の時間]を費やして、#[b 無料で自由]の Firefox のアドオンを作ってきました。
+      p: u もし、このアドオンが役に立ったと思われたなら、もっと素晴らしいアドオンの開発のために、#[b 少額の寄付]はよろしいじゃないかしら：
+        +donate_links()
+      hr
+    +footer_links()
+  .root.i18nArea(lang="en")
+    .banner
+      .logo: img(src="../../img/icon.png")
+      .title: h4 You have just downloaded #[b the 1000 th] image / video via Booru Shinshi!
+      .subtitle: i Booru Shinshi (ボール紳士) is not that bad, is it?
+    article
+      hr
+      p I have spent many of my #[b valuable holiday hours] working on these #[b free and libre] Firefox plugins without any repay.
+      p: u #[u If you find this Addon useful or helpful, please consider making some #[b donation] to support me to make more goods:]
+        +donate_links()
+      hr
+    +footer_links()
+  .root.i18nArea(lang="zh")
+    .banner
+      .logo: img(src="../../img/icon.png")
+      .title: h4 你已經用了ボール紳士下載了#[b 第 1000 張]圖片＆影片！
+      .subtitle: i 如何？ボール紳士還不錯用吧？
+    article
+      hr
+      p 我無償地花費了許多#[b 假日的寶貴時間]在製作#[b 免費且自由]的 Firefox 外掛。
+      p: u 如果你覺得這個 Addon 好用或有幫助到你，請考慮捐點小錢鼓勵繼續開發更多好東西吧。
+        +donate_links()
+      hr
+    +footer_links()
+  script(src="../internal_pages_script.js")
+
