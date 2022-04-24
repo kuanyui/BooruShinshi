@@ -12,7 +12,7 @@
  * remedy known factual inaccuracies. (Cited from MPL - 2.0, chapter 3.3)
  */
 
-import { deepObjectShaper, tag_category_t } from "../common"
+import { deepObjectShaper, sanitizeFilePath, tag_category_t } from "../common"
 import { ALL_FILENAME_TEMPLATE_TOKEN, ALL_RULE_TYPE, FilenameTemplateTokenDict, FolderClassifyRule, FolderClassifyRule__custom, options_ui_input_query_t, rule_type_t, storageManager } from "../options"
 import * as elHelper from './components'
 import tippy from 'tippy.js'
@@ -398,6 +398,10 @@ function preprocessDOM() {
     const uiHelp = q<HTMLElement>('.alert.uiSetting')
     uiHelp.innerHTML = `If you found it's annoying that Firefox always show the build-in download popup at top-right corner when download start, you can consider to change the setting <code>browser.download.alwaysOpenPanel</code> to <code>false</code> in <code>about:config</code>. See <a href="https://support.mozilla.org/en-US/questions/1370262">here</a> for more information.`
     uiHelp.querySelector('button')
+    const rootFolderNameInput = q<HTMLInputElement, options_ui_input_query_t>('#folder_downloadFolderName')
+    rootFolderNameInput.onchange = (ev) => {
+        rootFolderNameInput.value = sanitizeFilePath(rootFolderNameInput.value.trim())
+    }
 }
 
 function validateInput(el: HTMLInputElement) {

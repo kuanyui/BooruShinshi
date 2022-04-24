@@ -1,4 +1,4 @@
-import { ALL_OPTIONS_TAG_CATEGORY, ALL_TAG_CATEGORY, tag_category_t } from "../common"
+import { ALL_OPTIONS_TAG_CATEGORY, ALL_TAG_CATEGORY, sanitizeFilePath, tag_category_t } from "../common"
 import { ALL_LOGIC_GATE, ALL_RULE_TYPE, logic_gate_t, rule_type_t } from "../options"
 import tippy from 'tippy.js'
 import 'tippy.js/dist/tippy.css'
@@ -39,7 +39,7 @@ export function mkelRuleDirNameInput(modelValue: string, changeCb: (nv: string) 
     const input = document.createElement('input')
     input.value = modelValue
     input.onchange = () => {
-        input.value = input.value.trim()
+        input.value = sanitizeFilePath(input.value.trim())
         changeCb(input.value)
     }
     input.style.minWidth = '0px'
