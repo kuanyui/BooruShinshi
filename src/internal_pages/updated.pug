@@ -1,0 +1,66 @@
+mixin donate_links()
+  ul
+    li
+      a(href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=G4F7NM38ADPEC&amp;source=url")
+        img(src="../../img/paypal.svg" style="max-width: 100%;" width="24" height="24")
+        span PayPal
+    li
+      a(href="https://liberapay.com/onoono")
+        img(src="../../img/liberapay.svg" style="max-width: 100%;" width="24" height="24")
+        span LiberaPay
+    li
+      a(href="https://www.patreon.com/onoono")
+        img(src="../../img/patreon.svg" style="max-width: 100%;" width="24" height="24")
+        span Patreon
+</ul>
+
+doctype html
+html
+  head
+    meta(charset='utf-8')
+    meta(name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no")
+    link(rel="stylesheet" type="text/css" href="./common_style.css")
+  body
+  .root.i18nArea(lang="ja")
+    .banner
+      .logo: img(src="../../img/icon.png")
+      .title ボール紳士
+      .subtitle ボール紳士が成功にアップデートされました！
+    article
+      hr
+      p 今回の更新では多くの変更点がありますので、不具合がある場合は「BooruShinshiのアドオン設定 → Reset to Defaults」を試すか、Booru Shinshiの再インストールをお願いします。
+      p それでも解決しない場合は、GitHub に issue　を作成するか（アドオンページにリンクがあります）、私にメールを送って報告してください。
+      hr
+      p 私は私の休日の多くの時間を費やして、無料の Firefox のプラグインを作ってきました。
+      p もし、このAddonが役に立ったと思われたなら、少額の寄付かもしれないか：
+        +donate_links()
+  .root.i18nArea(lang="en")
+    .banner
+      .logo: img(src="../../img/icon.png")
+      .title Booru Shinshi
+      .subtitle Booru Shinsi (ボール紳士) is just upgraded successfully!
+    article
+      hr
+      p There are many changes in this update, so if it is a problem, please try "BooruShinshi's Addon Settings → Reset to Default" or reinstall Booru Shinshi.　
+      p If still not solve your problem, please go to GitHub to open an issue, or send me email to report.
+      hr
+      p I have spent many of my valuable holiday hours working on these free Firefox plugins for free.
+      p If you find this Addon useful or helpful, please consider making some donation:
+        +donate_links()
+  .root.i18nArea(lang="zh")
+    .banner
+      .logo: img(src="../../img/icon.png")
+      .title ボール紳士
+      .subtitle ボール紳士 (Booru Shinshi) 已經成功更新！
+    article
+      hr
+      p 這次更新新增了大量功能，如果遇到問題，請嘗試重新安裝、或者於 Addon 設定頁面中重設設定回預設值 (Reset to Defaults)。
+      p 如果仍然無法解決，請到 Github 開 issue（於 Addon 頁面中有連結）、或者來信回報。
+      hr
+      p 我無償地花費了許多假日的寶貴時間在製作免費且自由的 Firefox 外掛。
+      p 如果你覺得這個 Addon 好用或有幫助到你，請考慮捐點小錢吧。
+        +donate_links()
+
+
+  script(src="../internal_pages_script.js")
+

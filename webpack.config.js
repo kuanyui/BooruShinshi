@@ -6,6 +6,7 @@ const config = {
         background: './src/background.ts',
         content: './src/content.ts',
         'options_ui': './src/options_ui/options_ui.ts',
+        'internal_pages_script': './src/internal_pages/common_script.ts',
     },
     output: {
         filename: '[name].js',
@@ -38,7 +39,7 @@ const config = {
                     }
                 ]
             },
-            { test: /\.styl(us)?$/, use: [ 'vue-style-loader', 'css-loader', 'stylus-loader' ] },
+            { test: /\.styl(us)?$/, use: [ 'css-loader', 'stylus-loader' ] },
             { test: /\.(gif|svg|jpg|png)$/, loader: "file-loader" },
             { test: /\.css$/, use: ['style-loader', 'css-loader'] }
         ]
@@ -52,6 +53,14 @@ const config = {
             filename: 'options_ui.html',
             chunks: [],  // 'options_ui'  // IMPORTANT: If you don't add this manually, this shitty HtmlWebpackPlugin will add ALL entries into options_ui.html...
         }),
+        new HtmlWebpackPlugin({
+            template: './src/internal_pages/updated.pug',
+            filename: 'internal_pages/updated.html',
+            chunks: [],  // IMPORTANT: If you don't add this manually, this shitty HtmlWebpackPlugin will add ALL entries into <script>
+        }),
+        new CopyPlugin([
+            { from: 'src/internal_pages/common_style.css', to: 'internal_pages/common_style.css', force: true, toType: 'file' },
+        ]),
         new CopyPlugin([
             { from: 'src/options_ui/style/', to: 'options_ui_style/', force: true, toType: 'dir' },
         ]),

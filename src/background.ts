@@ -2,6 +2,17 @@ import { msgManager, MyMsg, MyMsg_DownloadLinkGotten, objectAssignPerfectly, san
 // import sanitizeFilename from 'sanitize-filename'
 import { MyStorageRoot, storageManager } from "./options"
 
+browser.runtime.onInstalled.addListener(function(details){
+    if (details.reason === "install"){
+        console.log("[browser.runtime.onInstalled] This is a first install!");
+    } else if (details.reason === "update"){
+        var thisVersion = browser.runtime.getManifest().version
+        browser.tabs.create({
+            url: browser.runtime.getURL('dist/internal_pages/updated.html')
+        })
+        console.log("[browser.runtime.onInstalled] Updated from " + details.previousVersion + " to " + thisVersion + "!")
+    }
+})
 
 /** This can be modify */
 const STORAGE: MyStorageRoot = storageManager.getDefaultRoot()
