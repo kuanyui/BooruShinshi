@@ -139,3 +139,66 @@ export function sanitizeFilePath(fileName: string) {
         .replace(reservedRe, '')
         .replace(windowsReservedRe, '')
 }
+
+/**
+ * @return true if modified the originalRoot. Else, false.
+ */
+export function deepObjectShaper<T, U>(originalRoot: T, wishedShape: U): boolean {
+    let modified = false
+    for (const k in originalRoot) {
+        if (!Object.keys(wishedShape).includes(k)) {
+            delete originalRoot[k]
+            modified = true
+        }
+    }
+    for (const k in wishedShape) {
+        // @ts-ignore
+        const ori = originalRoot[k]
+        const wish = wishedShape[k]
+        if (isObject(ori) && isObject(wish)) {
+            modified = modified || deepObjectShaper(ori, wish)
+        } else if (!Object.keys(originalRoot).includes(k)) {
+            // @ts-expect-error
+            originalRoot[k] = wishedShape[k]
+            modified = true
+        } else if (typeof ori !== typeof wish) {
+            // @ts-expect-error
+            originalRoot[k] = wishedShape[k]
+            modified = true
+        } else {
+            // skip
+        }
+    }
+    return modified
+}
+
+export function isObject<T extends object>(x: any): x is T {
+    return typeof x === 'object' &&
+        !Array.isArray(x) &&
+        x !== null
+}
+
+export type DeepPartial<T> = T extends object ? {
+    [P in keyof T]?: DeepPartial<T[P]>
+} : T
+
+export function deepMergeSubset<T>(originalRoot: T, subsetRoot: DeepPartial<T>): T {
+    for (const k in subsetRoot) {
+        if (isObject(subsetRoot[k])) {
+            // @ts-ignore
+            deepMergeSubset(originalRoot[k], subsetRoot[k])
+        } else {
+            // @ts-ignore
+            originalRoot[k] = subsetRoot[k]
+        }
+    }
+    return originalRoot
+}
+
+export function assertUnreachable (x: never) { x }
+export function objectAssignPerfectly<T>(target: T, newValue: T) {
+    return Object.assign(target, newValue)
+}
+export function deepCopy<T>(x: T): T {
+    return JSON.parse(JSON.stringify(x))
+}

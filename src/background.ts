@@ -1,20 +1,20 @@
-import { msgManager, MyMsg, MyMsg_DownloadLinkGotten, sanitizeFilePath } from "./common"
+import { msgManager, MyMsg, MyMsg_DownloadLinkGotten, objectAssignPerfectly, sanitizeFilePath } from "./common"
 // import sanitizeFilename from 'sanitize-filename'
-import { MyOptions, objectAssignPerfectly, storageManager } from "./options"
+import { MyStorageRoot, storageManager } from "./options"
 
 
 /** This can be modify */
-const STORAGE: MyOptions = storageManager.getDefaultData()
+const STORAGE: MyStorageRoot = storageManager.getDefaultRoot()
 
 // Storage
 console.log('[background] first time to get config from storage')
-storageManager.getData().then((obj) => {
+storageManager.getRoot().then((obj) => {
     objectAssignPerfectly(STORAGE, obj)
   })
 
-  storageManager.onDataChanged(async (changes) => {
+  storageManager.onOptionsChanged(async (changes) => {
     console.log('[background] storage changed!', changes)
-    objectAssignPerfectly(STORAGE, await storageManager.getData())
+    objectAssignPerfectly(STORAGE, await storageManager.getRoot())
 })
 
 
@@ -50,6 +50,11 @@ browser.runtime.onMessage.addListener((_msg: any, sender: browser.runtime.Messag
             saveAs: false,
             conflictAction: 'uniquify',
         }).then((id) => {
+            storageManager.setRootPartially({
+                statistics: {
+                    downloadCount: ++STORAGE.statistics.downloadCount
+                }
+            })
             console.log('download success, id =', id)
         }).catch((err) => {
             console.error('download failed:', err)

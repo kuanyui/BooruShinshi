@@ -1,4 +1,4 @@
-import { tag_category_t } from "./common"
+import { deepCopy, deepMergeSubset, deepObjectShaper, DeepPartial, tag_category_t } from "./common"
 
 type TypedStorageChange<T> = {
     oldValue: T
@@ -68,13 +68,21 @@ export const DEFAULT_FOLDER_CLASSIFY_RULES: FolderClassifyRule[] = [
 
 
 type api_level_t = 1 | 2
-export interface MyOptions {
+export interface MyStorageRoot {
     apiLevel: api_level_t,
+    options: MyOptions,
+    statistics: MyStatistics
+}
+
+export interface MyStatistics {
+    downloadCount: number
+}
+
+export interface MyOptions {
     ui: MyOptions_Ui,
     fileName: MyOptions_FileName,
     folder: MyOptions_Folder,
 }
-
 export interface MyOptions_Ui {
     showNotificationWhenStartingToDownload: boolean,
     /** Design for touchscreen */
@@ -115,13 +123,6 @@ export type options_ui_input_id_t =
 `folder_${keyof MyOptions_Folder}`
 export type options_ui_input_query_t = `#${options_ui_input_id_t}`
 
-export function assertUnreachable (x: never) { x }
-export function objectAssignPerfectly<T>(target: T, newValue: T) {
-    return Object.assign(target, newValue)
-}
-export function deepCopy<T>(x: T): T {
-    return JSON.parse(JSON.stringify(x))
-}
 
 class StorageManager {
     // tsconfig: useDefineForClassFields = false
@@ -134,94 +135,88 @@ class StorageManager {
         } else {
             this.area = browser.storage.local
         }
+        this.initAndGetRoot()
     }
-    getDefaultData(): MyOptions {
+    getDefaultRoot(): MyStorageRoot {
         return {
             apiLevel: 2,
-            ui: {
-                showNotificationWhenStartingToDownload: true,
-                openLinkWithNewTab: false,
-                buttonForCloseTab: false,
+            options: {
+                ui: {
+                    showNotificationWhenStartingToDownload: true,
+                    openLinkWithNewTab: false,
+                    buttonForCloseTab: false,
+                },
+                fileName: {
+                    fileNameMaxCharacterLength: 180,
+                    fileNameTemplate: '[%siteabbrev%](%postid%)[%artist%][%series%][%character%]%generals%',
+                    tagSeparator: ','
+                },
+                folder: {
+                    downloadFolderName: '__BooruShinshi__',
+                    enableClassify: true,
+                    classifyRules: DEFAULT_FOLDER_CLASSIFY_RULES,
+                }
             },
-            fileName: {
-                fileNameMaxCharacterLength: 180,
-                fileNameTemplate: '[%siteabbrev%](%postid%)[%artist%][%series%][%character%]%generals%',
-                tagSeparator: ','
+            statistics: {
+                downloadCount: 0,
             },
-            folder: {
-                downloadFolderName: '__BooruShinshi__',
-                enableClassify: true,
-                classifyRules: DEFAULT_FOLDER_CLASSIFY_RULES,
-            }
         }
     }
-    /** Set data object (can be partial) into LocalStorage. */
-    setDataPartially(d: Partial<MyOptions>): void {
-        const tmp = deepCopy(d)
-        console.log('[SET] TO STORAGE', tmp)
-        this.area.set(deepCopy(d) as any)
+    /** Set data object (can be deeply partial) into LocalStorage. */
+    setRootPartially(_newRoot: DeepPartial<MyStorageRoot>): Promise<void> {
+        const newRoot = deepCopy(_newRoot)
+        return this.getRoot().then((oriRoot) => {
+            deepMergeSubset(oriRoot, newRoot)
+            console.log('[SET] STORAGE, partial new ===', newRoot)
+            console.log('[SET] STORAGE, merged root ===', oriRoot)
+            this.area.set(oriRoot as any)
+        })
+    }
+    /** Without NO migrations */
+    initAndGetRoot(): Promise<MyStorageRoot> {
+        return this.area.get().then((_ori) => {
+            /** may be malformed */
+            const DEFAULT_ROOT = this.getDefaultRoot()
+            let modified: boolean
+            let root = _ori as unknown as MyStorageRoot
+            if (!root) {
+                root = DEFAULT_ROOT
+                modified = true
+            } else {
+                modified = deepObjectShaper(root, DEFAULT_ROOT)
+            }
+            console.log('[GET] browser.storage.sync.get() ORIGINAL', deepCopy(root))
+            if (modified) {
+                this.setRootPartially(root)
+            }
+            return root
+        })
     }
     /** Get data object from LocalStorage */
-    getData(): Promise<MyOptions> {
-        return this.area.get().then((_ori) => {
-            let needSave = false
-            /** may be malformed */
-            const ori = _ori as unknown as MyOptions
-            console.log('[GET] ORIGINAL', deepCopy(ori))
-            const DEFAULT = this.getDefaultData()
-            if (!ori || ori.apiLevel !== 2) {
-                this.setDataPartially(DEFAULT)
-                return DEFAULT
-            }
-            const final = this.getDefaultData()
-            // Removed deprecated fields
-            for (const _expectedKey in final) {
-                const expectedKey = _expectedKey as keyof MyOptions
-                if (ori[expectedKey] !== undefined) {  // expectedKey found in gotten object
-                    // @ts-ignore
-                    final[expectedKey] = ori[expectedKey]
-                } else {
-                    needSave = true
-                }
-            }
-            // ==================================
-            // MIGRATION BEGINS
-            // ==================================
-            // migrateLoop:
-            // while (final.apiLevel !== DEFAULT.apiLevel) {
-            //     switch (final.apiLevel) {
-            //         case undefined: {
-            //             continue migrateLoop
-            //         }
-            //         case 1: {
-            //             // Latest
-            //             break
-            //         }
-            //         default: {
-            //             assertUnreachable(final.apiLevel)
-            //         }
-            //     }
-            // }
-            // ==================================
-            // MIGRATION ENDS
-            // ==================================
-            console.log('[GET] FIXED', final)
-            if (needSave) {
-                this.setDataPartially(final)
-            }
-            return final
+    getRoot(): Promise<MyStorageRoot> {
+        return this.area.get().then((root) => {
+            return root as unknown as MyStorageRoot
         }).catch((err) => {
             console.error('Error when getting settings from browser.storage:', err)
-            return this.getDefaultData()
+            return this.initAndGetRoot()
         })
     }
-    onDataChanged(cb: (changes: TypedChangeDict<MyOptions>) => void) {
-        browser.storage.onChanged.addListener((changes, areaName) => {
+    getData<K extends keyof MyStorageRoot>(category: K): Promise<MyStorageRoot[K]> {
+        return this.getRoot().then((root) => {
+            return root[category]
+        })
+    }
+    onOptionsChanged(cb: (changes: TypedChangeDict<MyStorageRoot>) => void) {
+        browser.storage.onChanged.addListener((_changes, areaName) => {
+            const changes = _changes as TypedChangeDict<MyStorageRoot>
             if (areaName === 'sync' || areaName === 'local') {
-                cb(changes as TypedChangeDict<MyOptions>)
+                if (changes.options) {
+                    cb(changes)
+                }
             }
         })
     }
+
 }
 
 export const storageManager = new StorageManager()

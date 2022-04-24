@@ -12,7 +12,7 @@
  * remedy known factual inaccuracies. (Cited from MPL - 2.0, chapter 3.3)
  */
 
-import { tag_category_t } from "../common"
+import { deepObjectShaper, tag_category_t } from "../common"
 import { ALL_FILENAME_TEMPLATE_TOKEN, ALL_RULE_TYPE, FilenameTemplateTokenDict, FolderClassifyRule, FolderClassifyRule__custom, options_ui_input_query_t, rule_type_t, storageManager } from "../options"
 import * as elHelper from './components'
 import tippy from 'tippy.js'
@@ -78,19 +78,7 @@ function swap<T>(arr: T[], i: number, j: number): void {
     arr[i] = arr[j]
     arr[j] = tmp
 }
-function objectShaper<T, U>(ori: T, wishedShape: U): void {
-    for (const k in ori) {
-        if (!Object.keys(wishedShape).includes(k)) {
-            delete ori[k]
-        }
-    }
-    for (const k in wishedShape) {
-        if (!Object.keys(ori).includes(k)) {
-            // @ts-expect-error
-            ori[k] = wishedShape[k]
-        }
-    }
-}
+
 type rule_index_t = number
 class RuleTableHandler {
     private __curIdx: rule_index_t = -1
@@ -267,7 +255,7 @@ class RuleTableHandler {
         }
         switch (rule.ruleType) {
             case 'CustomTagMatcher': {
-                objectShaper<any, typeof rule>(rule, { ruleType: 'CustomTagMatcher', folderName: '', ifContainsTag: [], logicGate: 'OR' })
+                deepObjectShaper<any, typeof rule>(rule, { ruleType: 'CustomTagMatcher', folderName: '', ifContainsTag: [], logicGate: 'OR' })
                 const tmp = elHelper.mkelTd(
                     elHelper.mkelRuleLogicGateSelect(rule.logicGate, (nv) => { rule.logicGate = nv }),
                     elHelper.mkelRuleCustomTagInput(rule.ifContainsTag, (nv) => { rule.ifContainsTag = nv })
@@ -280,7 +268,7 @@ class RuleTableHandler {
                 break
             }
             case 'TagCategory': {
-                objectShaper<any, typeof rule>(rule, { ruleType: 'TagCategory', tagCategory: 'artist' })
+                deepObjectShaper<any, typeof rule>(rule, { ruleType: 'TagCategory', tagCategory: 'artist' })
                 tr.appendChild(elHelper.mkelTd(
                     elHelper.mkelRuleTagCategoriesSelect(rule.tagCategory, (nv) => { rule.tagCategory = nv })
                 ))
@@ -288,7 +276,7 @@ class RuleTableHandler {
                 break
             }
             case 'Fallback': {
-                objectShaper<any, typeof rule>(rule, { ruleType: 'Fallback', folderName: '' })
+                deepObjectShaper<any, typeof rule>(rule, { ruleType: 'Fallback', folderName: '' })
                 tr.appendChild(elHelper.mkelTd(elHelper.mkelTextContent('span', 'N/A')))
                 tr.appendChild(elHelper.mkelTd(
                     elHelper.mkelRuleDirNameInput(rule.folderName, (nv) => { rule.folderName = nv })
@@ -304,7 +292,7 @@ rth.onchange = (newVal) => {
 }
 
 async function loadFromLocalStorage() {
-    const d = await storageManager.getData()
+    const d = await storageManager.getData('options')
     setCheckboxValue('#ui_showNotificationWhenStartingToDownload', d.ui.showNotificationWhenStartingToDownload)
     setCheckboxValue('#ui_openLinkWithNewTab', d.ui.openLinkWithNewTab)
     setCheckboxValue('#ui_buttonForCloseTab', d.ui.buttonForCloseTab)
@@ -317,26 +305,28 @@ async function loadFromLocalStorage() {
 }
 
 function resetToDefault() {
-    storageManager.setDataPartially(storageManager.getDefaultData())
+    storageManager.setRootPartially(storageManager.getDefaultRoot())
     loadFromLocalStorage()
 }
 
 function saveFormToLocalStorage() {
-    storageManager.setDataPartially({
-        ui: {
-            showNotificationWhenStartingToDownload: getCheckboxValue('#ui_showNotificationWhenStartingToDownload'),
-            openLinkWithNewTab: getCheckboxValue('#ui_openLinkWithNewTab'),
-            buttonForCloseTab: getCheckboxValue('#ui_buttonForCloseTab'),
-        },
-        fileName: {
-            fileNameMaxCharacterLength: ~~getTextAreaValue('#fileName_fileNameMaxCharacterLength'),
-            fileNameTemplate: getTextAreaValue('#fileName_fileNameTemplate'),
-            tagSeparator: getSelectValue('#fileName_tagSeparator') as any,
-        },
-        folder: {
-            downloadFolderName: getTextAreaValue('#folder_downloadFolderName'),
-            enableClassify: getCheckboxValue('#folder_enableClassify'),
-            classifyRules: rth.model
+    storageManager.setRootPartially({
+        options: {
+            ui: {
+                showNotificationWhenStartingToDownload: getCheckboxValue('#ui_showNotificationWhenStartingToDownload'),
+                openLinkWithNewTab: getCheckboxValue('#ui_openLinkWithNewTab'),
+                buttonForCloseTab: getCheckboxValue('#ui_buttonForCloseTab'),
+            },
+            fileName: {
+                fileNameMaxCharacterLength: ~~getTextAreaValue('#fileName_fileNameMaxCharacterLength'),
+                fileNameTemplate: getTextAreaValue('#fileName_fileNameTemplate'),
+                tagSeparator: getSelectValue('#fileName_tagSeparator') as any,
+            },
+            folder: {
+                downloadFolderName: getTextAreaValue('#folder_downloadFolderName'),
+                enableClassify: getCheckboxValue('#folder_enableClassify'),
+                classifyRules: rth.model
+            }
         }
     })
     inPageNotify('Settings Saved', 'Modifications to settings are saved.')
@@ -390,7 +380,7 @@ function preprocessDOM() {
     resetFilenameTemplateBtn.type = "button" // prevent submitting <form>
     resetFilenameTemplateBtn.textContent = "Reset Template"
     resetFilenameTemplateBtn.onclick = () => {
-        const defaultValue = storageManager.getDefaultData().fileName.fileNameTemplate
+        const defaultValue = storageManager.getDefaultRoot().options.fileName.fileNameTemplate
         setTextAreaValue("#fileName_fileNameTemplate", defaultValue)
         saveFormToLocalStorage()
     }

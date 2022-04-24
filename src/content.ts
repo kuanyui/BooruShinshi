@@ -1,5 +1,5 @@
 import { FileTags, msgManager, MyMsg, ParsedImageInfo, supported_hostname_t, Tag } from "./common";
-import { filename_template_token_t, MyOptions, storageManager } from "./options";
+import { filename_template_token_t, MyOptions, MyStorageRoot, storageManager } from "./options";
 import * as modules from './modules'
 import { AbstractModule } from "./modules/abstract";
 import { inPageNotify } from "./inpage-notify";
@@ -36,15 +36,15 @@ browser.runtime.onMessage.addListener((_ev: any) => {
         showHideDownloadLinks()
     }
 })
-let OPTIONS = storageManager.getDefaultData()
-storageManager.getData().then((opts) => {
+let OPTIONS = storageManager.getDefaultRoot().options
+storageManager.getData('options').then((opts) => {
     OPTIONS = opts
     if (opts.ui.openLinkWithNewTab) {
         makeImgAlwaysOpenedWithNewTab()
     }
 })
 function fetchOptions(): Promise<MyOptions> {
-    return storageManager.getData().then((opts) => {
+    return storageManager.getData('options').then((opts) => {
         return OPTIONS = opts
     })
 }
@@ -309,7 +309,7 @@ async function showHideDownloadLinks() {
     const root = document.createElement('div')
     root.id = "BooruShinshi_DivForContentPage"
     const infoArr: ParsedImageInfo[] = curMod.collectImageInfoList()
-    if ((await storageManager.getData()).ui.buttonForCloseTab) {
+    if ((await storageManager.getData('options')).ui.buttonForCloseTab) {
         const closeTab = document.createElement('button')
         closeTab.textContent = 'Close Tab'
         closeTab.onclick = () => msgManager.sendToBg({ type: 'CloseTab' })
