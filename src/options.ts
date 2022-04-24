@@ -71,8 +71,8 @@ export const DEFAULT_FOLDER_CLASSIFY_RULES: FolderClassifyRule[] = [
     {ruleType: 'CustomTagMatcher', logicGate: 'AND', ifContainsTag: ['hayasaka_ai'], folderName: 'hayasaka_ai' },
     {ruleType: 'CustomTagMatcher', logicGate: 'OR', ifContainsTag: ['shani', 'shani_(the_witcher)'], folderName: 'the_witcher/shani' },
     {ruleType: 'CustomTagMatcher', logicGate: 'OR', ifContainsTag: ['the_witcher*'], folderName: 'the_witcher' },
-    {ruleType: 'TagCategory', tagCategory: 'copyright'},
     {ruleType: 'TagCategory', tagCategory: 'artist'},
+    {ruleType: 'TagCategory', tagCategory: 'copyright'},
     {ruleType: 'Fallback', folderName: '__NoCategory__' },
 ]
 
