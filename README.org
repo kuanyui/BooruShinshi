@@ -7,8 +7,9 @@
 This WebExtension improve your experience of browsing [[https://booru.org/][Booru]] (ボール, "board" in Japanese) sites:
 
 1. One-click to download image with comprehensible filename from a Booru site.
-2. One-click to search current keyword across different Booru sites.
-3. /(Optional)/ All image post to images will be opened with new tab /(this is very usable if you are using a touchscreen device. e.g. Microsoft Surface)./
+2. Auto classfication: auto decide which folder to save, by customized tag rules.
+3. One-click to search current keyword across different Booru sites.
+4. /(Optional)/ All image post to images will be opened with new tab /(this is very usable if you are using a touchscreen device. e.g. Microsoft Surface)./
 
 This is a 100% safe & clean FLOSS. More info about permission, issue, development is on [[https://github.com/kuanyui/BooruShinshi][Github]]
 
