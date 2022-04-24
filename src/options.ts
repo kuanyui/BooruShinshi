@@ -27,21 +27,27 @@ export const ALL_FILENAME_TEMPLATE_TOKEN: filename_template_token_t[] = Object.k
  *
  * - 根據 artist 名稱分資料假
  */
-interface SelectOptionData {
-    value: string,
+interface SelectOptionData<T> {
+    value: T,
     label: string,
     doc: string,
 }
 
 /** Rules are ordering-sensitive */
-export const ALL_RULE_TYPE = [
+export const ALL_RULE_TYPE: SelectOptionData<rule_type_t>[] = [
     {value: 'CustomTagMatcher', label: "Custom",     doc: '<b>Custom tag matcher</b>. Custom your rule. When an image match the conditions you set, save it to a specific folder.'},
     {value: 'TagCategory',      label: "Auto",       doc: '<b>Auto choose tag category as folder name</b>. Notice, when an image has multiple tags in one category (for example, multiple "artist" tags), it will choose the shortest one. So the result may not be what you want.'},
     {value: 'Fallback',         label: "Fallback",   doc: '<b>Default rule</b>. When none of above rule matched, save to this folder. This is the default rule, which cannot be removed nor moved.'},
-] as const
+]
 // type _infer_value_in_arr<T> = T extends {value: infer U}[] ? U : unknown
 export type rule_type_t = 'CustomTagMatcher' | 'TagCategory' | 'Fallback'
-export type logic_gate_t = 'AND' | 'OR'
+export type logic_gate_t = 'AND' | 'OR'  // | 'CONTAINS_AND' | 'CONTAINS_OR'
+export const ALL_LOGIC_GATE: SelectOptionData<logic_gate_t>[] = [
+    {value: 'AND'   , label: "AND"   , doc: `<b>Exact string match + AND.</b> The image must have <b>all</b> tags in this list.`}      ,
+    {value: 'OR'    , label: "OR"    , doc: `<b>Exact string match + OR.</b> The image matches <b>at least one</b> tag in this list.`} ,
+    // {value: 'CONTAINS_AND', label: "CONTAINS+AND", doc: `<b>Partial string match + AND.</b> The image must have <b>all</b> tags in this list.`}    ,
+    // {value: 'CONTAINS_OR' , label: "CONTAINS+OR" , doc: `<b>Partial string match + OR.</b> The image <b>at least one</b> tag in this list.`}       ,
+]
 export interface FolderClassifyRule__custom {
     ruleType: 'CustomTagMatcher',
     logicGate: logic_gate_t,
@@ -61,6 +67,10 @@ export interface FolderClassifyRule__fallback {
 }
 export type FolderClassifyRule =  FolderClassifyRule__custom | FolderClassifyRule__auto | FolderClassifyRule__fallback
 export const DEFAULT_FOLDER_CLASSIFY_RULES: FolderClassifyRule[] = [
+    {ruleType: 'CustomTagMatcher', logicGate: 'AND', ifContainsTag: ['hayasaka_ai', 'maid'], folderName: 'hayasaka_ai/maid' },
+    {ruleType: 'CustomTagMatcher', logicGate: 'AND', ifContainsTag: ['hayasaka_ai'], folderName: 'hayasaka_ai' },
+    {ruleType: 'CustomTagMatcher', logicGate: 'OR', ifContainsTag: ['shani', 'shani_(the_witcher)'], folderName: 'the_witcher/shani' },
+    {ruleType: 'CustomTagMatcher', logicGate: 'OR', ifContainsTag: ['the_witcher*'], folderName: 'the_witcher' },
     {ruleType: 'TagCategory', tagCategory: 'copyright'},
     {ruleType: 'TagCategory', tagCategory: 'artist'},
     {ruleType: 'Fallback', folderName: '__NoCategory__' },
@@ -164,14 +174,17 @@ class StorageManager {
         return deepCopy(MY_STORAGE_ROOT_DEFAULT)
     }
     /** Set data object (can be deeply partial) into LocalStorage. */
-    setRootPartially(_newRoot: DeepPartial<MyStorageRoot>): Promise<void> {
-        const newRoot = deepCopy(_newRoot)
-        return this.getRoot().then((oriRoot) => {
-            deepMergeSubset(oriRoot, newRoot)
-            console.log('[SET] STORAGE, partial new ===', newRoot)
-            console.log('[SET] STORAGE, merged root ===', oriRoot)
-            this.area.set(oriRoot as any)
+    setRootSubsetPartially(subset: DeepPartial<MyStorageRoot>): Promise<void> {
+        const newRoot = deepCopy(subset)
+        return this.getRoot().then((existingRoot) => {
+            deepMergeSubset(existingRoot, newRoot)
+            console.log('[SET] STORAGE, subset (new) ===', newRoot)
+            console.log('[SET] STORAGE, merged (ori) ===', existingRoot)
+            this.area.set(existingRoot as any)
         })
+    }
+    setRoot(newRoot: MyStorageRoot) {
+        this.area.set(newRoot as any)
     }
     /** Without NO migrations */
     initAndGetRoot(): Promise<MyStorageRoot> {
@@ -188,7 +201,7 @@ class StorageManager {
             }
             console.log('[GET] browser.storage.sync.get() ORIGINAL', deepCopy(root))
             if (modified) {
-                this.setRootPartially(root)
+                this.setRoot(root)
             }
             return root
         })

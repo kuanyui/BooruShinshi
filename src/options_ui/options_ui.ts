@@ -305,12 +305,12 @@ async function loadFromLocalStorage() {
 }
 
 function resetToDefault() {
-    storageManager.setRootPartially(storageManager.getDefaultRoot())
+    storageManager.setRootSubsetPartially(storageManager.getDefaultRoot())
     loadFromLocalStorage()
 }
 
 function saveFormToLocalStorage() {
-    storageManager.setRootPartially({
+    storageManager.setRootSubsetPartially({
         options: {
             ui: {
                 showNotificationWhenStartingToDownload: getCheckboxValue('#ui_showNotificationWhenStartingToDownload'),

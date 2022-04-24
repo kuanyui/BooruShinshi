@@ -1,5 +1,5 @@
 import { ALL_OPTIONS_TAG_CATEGORY, ALL_TAG_CATEGORY, tag_category_t } from "../common"
-import { ALL_RULE_TYPE, logic_gate_t, rule_type_t } from "../options"
+import { ALL_LOGIC_GATE, ALL_RULE_TYPE, logic_gate_t, rule_type_t } from "../options"
 import tippy from 'tippy.js'
 import 'tippy.js/dist/tippy.css'
 
@@ -23,7 +23,13 @@ export function mkelRuleCustomTagInput(modelValue: string[], changeCb: (nv: stri
         changeCb(input.value.split(' '))
     }
     input.placeholder = "(Tags list separated by space)"
-    tippy(input, { allowHTML: true, content: "Please input tags separated by space. Example: <code>hayasaka_ai maid highres</code>. <br/>Notice that if left empty, this rule will be ignored." })
+    tippy(input, {
+        allowHTML: true,
+        content: `Please input tags separated by space. Example: <code>hayasaka_ai maid highres</code>. <br/><br/>
+        Star symbol <code>*</code> is available. For example, <code>the_witcher*</code> can match <code>the_witcher</code>, <code>the_witcher_(series)</code>, <code>the_witcher_3_(hearts_of_stone)</code>...etc. <br/><br/>
+        Notice that if left empty, this rule will be ignored.
+        `
+    })
     input.required = true
     input.style.minWidth = '0px'
     input.style.width = '100%'
@@ -79,10 +85,10 @@ export function mkelRuleTagCategoriesSelect(modelValue: tag_category_t, changeCb
 }
 export function mkelRuleLogicGateSelect(modelValue: logic_gate_t, changeCb: (nv: logic_gate_t) => void): HTMLSelectElement {
     const selectEl = document.createElement('select')
-    for (const x of ['AND', 'OR']) {
+    for (const x of ALL_LOGIC_GATE) {
         const opt = document.createElement('option')
-        opt.value = x
-        opt.textContent = x
+        opt.value = x.value
+        opt.textContent = x.label
         selectEl.add(opt)
     }
     selectEl.style.width = '60px'

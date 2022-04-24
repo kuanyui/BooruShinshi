@@ -62,8 +62,8 @@ export function makeEmptyFileTags(): FileTags {
 
 export type tag_category_t = 'copyright' | 'character' | 'artist' | 'studio' | 'general' | 'meta'
 export const ALL_TAG_CATEGORY: tag_category_t[] = ['copyright', 'character', 'artist', 'studio', 'general', 'meta']
-export type options_tag_category_t = tag_category_t | '__any__'
-export const ALL_OPTIONS_TAG_CATEGORY: options_tag_category_t[] = ['__any__', ...ALL_TAG_CATEGORY]
+export type options_tag_category_t = tag_category_t
+export const ALL_OPTIONS_TAG_CATEGORY: options_tag_category_t[] =  ALL_TAG_CATEGORY
 
 export type FileTags = Record<tag_category_t, Tag[]>
 export type FileTagsElementClass = Record<tag_category_t, string>
@@ -182,7 +182,8 @@ export type DeepPartial<T> = T extends object ? {
     [P in keyof T]?: DeepPartial<T[P]>
 } : T
 
-export function deepMergeSubset<T>(originalRoot: T, subsetRoot: DeepPartial<T>): T {
+export function deepMergeSubset<T>(originalRoot: T, subsetRoot: DeepPartial<T>): void {
+    if (!originalRoot) { return }
     for (const k in subsetRoot) {
         if (isObject(subsetRoot[k])) {
             // @ts-ignore
@@ -192,7 +193,7 @@ export function deepMergeSubset<T>(originalRoot: T, subsetRoot: DeepPartial<T>):
             originalRoot[k] = subsetRoot[k]
         }
     }
-    return originalRoot
+    return
 }
 
 export function assertUnreachable (x: never) { x }

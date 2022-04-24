@@ -7,9 +7,9 @@ browser.runtime.onInstalled.addListener(function(details){
         console.log("[browser.runtime.onInstalled] This is a first install!");
     } else if (details.reason === "update"){
         var thisVersion = browser.runtime.getManifest().version
-        browser.tabs.create({
-            url: browser.runtime.getURL('dist/internal_pages/updated.html')
-        })
+        //browser.tabs.create({
+        //    url: browser.runtime.getURL('dist/internal_pages/updated.html')
+        //})
         console.log("[browser.runtime.onInstalled] Updated from " + details.previousVersion + " to " + thisVersion + "!")
     }
 })
@@ -61,7 +61,7 @@ browser.runtime.onMessage.addListener((_msg: any, sender: browser.runtime.Messag
             saveAs: false,
             conflictAction: 'uniquify',
         }).then((id) => {
-            storageManager.setRootPartially({
+            storageManager.setRootSubsetPartially({
                 statistics: {
                     downloadCount: ++STORAGE.statistics.downloadCount
                 }
