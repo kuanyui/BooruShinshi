@@ -13,7 +13,7 @@ export class ModuleTbibOrg extends AbstractModule {
         return 'TBIB'
     }
     abbrev (): string {
-        return 'TBIB'
+        return 'TBI'
     }
     inPostListPage(): boolean {
         const params = new URLSearchParams(location.search)

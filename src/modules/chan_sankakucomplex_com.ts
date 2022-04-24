@@ -13,7 +13,7 @@ export class ModuleChanSankakuComplexCom extends AbstractModule {
         return 'SankakuComplex'
     }
     abbrev(): string {
-        return 'SC'
+        return 'SCX'
     }
     inPostListPage(): boolean {
         return location.pathname === '/' ||
