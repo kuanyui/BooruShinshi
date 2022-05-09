@@ -46,7 +46,11 @@ For more information please see [[https://github.com/kuanyui/BooruShinshi][GitHu
 - [[https://addons.mozilla.org/en-US/firefox/addon/booru-shinshi/][Mozilla Add-ons]]
 
 * Screenshot
-[[https://addons.cdn.mozilla.net/user-media/previews/full/217/217427.png]]
+[[https://addons.mozilla.org/user-media/previews/full/268/268825.png?modified=1650811632]]
+[[https://addons.mozilla.org/user-media/previews/full/268/268821.png?modified=1650811625]]
+[[https://addons.mozilla.org/user-media/previews/full/268/268750.png?modified=1650811625]]
+[[https://addons.mozilla.org/user-media/previews/full/268/268751.png?modified=1650811625]]
+[[https://addons.mozilla.org/user-media/previews/full/268/268771.png?modified=1650811625]]
 
 * Supported Browser
 - Firefox for Desktop >= 61
