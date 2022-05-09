@@ -2,6 +2,7 @@
   "include": [
     "*",  // What? `includes` is not same as `include` ???
     "test/*.ts",
+    "script/*.ts",
     "src/*.ts",
     "src/**/*.ts",
     "src/options_ui/*.ts",
@@ -16,7 +17,7 @@
   },
   "compilerOptions": {
     "typeRoots": ["node_modules/@types", "node_modules/web-ext-types"],  // Useless for .vue
-    "types": ["web-ext-types", "sanitize-filename"],   // Useless for .vue
+    "types": ["web-ext-types", "sanitize-filename", "node"],   // Useless for .vue
     "target": "esnext",
     "allowSyntheticDefaultImports": true,
     "useDefineForClassFields": false,  // Important. See  https://www.typescriptlang.org/tsconfig#useDefineForClassFields
@@ -28,5 +29,12 @@
     "strict": true,
     "removeComments": true,
     "moduleResolution": "node",  // without this, vue cannot be import by TypeScript
+  },
+  // override tsconfig for ts-node only.
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs",
+      "target": "es6",
+    }
   }
 }

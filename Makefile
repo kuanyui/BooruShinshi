@@ -33,3 +33,6 @@ zip-repo: clear
 
 deploy: zip-repo xpi
 	@echo "Done!"
+
+update-readme-screenshot:
+	${BIN}/ts-node -P ./tsconfig.json ./script/update-readme-screenshot.ts
