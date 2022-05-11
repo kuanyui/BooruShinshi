@@ -216,3 +216,14 @@ export function fromHtmlEntities (htmlStringContainingEntities: string) {
         return String.fromCharCode(code)
     })
 }
+
+export function createDebounceFunction (callback: () => any, durMs: number): () => any {
+    let timeoutId: number
+    return () => {
+        clearTimeout(timeoutId)
+        timeoutId = window.setTimeout(() => {
+            callback()
+            timeoutId = -1
+        }, durMs)
+    }
+}

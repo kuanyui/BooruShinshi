@@ -1,4 +1,4 @@
-import { FileTags, msgManager, MyMsg, ParsedImageInfo, supported_hostname_t, Tag, toHtmlEntities } from "./common";
+import { createDebounceFunction, FileTags, msgManager, MyMsg, ParsedImageInfo, supported_hostname_t, Tag, toHtmlEntities } from "./common";
 import { filename_template_token_t, MyOptions, MyStorageRoot, storageManager } from "./options";
 import ALL_MODULE_CLASS from './modules'
 import { AbstractModule } from "./modules/abstract";
@@ -38,19 +38,14 @@ function fetchOptions(): Promise<MyOptions> {
 
 function makeImgAlwaysOpenedWithNewTab() {
     const selector: string = curMod.getPostLinkElementSelector()
-    window.setTimeout(() => {
-        document.querySelectorAll(selector).forEach(x => { _makeAnchorElementOpenedWithTab(x) })
-    }, 3000)
-    let timeoutId = -1
+    const domChanger = createDebounceFunction(() => {
+        document.querySelectorAll(selector).forEach(anchorEl => { _makeAnchorElementOpenedWithTab(anchorEl) })
+    }, 100)
     const observer = new MutationObserver(function (mutations, me) {
         // TODO: The advertisements will trigger lots of unwanted mutations here. Maybe try to limit query within post link area.
         // console.log('mutations ===>', mutations.map(x=>x.target))
         // mutations.forEach(mut => mut.target.querySelectorAll(selector).forEach(x => { x.setAttribute('target', '_blank') }))
-        // Debounce timeout
-        window.clearTimeout(timeoutId)
-        window.setTimeout(() => {
-            document.querySelectorAll(selector).forEach(x => { _makeAnchorElementOpenedWithTab(x) })
-        }, 2000)
+        domChanger()
     })
     observer.observe(window.document, {
         childList: true,
@@ -65,7 +60,6 @@ function _makeAnchorElementOpenedWithTab(el: Element) {
     if (!a.href) { return }
     // @ts-ignore
     a.onclick = function (ev) {
-        console.log('Shit', Date.now())
         ev.preventDefault()
         ev.stopPropagation()
         // Open with new tab, but don't focus to the new tab.
