@@ -39,16 +39,16 @@ export class ModuleRule34XXX extends AbstractModule {
     getLinkElementsToPost(): HTMLAnchorElement[] | NodeListOf<HTMLAnchorElement> {
         return document.querySelectorAll('#post-list .content span.thumb a')
     }
-    getPostContentPagePendingElements(): Array<Element | null> {
+    ifPostContentPageIsReady(): boolean {
         return [
             document.querySelector('#image') || document.querySelector('#gelcomVideoContainer'),
             document.querySelector('#tag-sidebar'),
-        ]
+        ].every(x=>!!x)
     }
-    getPostListPagePendingElements(): Array<Element | null> {
+    ifPostLinkPageIsReady(): boolean {
         return [
             document.querySelector('#paginator')
-        ]
+        ].every(x=>!!x)
     }
     getPaginationInfo(): PaginationInfo {
         const root = document.querySelector('#paginator')!

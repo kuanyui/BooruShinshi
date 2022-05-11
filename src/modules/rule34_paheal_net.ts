@@ -35,17 +35,17 @@ export class ModuleRule34PahealNet extends AbstractModule {
         arr.forEach((a) => a.onclick = null)  // TODO: Dirty hack. This code should not be written in here.
         return arr
     }
-    getPostContentPagePendingElements(): Array<Element | null> {
+    ifPostContentPageIsReady(): boolean {
         return [
             document.querySelector('#main_image'),
             document.querySelector('#Tagsleft'),
             document.querySelector('#ImageInfo'),
-        ]
+        ].every(x=>!!x)
     }
-    getPostListPagePendingElements(): Array<Element | null> {
+    ifPostLinkPageIsReady(): boolean {
         return [
             document.querySelector('#paginator')
-        ]
+        ].every(x=>!!x)
     }
     getPaginationInfo(): PaginationInfo {
         const root = document.querySelector('#paginator .blockbody')!

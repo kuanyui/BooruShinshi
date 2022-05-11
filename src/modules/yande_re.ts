@@ -34,16 +34,16 @@ export class ModuleYandeRe extends AbstractModule {
     getLinkElementsToPost(): HTMLAnchorElement[] | NodeListOf<HTMLAnchorElement> {
         return document.querySelectorAll('#post-list-posts a.thumb')
     }
-    getPostContentPagePendingElements(): Array<Element | null> {
+    ifPostContentPageIsReady(): boolean {
         return [
             document.querySelector('#tag-sidebar'),
             document.querySelector('#highres'),
-        ]
+        ].every(x=>!!x)
     }
-    getPostListPagePendingElements(): Array<Element | null> {
+    ifPostLinkPageIsReady(): boolean {
         return [
             document.querySelector('#paginator')
-        ]
+        ].every(x=>!!x)
     }
     getPaginationInfo(): PaginationInfo {
         const p = document.querySelector<HTMLAnchorElement>('#paginator .pagination a.previous_page')!

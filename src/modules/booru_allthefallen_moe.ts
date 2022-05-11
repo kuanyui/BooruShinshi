@@ -41,18 +41,18 @@ export class ModuleAllthefallenMoe extends AbstractModule {
             ...Array.from(document.querySelectorAll('#has-children-relationship-preview a'))
         ]
     }
-    getPostContentPagePendingElements(): Array<Element | null> {
+    ifPostContentPageIsReady(): boolean {
         return [
             document.querySelector('#image'),
             document.querySelector('#tag-list'),
             document.querySelector('#post-information'),
             document.querySelector('#post-options'),
-        ]
+        ].every(x=>!!x)
     }
-    getPostListPagePendingElements(): Array<Element | null> {
+    ifPostLinkPageIsReady(): boolean {
         return [
             document.querySelector('.paginator')
-        ]
+        ].every(x=>!!x)
     }
     getPaginationInfo(): PaginationInfo {
         const p = document.querySelector<HTMLAnchorElement>('a.paginator-prev')!

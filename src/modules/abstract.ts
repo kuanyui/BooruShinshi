@@ -18,9 +18,9 @@ export abstract class AbstractModule {
      * That's to say, when in a post content page, it will wait for all "pending
      * elements" are ready, them start to parse page + insert floating buttons.
      */
-    public abstract getPostContentPagePendingElements(): Array<Element | null>
+    public abstract ifPostContentPageIsReady(): boolean
     /** After the pending elements ready, then call getPaginationInfo. */
-    public abstract getPostListPagePendingElements(): Array<Element | null>
+    public abstract ifPostLinkPageIsReady(): boolean
     public abstract getPostId(): number
     public abstract collectImageInfoList(): ParsedImageInfo[]
     /** Remember to `str.trim().replaceAll(' ', '_')` */

@@ -37,17 +37,17 @@ export class ModuleChanSankakuComplexCom extends AbstractModule {
     getLinkElementsToPost(): HTMLAnchorElement[] | NodeListOf<HTMLAnchorElement> {
         return document.querySelectorAll('span.thumb > a')
     }
-    getPostContentPagePendingElements(): Array<Element | null> {
+    ifPostContentPageIsReady(): boolean {
         return [
             document.querySelector('#image'),
             document.querySelector('#tag-sidebar'),
             document.querySelector('#stats'),
-        ]
+        ].every(x=>!!x)
     }
-    getPostListPagePendingElements(): Array<Element | null> {
+    ifPostLinkPageIsReady(): boolean {
         return [
             document.querySelector('#paginator')
-        ]
+        ].every(x=>!!x)
     }
     getPaginationInfo(): PaginationInfo {
         const links = Array.from(document.querySelectorAll('#paginator .pagination a'))

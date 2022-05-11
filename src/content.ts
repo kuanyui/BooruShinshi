@@ -329,10 +329,8 @@ function createJumpButton() {
 function setupPostContentPage() {
     console.log('[Post Content] setup for post content page')
     const observer = new MutationObserver(function (mutations, me) {
-        const watchElemArr: Array<Element | null> = curMod.getPostContentPagePendingElements()
-        console.log('document changed!', watchElemArr)
-        if (watchElemArr.every(x => !!x)) {
-            console.log('document with key elements rendered!', watchElemArr)
+        if (curMod.ifPostContentPageIsReady()) {
+            console.log('document with key elements rendered!')
             me.disconnect() // stop observing
             showHideDownloadLinks()
             return
@@ -355,8 +353,7 @@ function setupPostListPage() {
             createJumpButton()
         }
         if (!paginatorButtonCreated) {
-            const watchElemArr = curMod.getPostListPagePendingElements()
-            if (watchElemArr.every(x => !!x)) {
+            if (curMod.ifPostLinkPageIsReady()) {
                 paginatorButtonCreated = true
                 createPaginatorButton()
             }

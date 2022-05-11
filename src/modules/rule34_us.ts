@@ -38,17 +38,17 @@ export class ModuleRule34Us extends AbstractModule {
     getLinkElementsToPost(): HTMLAnchorElement[] | NodeListOf<HTMLAnchorElement> {
         return document.querySelectorAll('.thumbail-container a')  // It really has a spelling mistake...
     }
-    getPostContentPagePendingElements(): Array<Element | null> {
+    ifPostContentPageIsReady(): boolean {
         return [
             document.querySelector('.content_push > img') || document.querySelector('.content_push > video'),
             document.querySelector('#tag-list\\ '),
             document.querySelector('#comment_form'),
-        ]
+        ].every(x=>!!x)
     }
-    getPostListPagePendingElements(): Array<Element | null> {
+    ifPostLinkPageIsReady(): boolean {
         return [
             document.querySelector('.pagination')
-        ]
+        ].every(x=>!!x)
     }
     getPaginationInfo(): PaginationInfo {
         const root = document.querySelector('.pagination')!

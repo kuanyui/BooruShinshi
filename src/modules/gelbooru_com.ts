@@ -43,11 +43,11 @@ export class ModuleGelbooruCom extends AbstractModule {
         const moreLikeThisArr = Array.from(document.querySelectorAll('.mainBodyPadding > div > a > img')).map(img=>img.parentElement) as HTMLAnchorElement[]
         return [...mainArr, ...moreLikeThisArr]
     }
-    getPostContentPagePendingElements(): Array<Element | null> {
+    ifPostContentPageIsReady(): boolean {
         return [
             document.querySelector('#image') || document.querySelector('#gelcomVideoPlayer'),
             document.querySelector('#tag-list'),
-        ]
+        ].every(x=>!!x)
     }
     getPostId(): number {
         const u = new URL(location.href)
@@ -63,10 +63,10 @@ export class ModuleGelbooruCom extends AbstractModule {
         }
         return fin
     }
-    getPostListPagePendingElements(): Array<Element | null> {
+    ifPostLinkPageIsReady(): boolean {
         return [
             document.querySelector('#paginator')
-        ]
+        ].every(x=>!!x)
     }
     getPaginationInfo(): PaginationInfo {
         const root = document.querySelector('#paginator')!
