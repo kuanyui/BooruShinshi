@@ -261,7 +261,10 @@ async function showHideDownloadLinks() {
     document.body.appendChild(root)
 }
 
-function createPaginatorButton() {
+async function createPaginatorButton() {
+    if (!(await storageManager.getData('options')).ui.paginationButtons) {
+        return
+    }
     const oriEl = document.getElementById('BooruShinshi_Paginator')
     if (oriEl) { oriEl.remove() }
     const root = createEl('div', {

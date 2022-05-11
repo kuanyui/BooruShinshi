@@ -303,6 +303,7 @@ async function loadFromLocalStorage() {
     setCheckboxValue('#ui_showNotificationWhenStartingToDownload', d.ui.showNotificationWhenStartingToDownload)
     setCheckboxValue('#ui_openLinkWithNewTab', d.ui.openLinkWithNewTab)
     setCheckboxValue('#ui_buttonForCloseTab', d.ui.buttonForCloseTab)
+    setCheckboxValue('#ui_paginationButtons', d.ui.paginationButtons)
     setTextAreaValue('#fileName_fileNameMaxCharacterLength', d.fileName.fileNameMaxCharacterLength+'')
     setTextAreaValue('#fileName_fileNameTemplate', d.fileName.fileNameTemplate)
     setSelectValue('#fileName_tagSeparator', d.fileName.tagSeparator)
@@ -323,6 +324,7 @@ function saveFormToLocalStorage() {
                 showNotificationWhenStartingToDownload: getCheckboxValue('#ui_showNotificationWhenStartingToDownload'),
                 openLinkWithNewTab: getCheckboxValue('#ui_openLinkWithNewTab'),
                 buttonForCloseTab: getCheckboxValue('#ui_buttonForCloseTab'),
+                paginationButtons: getCheckboxValue('#ui_paginationButtons'),
             },
             fileName: {
                 fileNameMaxCharacterLength: ~~getTextAreaValue('#fileName_fileNameMaxCharacterLength'),

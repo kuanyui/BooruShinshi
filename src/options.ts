@@ -103,6 +103,8 @@ export interface MyOptions_Ui {
     openLinkWithNewTab: boolean,
     /** Design for touchscreen */
     buttonForCloseTab: boolean,
+    /** Design for touchscreen */
+    paginationButtons: boolean,
 }
 export interface MyOptions_FileName {
     /** include file ext.
@@ -144,6 +146,7 @@ export const MY_STORAGE_ROOT_DEFAULT: MyStorageRoot = {
             showNotificationWhenStartingToDownload: true,
             openLinkWithNewTab: false,
             buttonForCloseTab: false,
+            paginationButtons: true,
         },
         fileName: {
             fileNameMaxCharacterLength: 180,
