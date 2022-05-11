@@ -66,85 +66,6 @@ function _makeAnchorElementOpenedWithTab(el: Element) {
         msgManager.sendToBg({ type: 'OpenLinkInNewTab', url: a.href })
     }
 }
-function insertStyleElement () {
-    if (document.getElementById('BooruShinshi_Style')) {
-        return console.log('[BooruShinshi] Style has inserted, aborted.')
-    }
-    const css = `
-    #BooruShinshi_DivForContentPage {
-        position: fixed;
-        right: 20px;
-        top: 20px;
-        background-color:  #fff;
-        border: solid 1px #aaa;
-        padding: 6px;
-        z-index: 9999;
-    }
-    #BooruShinshi_DivForContentPage button {
-        cursor: pointer;
-        font-size: 2em;
-        background: #E9E9ED;
-        border: 1px solid #aaaaaa;
-        color: #000000;
-        padding: 0.4em 1.2em;
-        display: block;
-        width: 100%;
-    }
-    #BooruShinshi_DivForListPage {
-        display: flex;
-        flex-direction: column;
-        position: fixed;
-        left: 20px;
-        bottom: 20px;
-        background-color:  #fff;
-        border: solid 1px #aaa;
-        padding: 6px;
-        z-index: 999999999;
-    }
-    #BooruShinshi_DivForListPage.moved {
-        left: unset;
-        right: 20px;
-    }
-    #BooruShinshi_DivForListPage .ButtonsContainer {
-        display: flex;
-    }
-    #BooruShinshi_DivForListPage .ButtonsContainer button {
-        cursor: pointer;
-        font-size: 20px;
-        background: #E9E9ED;
-        border: 1px solid #aaaaaa;
-        color: #000000;
-        padding: 10px 20px;
-        display: block;
-    }
-    #BooruShinshi_DivForListPage .LinksContainer {
-        display: flex;
-        flex-direction: column;
-    }
-    #BooruShinshi_DivForListPage .LinksContainer a {
-        display: flex;
-        text-decoration: none;
-        font-size: 14px;
-        padding: 8px 8px;
-        color: #3388ff;
-    }
-    #BooruShinshi_DivForListPage .LinksContainer a:hover:not(.currentSite) {
-        background: #eeeeee;
-    }
-    #BooruShinshi_DivForListPage .LinksContainer a:visited {
-        color: #8833ff;
-    }
-    #BooruShinshi_DivForListPage .LinksContainer a.currentSite {
-        color: #aaaaaa;
-        cursor: not-allowed;
-    }
-    `
-    const style = document.createElement('style')
-    document.head.appendChild(style)
-    style.id = 'BooruShinshi_Style'
-    style.type = 'text/css'
-    style.appendChild(document.createTextNode(css));
-}
 
 async function downloadImage(imgFileUrl: string) {
     await fetchOptions()
@@ -309,7 +230,6 @@ async function showHideDownloadLinks() {
         oriEl.remove()
         return
     }
-    insertStyleElement()
     const root = document.createElement('div')
     root.id = "BooruShinshi_DivForContentPage"
     const infoArr: ParsedImageInfo[] = curMod.collectImageInfoList()
@@ -342,14 +262,14 @@ async function showHideDownloadLinks() {
 }
 
 function createJumpButton() {
-    const oriEl = document.getElementById('BooruShinshi_DivForListPage')
+    const oriEl = document.getElementById('BooruShinshi_QueryJumper')
     if (oriEl) {
         oriEl.remove()
         return
     }
-    insertStyleElement()
     const root = document.createElement('div')
-    root.id = "BooruShinshi_DivForListPage"
+    root.className = "BooruShinshi_QueryJumper"
+    root.className = "BooruShinshi_DivForListPage"
 
     const foldBtn = document.createElement('button')
     foldBtn.textContent = 'Search in Other Sites'

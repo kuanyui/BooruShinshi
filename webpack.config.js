@@ -5,6 +5,7 @@ const config = {
     entry: {
         background: './src/background.ts',
         content: './src/content.ts',
+        contentCss: './src/content.scss',
         'options_ui': './src/options_ui/options_ui.ts',
         'internal_pages_script': './src/internal_pages/common_script.ts',
     },
@@ -41,7 +42,16 @@ const config = {
             },
             { test: /\.styl(us)?$/, use: [ 'css-loader', 'stylus-loader' ] },
             { test: /\.(gif|svg|jpg|png)$/, loader: "file-loader" },
-            { test: /\.css$/, use: ['style-loader', 'css-loader'] }
+            { test: /\.css$/, use: ['style-loader', 'css-loader'] },
+            {
+                test: /\.scss$/i, use: [
+                    {
+                        loader: 'file-loader',
+                        options: { outputPath: '', name: '[name].css' }
+                    },
+                    "sass-loader"
+                ]
+            }
         ]
     },
     resolve: {

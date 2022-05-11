@@ -43,7 +43,8 @@
                 "*://rule34.paheal.net/*",
                 "*://rule34.us/*"
             ],
-            "js": ["dist/content.js"]
+            "js": ["dist/content.js"],
+            "css": ["dist/content.css"]
         }
     ],
     "permissions": [ "tabs", "storage", "downloads" ]
