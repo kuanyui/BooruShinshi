@@ -38,8 +38,8 @@ export class ModuleSafebooruOrg extends AbstractModule {
         const fmtted = queryList.filter(x => x).map(x=>x.trim()).join(' ')
         return `https://safebooru.org/index.php?page=post&s=list&tags=${fmtted}`
     }
-    getPostLinkElementSelector(): string {
-        return '#post-list .content .thumb a'
+    getLinkElementsToPost(): HTMLAnchorElement[] | NodeListOf<HTMLAnchorElement> {
+        return document.querySelectorAll('#post-list .content .thumb a')
     }
     getPostContentPagePendingElements(): Array<Element | null> {
         return [

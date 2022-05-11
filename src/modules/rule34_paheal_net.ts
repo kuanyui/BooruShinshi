@@ -30,8 +30,10 @@ export class ModuleRule34PahealNet extends AbstractModule {
         const fmtted = queryList.filter(x => x).map(x=>x.trim()).join(' ')
         return `http://rule34.paheal.net/post/list/${fmtted}/1`
     }
-    getPostLinkElementSelector(): string {
-        return 'a.shm-thumb-link'
+    getLinkElementsToPost(): HTMLAnchorElement[] | NodeListOf<HTMLAnchorElement> {
+        const arr = document.querySelectorAll('a.shm-thumb-link') as NodeListOf<HTMLAnchorElement>
+        arr.forEach((a) => a.onclick = null)  // TODO: Dirty hack. This code should not be written in here.
+        return arr
     }
     getPostContentPagePendingElements(): Array<Element | null> {
         return [

@@ -36,8 +36,8 @@ export class ModuleRule34XXX extends AbstractModule {
         const fmtted = queryList.filter(x => x).map(x=>x.trim()).join(' ')
         return `https://rule34.xxx/index.php?page=post&s=list&tags=${fmtted}`
     }
-    getPostLinkElementSelector(): string {
-        return '#post-list .content span.thumb a'
+    getLinkElementsToPost(): HTMLAnchorElement[] | NodeListOf<HTMLAnchorElement> {
+        return document.querySelectorAll('#post-list .content span.thumb a')
     }
     getPostContentPagePendingElements(): Array<Element | null> {
         return [

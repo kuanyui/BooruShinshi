@@ -38,8 +38,10 @@ export class ModuleGelbooruCom extends AbstractModule {
         const fmtted = queryList.filter(x => x).map(x=>x.trim()).join(' ')
         return `https://gelbooru.com/index.php?page=post&s=list&tags=${fmtted}`
     }
-    getPostLinkElementSelector(): string {
-        return '.thumbnail-container a'
+    getLinkElementsToPost(): HTMLAnchorElement[] | NodeListOf<HTMLAnchorElement> {
+        const mainArr = Array.from(document.querySelectorAll('.thumbnail-container a')) as HTMLAnchorElement[]
+        const moreLikeThisArr = Array.from(document.querySelectorAll('.mainBodyPadding > div > a > img')).map(img=>img.parentElement) as HTMLAnchorElement[]
+        return [...mainArr, ...moreLikeThisArr]
     }
     getPostContentPagePendingElements(): Array<Element | null> {
         return [

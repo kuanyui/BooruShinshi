@@ -31,8 +31,8 @@ export class ModuleKonachanCom extends AbstractModule {
         const fmtted = queryList.filter(x => x).map(x=>x.trim()).join(' ')
         return `https://konachan.com/post?tags=${fmtted}`
     }
-    getPostLinkElementSelector(): string {
-        return '#post-list-posts a.thumb'
+    getLinkElementsToPost(): HTMLAnchorElement[] | NodeListOf<HTMLAnchorElement> {
+        return document.querySelectorAll('#post-list-posts a.thumb')
     }
     getPostContentPagePendingElements(): Array<Element | null> {
         return [

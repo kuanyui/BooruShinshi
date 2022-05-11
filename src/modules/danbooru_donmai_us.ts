@@ -31,8 +31,8 @@ export class ModuleDanbooruDonmaiUs extends AbstractModule {
         const fmtted = queryList.filter(x => x).map(x=>x.trim()).join(' ')
         return `https://danbooru.donmai.us/posts?tags=${fmtted}`
     }
-    getPostLinkElementSelector(): string {
-        return '.post-preview-link'
+    getLinkElementsToPost(): HTMLAnchorElement[] | NodeListOf<HTMLAnchorElement> {
+        return document.querySelectorAll('.post-preview-link')
     }
     getPostContentPagePendingElements(): Array<Element | null> {
         return [

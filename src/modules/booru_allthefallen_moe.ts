@@ -33,8 +33,13 @@ export class ModuleAllthefallenMoe extends AbstractModule {
         const fmtted = queryList.filter(x => x).map(x=>x.trim()).join(' ')
         return `https://booru.allthefallen.moe/posts?tags=${fmtted}`
     }
-    getPostLinkElementSelector(): string {
-        return '#posts-container a'
+    getLinkElementsToPost(): HTMLAnchorElement[] | NodeListOf<HTMLAnchorElement> {
+        // @ts-ignore
+        return [
+            ...Array.from(document.querySelectorAll('#posts-container a')),
+            ...Array.from(document.querySelectorAll('#has-parent-relationship-preview a')),
+            ...Array.from(document.querySelectorAll('#has-children-relationship-preview a'))
+        ]
     }
     getPostContentPagePendingElements(): Array<Element | null> {
         return [

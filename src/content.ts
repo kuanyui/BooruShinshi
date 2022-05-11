@@ -37,9 +37,8 @@ function fetchOptions(): Promise<MyOptions> {
 }
 
 function makeImgAlwaysOpenedWithNewTab() {
-    const selector: string = curMod.getPostLinkElementSelector()
     const domChanger = createDebounceFunction(() => {
-        document.querySelectorAll(selector).forEach(anchorEl => { _makeAnchorElementOpenedWithTab(anchorEl) })
+        curMod.getLinkElementsToPost().forEach(anchorEl => { _makeAnchorElementOpenedWithTab(anchorEl) })
     }, 100)
     const observer = new MutationObserver(function (mutations, me) {
         // TODO: The advertisements will trigger lots of unwanted mutations here. Maybe try to limit query within post link area.

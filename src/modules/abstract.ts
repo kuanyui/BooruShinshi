@@ -10,8 +10,8 @@ export abstract class AbstractModule {
     public abstract getCurrentQueryList(): string[]
     /** generate URL toward post list page. */
     public abstract makeQueryUrl(queryList: string[]): string
-    /** for making all images links in post list page always be opened with new tab. */
-    public abstract getPostLinkElementSelector(): string
+    /** for making all images links in post list page or post content page always be opened with new tab. */
+    public abstract getLinkElementsToPost(): HTMLAnchorElement[] | NodeListOf<HTMLAnchorElement>
     /** In post content page, do not parse page + insert floating buttons until
      * every elements are non-null.
      *

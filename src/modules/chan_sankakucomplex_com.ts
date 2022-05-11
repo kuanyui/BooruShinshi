@@ -34,8 +34,8 @@ export class ModuleChanSankakuComplexCom extends AbstractModule {
         const fmtted = queryList.filter(x => x).map(x=>x.trim()).join(' ')
         return `https://chan.sankakucomplex.com/post/index?tags=${fmtted}`
     }
-    getPostLinkElementSelector(): string {
-        return 'span.thumb > a'
+    getLinkElementsToPost(): HTMLAnchorElement[] | NodeListOf<HTMLAnchorElement> {
+        return document.querySelectorAll('span.thumb > a')
     }
     getPostContentPagePendingElements(): Array<Element | null> {
         return [

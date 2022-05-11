@@ -35,8 +35,8 @@ export class ModuleRule34Us extends AbstractModule {
         const fmtted = queryList.filter(x => x).map(x=>x.trim()).join(' ')
         return `http://rule34.us/index.php?r=posts/index&q=${fmtted}`
     }
-    getPostLinkElementSelector(): string {
-        return '.thumbail-container a'  // It really has a spelling mistake...
+    getLinkElementsToPost(): HTMLAnchorElement[] | NodeListOf<HTMLAnchorElement> {
+        return document.querySelectorAll('.thumbail-container a')  // It really has a spelling mistake...
     }
     getPostContentPagePendingElements(): Array<Element | null> {
         return [
