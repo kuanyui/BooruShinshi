@@ -17,7 +17,7 @@ interface ImageInfo {
 function fetchAddonAllImageInfo(): Promise<ImageInfo[]> {
     return fetchAddonDetails().then(resp => {
         return resp.json().then(root => {
-            return root.previews.map((x: any): ImageInfo => ({ url: x.image_url }))
+            return root.previews.map((x: any): ImageInfo => ({ url: x.image_url.split('?')[0] }))
         })
     })
 }
