@@ -1,23 +1,10 @@
 import { FileTags, msgManager, MyMsg, ParsedImageInfo, supported_hostname_t, Tag, toHtmlEntities } from "./common";
 import { filename_template_token_t, MyOptions, MyStorageRoot, storageManager } from "./options";
-import * as modules from './modules'
+import ALL_MODULE_CLASS from './modules'
 import { AbstractModule } from "./modules/abstract";
 import { inPageNotify } from "./inpage-notify";
 
-const ALL_MODULES: AbstractModule[] = [
-     new modules.ModuleChanSankakuComplexCom(),
-     new modules.ModuleKonachanCom(),
-     new modules.ModuleKonachanNet(),
-     new modules.ModuleYandeRe(),
-     new modules.ModuleDanbooruDonmaiUs(),
-     new modules.ModuleGelbooruCom(),
-     new modules.ModuleSafebooruOrg(),
-     new modules.ModuleTbibOrg(),
-     new modules.ModuleAllthefallenMoe(),
-     new modules.ModuleRule34XXX(),
-     new modules.ModuleRule34PahealNet(),
-     new modules.ModuleRule34Us(),
-]
+const ALL_MODULES: AbstractModule[] = ALL_MODULE_CLASS.map(kls => new kls())
 
 function getModuleInstance(): AbstractModule {
     for (const m of ALL_MODULES) {
