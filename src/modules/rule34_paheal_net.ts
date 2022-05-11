@@ -1,5 +1,5 @@
 import { AbstractModule } from "./abstract"
-import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
+import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, PaginationInfo, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
 
 
 export class ModuleRule34PahealNet extends AbstractModule {
@@ -39,6 +39,21 @@ export class ModuleRule34PahealNet extends AbstractModule {
             document.querySelector('#Tagsleft'),
             document.querySelector('#ImageInfo'),
         ]
+    }
+    getPostListPagePendingElements(): Array<Element | null> {
+        return [
+            document.querySelector('#paginator')
+        ]
+    }
+    getPaginationInfo(): PaginationInfo {
+        const root = document.querySelector('#paginator .blockbody')!
+        const nodes = Array.from(root.childNodes)
+        const p = nodes.find(x=>x.textContent === 'Prev')! as HTMLAnchorElement
+        const n = nodes.find(x=>x.textContent === 'Next')! as HTMLAnchorElement
+        return {
+            prevPageUrl: p ? p.href : '',
+            nextPageUrl: n ? n.href : ''
+        }
     }
     getPostId(): number {
         const u = new URL(location.href)
@@ -87,4 +102,5 @@ export class ModuleRule34PahealNet extends AbstractModule {
         }
         return fileTags
     }
+    onBodyReady(): void { }
 }

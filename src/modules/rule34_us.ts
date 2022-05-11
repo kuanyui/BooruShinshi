@@ -1,5 +1,5 @@
 import { AbstractModule } from "./abstract"
-import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
+import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, PaginationInfo, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
 
 
 export class ModuleRule34Us extends AbstractModule {
@@ -44,6 +44,21 @@ export class ModuleRule34Us extends AbstractModule {
             document.querySelector('#tag-list\\ '),
             document.querySelector('#comment_form'),
         ]
+    }
+    getPostListPagePendingElements(): Array<Element | null> {
+        return [
+            document.querySelector('.pagination')
+        ]
+    }
+    getPaginationInfo(): PaginationInfo {
+        const root = document.querySelector('.pagination')!
+        const cur = root.querySelector('b')!
+        const p = cur.previousElementSibling! as HTMLAnchorElement
+        const n = cur.nextElementSibling! as HTMLAnchorElement
+        return {
+            prevPageUrl: p ? p.href : '',
+            nextPageUrl: n ? n.href : ''
+        }
     }
     getPostId(): number {
         const u = new URL(location.href)
@@ -108,4 +123,5 @@ export class ModuleRule34Us extends AbstractModule {
         // console.log('[collectTags_rule34us] fileTags=====', fileTags)
         return fileTags
     }
+    onBodyReady(): void { }
 }

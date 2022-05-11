@@ -1,5 +1,5 @@
 import { AbstractModule } from "./abstract"
-import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
+import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, PaginationInfo, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
 
 
 export class ModuleTbibOrg extends AbstractModule {
@@ -47,6 +47,21 @@ export class ModuleTbibOrg extends AbstractModule {
             document.querySelector('#tag-sidebar'),
         ]
     }
+    getPostListPagePendingElements(): Array<Element | null> {
+        return [
+            document.querySelector('#paginator')
+        ]
+    }
+    getPaginationInfo(): PaginationInfo {
+        const root = document.querySelector('#paginator')!
+        const cur = root.querySelector('b')!
+        const p = cur.previousElementSibling! as HTMLAnchorElement
+        const n = cur.nextElementSibling! as HTMLAnchorElement
+        return {
+            prevPageUrl: p ? p.href : '',
+            nextPageUrl: n ? n.href : ''
+        }
+    }
     getPostId(): number {
         const u = new URL(location.href)
         const id = u.searchParams.get('id')
@@ -91,4 +106,5 @@ export class ModuleTbibOrg extends AbstractModule {
         }
         return fileTags
     }
+    onBodyReady(): void { }
 }

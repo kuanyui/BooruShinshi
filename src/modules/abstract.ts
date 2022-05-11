@@ -1,4 +1,4 @@
-import { FileTags, ParsedImageInfo, supported_hostname_t } from "../common";
+import { FileTags, PaginationInfo, ParsedImageInfo, supported_hostname_t } from "../common";
 
 export abstract class AbstractModule {
     public abstract hostname(): supported_hostname_t
@@ -19,9 +19,14 @@ export abstract class AbstractModule {
      * elements" are ready, them start to parse page + insert floating buttons.
      */
     public abstract getPostContentPagePendingElements(): Array<Element | null>
+    /** After the pending elements ready, then call getPaginationInfo. */
+    public abstract getPostListPagePendingElements(): Array<Element | null>
     public abstract getPostId(): number
     public abstract collectImageInfoList(): ParsedImageInfo[]
     /** Remember to `str.trim().replaceAll(' ', '_')` */
     public abstract collectTags(): FileTags
+    public abstract getPaginationInfo(): PaginationInfo
+    /** content.ts will call this after <body> is ready. */
+    public abstract onBodyReady(): void
 }
 

@@ -1,5 +1,5 @@
 import { AbstractModule } from "./abstract"
-import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
+import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, PaginationInfo, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
 
 
 export class ModuleYandeRe extends AbstractModule {
@@ -40,6 +40,19 @@ export class ModuleYandeRe extends AbstractModule {
             document.querySelector('#highres'),
         ]
     }
+    getPostListPagePendingElements(): Array<Element | null> {
+        return [
+            document.querySelector('#paginator')
+        ]
+    }
+    getPaginationInfo(): PaginationInfo {
+        const p = document.querySelector<HTMLAnchorElement>('#paginator .pagination a.previous_page')!
+        const n = document.querySelector<HTMLAnchorElement>('#paginator .pagination a.next_page')!
+        return {
+            prevPageUrl: p ? p.href : '',
+            nextPageUrl: n ? n.href : ''
+        }
+    }
     getPostId(): number {
         const u = new URL(location.href)
         const m = u.pathname.match(/\/post\/show\/([0-9]+)/)
@@ -74,4 +87,5 @@ export class ModuleYandeRe extends AbstractModule {
         }
         return fileTags
     }
+    onBodyReady(): void { }
 }

@@ -1,5 +1,5 @@
 import { AbstractModule } from "./abstract"
-import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
+import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, PaginationInfo, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
 
 
 export class ModuleChanSankakuComplexCom extends AbstractModule {
@@ -44,6 +44,20 @@ export class ModuleChanSankakuComplexCom extends AbstractModule {
             document.querySelector('#stats'),
         ]
     }
+    getPostListPagePendingElements(): Array<Element | null> {
+        return [
+            document.querySelector('#paginator')
+        ]
+    }
+    getPaginationInfo(): PaginationInfo {
+        const links = Array.from(document.querySelectorAll('#paginator .pagination a'))
+        const p = links.find(x=>x.textContent === "<<") as HTMLAnchorElement
+        const n = links.find(x=>x.textContent === ">>") as HTMLAnchorElement
+        return {
+            prevPageUrl: p ? p.href : '',
+            nextPageUrl: n ? n.href : ''
+        }
+    }
     getPostId(): number {
         const u = new URL(location.href)
         const m = u.pathname.match(/\/post\/show\/([0-9]+)/)
@@ -81,5 +95,11 @@ export class ModuleChanSankakuComplexCom extends AbstractModule {
             fileTags[tagCategory] = tagsOfCategory
         }
         return fileTags
+    }
+    onBodyReady(): void {
+        const a = document.querySelector<HTMLAnchorElement>('#sc-auto-toggle')!
+        if (a.textContent!.includes('On')) {
+            a.click()
+        }
     }
 }

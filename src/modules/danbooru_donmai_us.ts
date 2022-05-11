@@ -1,5 +1,5 @@
 import { AbstractModule } from "./abstract"
-import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
+import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, PaginationInfo, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
 
 
 export class ModuleDanbooruDonmaiUs extends AbstractModule {
@@ -40,6 +40,19 @@ export class ModuleDanbooruDonmaiUs extends AbstractModule {
             document.querySelector('#tag-list'),
             document.querySelector('#post-info-size'),
         ]
+    }
+    getPostListPagePendingElements(): Array<Element | null> {
+        return [
+            document.querySelector('.paginator')
+        ]
+    }
+    getPaginationInfo(): PaginationInfo {
+        const p = document.querySelector<HTMLAnchorElement>('a.paginator-prev')!
+        const n = document.querySelector<HTMLAnchorElement>('a.paginator-next')!
+        return {
+            prevPageUrl: p ? p.href : '',
+            nextPageUrl: n ? n.href : ''
+        }
     }
     getPostId(): number {
         const u = new URL(location.href)
@@ -85,4 +98,5 @@ export class ModuleDanbooruDonmaiUs extends AbstractModule {
         }
         return fileTags
     }
+    onBodyReady(): void { }
 }

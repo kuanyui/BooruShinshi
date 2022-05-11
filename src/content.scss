@@ -17,7 +17,7 @@
         width: 100%;
     }
 }
-.BooruShinshi_DivForListPage {
+#BooruShinshi_QueryJumper {
     display: flex;
     flex-direction: column;
     position: fixed;
@@ -62,6 +62,32 @@
                 color: #aaaaaa;
                 cursor: not-allowed;
             }
+        }
+    }
+}
+
+#BooruShinshi_Paginator {
+    display: flex;
+    flex-direction: row;
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    background-color:  #fff;
+    border: solid 1px #aaa;
+    padding: 6px;
+    z-index: 999999998;
+    a {
+        cursor: pointer;
+        font-size: 20px;
+        background: #E9E9ED;
+        border: 1px solid #aaaaaa;
+        color: #000000;
+        padding: 10px 20px;
+        display: block;
+        &[disabled] {
+            cursor: not-allowed;
+            pointer-events: none;
+            filter: opacity(0.3);
         }
     }
 }

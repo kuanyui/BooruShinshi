@@ -1,4 +1,4 @@
-import { createDebounceFunction, FileTags, msgManager, MyMsg, ParsedImageInfo, supported_hostname_t, Tag, toHtmlEntities } from "./common";
+import { createDebounceFunction, createEl, FileTags, msgManager, MyMsg, ParsedImageInfo, supported_hostname_t, Tag, toHtmlEntities } from "./common";
 import { filename_template_token_t, MyOptions, MyStorageRoot, storageManager } from "./options";
 import ALL_MODULE_CLASS from './modules'
 import { AbstractModule } from "./modules/abstract";
@@ -261,16 +261,28 @@ async function showHideDownloadLinks() {
     document.body.appendChild(root)
 }
 
+function createPaginatorButton() {
+    const oriEl = document.getElementById('BooruShinshi_Paginator')
+    if (oriEl) { oriEl.remove() }
+    const root = createEl('div', {
+        id: "BooruShinshi_Paginator",
+    })
+    const pagi = curMod.getPaginationInfo()
+    console.log('pagi===', pagi)
+    const prevBtn = createEl('a', { textContent: '←', href: pagi.prevPageUrl || 'javascript:;', disabled: !pagi.prevPageUrl })
+    const nextBtn = createEl('a', { textContent: '→', href: pagi.nextPageUrl || 'javascript:;', disabled: !pagi.nextPageUrl })
+    root.append(prevBtn, nextBtn)
+    document.body.appendChild(root)
+}
 function createJumpButton() {
     const oriEl = document.getElementById('BooruShinshi_QueryJumper')
     if (oriEl) {
         oriEl.remove()
-        return
     }
-    const root = document.createElement('div')
-    root.className = "BooruShinshi_QueryJumper"
-    root.className = "BooruShinshi_DivForListPage"
-
+    const root = createEl('div', {
+        id: "BooruShinshi_QueryJumper",
+        className: "BooruShinshi_DivForListPage",
+    })
     const foldBtn = document.createElement('button')
     foldBtn.textContent = 'Search in Other Sites'
     const moveBtn = document.createElement('button')
@@ -332,9 +344,22 @@ function setupPostContentPage() {
 
 function setupPostListPage() {
     console.log('[Post List] setup for post list page')
+    let jumpButtonCreated = false
+    let paginatorButtonCreated = false
     const observer = new MutationObserver(function (mutations, me) {
-        if (document.body) {
+        if (!document.body) { return }
+        if (!jumpButtonCreated) {
+            jumpButtonCreated = true
             createJumpButton()
+        }
+        if (!paginatorButtonCreated) {
+            const watchElemArr = curMod.getPostListPagePendingElements()
+            if (watchElemArr.every(x => !!x)) {
+                paginatorButtonCreated = true
+                createPaginatorButton()
+            }
+        }
+        if (jumpButtonCreated && paginatorButtonCreated) {
             me.disconnect()
         }
     })

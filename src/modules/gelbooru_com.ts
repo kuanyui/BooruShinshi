@@ -1,5 +1,5 @@
 import { AbstractModule } from "./abstract"
-import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
+import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, PaginationInfo, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
 
 
 export class ModuleGelbooruCom extends AbstractModule {
@@ -61,6 +61,21 @@ export class ModuleGelbooruCom extends AbstractModule {
         }
         return fin
     }
+    getPostListPagePendingElements(): Array<Element | null> {
+        return [
+            document.querySelector('#paginator')
+        ]
+    }
+    getPaginationInfo(): PaginationInfo {
+        const root = document.querySelector('#paginator')!
+        const cur = root.querySelector('b')!
+        const p = cur.previousElementSibling! as HTMLAnchorElement
+        const n = cur.nextElementSibling! as HTMLAnchorElement
+        return {
+            prevPageUrl: p ? p.href : '',
+            nextPageUrl: n ? n.href : ''
+        }
+    }
     collectTags(): FileTags {
         const sidebarEl = document.querySelector('#tag-list')
         const fileTags: FileTags = makeEmptyFileTags()
@@ -91,4 +106,5 @@ export class ModuleGelbooruCom extends AbstractModule {
         }
         return fileTags
     }
+    onBodyReady(): void { }
 }

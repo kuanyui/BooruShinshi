@@ -59,6 +59,12 @@ export function makeEmptyFileTags(): FileTags {
         meta: [],
     }
 }
+export interface PaginationInfo {
+    /** Empty string means currently is the first page. */
+    prevPageUrl: string
+    /** Empty string means no next page anymore. */
+    nextPageUrl: string
+}
 
 export type tag_category_t = 'copyright' | 'character' | 'artist' | 'studio' | 'general' | 'meta'
 export const ALL_TAG_CATEGORY: tag_category_t[] = ['copyright', 'character', 'artist', 'studio', 'general', 'meta']
@@ -227,3 +233,23 @@ export function createDebounceFunction (callback: () => any, durMs: number): () 
         }, durMs)
     }
 }
+
+
+interface ElAttr {
+    id?: string,
+    className?: string,
+    textContent?: string,
+    href?: string,
+    disabled?: boolean
+}
+export function createEl<K extends keyof HTMLElementTagNameMap>(tagName: K, attrs: ElAttr): HTMLElementTagNameMap[K] {
+    const el = document.createElement(tagName)
+    if (attrs.id) { el.id = attrs.id }
+    if (attrs.className) { el.className = attrs.className }
+    if (attrs.textContent) { el.textContent = attrs.textContent }
+    if (attrs.href && el instanceof HTMLAnchorElement) { el.href = attrs.href }
+    // @ts-expect-error
+    if (attrs.disabled && attrs.disabled !== 'false') { el.setAttribute('disabled', attrs.disabled) }
+    return el
+}
+
