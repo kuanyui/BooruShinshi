@@ -175,9 +175,10 @@ class RuleTableHandler {
     private actAdd() {
         console.log('[button] clicked on add')
         this.model.unshift({
-            ruleType: 'TagCategory',
-            tagCategory: 'artist',
-            folderName: '__AUTO__artist'
+            ruleType: 'CustomTagMatcher',
+            logicGate: 'OR',
+            ifContainsTag: [],
+            folderName: ''
         })
         this.createRuleTr(this.model[0], 'prepend')
         this.curIdx = 0
