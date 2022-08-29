@@ -126,6 +126,7 @@ html
       +checkbox('ui_openLinkWithNewTab'): span Always open image links with a new tab. (Recommended for touchscreen)
       +checkbox('ui_buttonForCloseTab'): span An extra button for closing current tab. (Recommended for touchscreen)
       +checkbox('ui_paginationButtons'): span Unified previous / next button in post list page. (Recommended for touchscreen)
+      +checkbox('ui_autoCloseTabAfterDownload'): span Auto close tab after clicking download.
       .alert.uiSetting
       h2 File Name
       -var id = 'fileName_fileNameMaxCharacterLength'
@@ -138,6 +139,7 @@ html
           #availableTokensContainer
       -var id = 'fileName_tagSeparator'
       +tablerow_select(id, {' ': '(Space)', ',': ','}): span Tag Separator
+      +checkbox('fileName_overwriteExisted'): span If a file with same filename has existed, overwrite the existed one directly.
       h2 Folder
       h3 Basic
       -var id = 'folder_downloadFolderName'

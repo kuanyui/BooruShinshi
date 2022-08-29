@@ -304,8 +304,10 @@ async function loadFromLocalStorage() {
     setCheckboxValue('#ui_openLinkWithNewTab', d.ui.openLinkWithNewTab)
     setCheckboxValue('#ui_buttonForCloseTab', d.ui.buttonForCloseTab)
     setCheckboxValue('#ui_paginationButtons', d.ui.paginationButtons)
+    setCheckboxValue('#ui_autoCloseTabAfterDownload', d.ui.autoCloseTabAfterDownload)
     setTextAreaValue('#fileName_fileNameMaxCharacterLength', d.fileName.fileNameMaxCharacterLength+'')
     setTextAreaValue('#fileName_fileNameTemplate', d.fileName.fileNameTemplate)
+    setCheckboxValue('#fileName_overwriteExisted', d.fileName.overwriteExisted)
     setSelectValue('#fileName_tagSeparator', d.fileName.tagSeparator)
     setSelectValue('#folder_downloadFolderName', d.folder.downloadFolderName)
     setCheckboxValue('#folder_enableClassify', d.folder.enableClassify)
@@ -325,11 +327,13 @@ function saveFormToLocalStorage() {
                 openLinkWithNewTab: getCheckboxValue('#ui_openLinkWithNewTab'),
                 buttonForCloseTab: getCheckboxValue('#ui_buttonForCloseTab'),
                 paginationButtons: getCheckboxValue('#ui_paginationButtons'),
+                autoCloseTabAfterDownload: getCheckboxValue('#ui_autoCloseTabAfterDownload')
             },
             fileName: {
                 fileNameMaxCharacterLength: ~~getTextAreaValue('#fileName_fileNameMaxCharacterLength'),
                 fileNameTemplate: getTextAreaValue('#fileName_fileNameTemplate'),
                 tagSeparator: getSelectValue('#fileName_tagSeparator') as any,
+                overwriteExisted: getCheckboxValue('#fileName_overwriteExisted'),
             },
             folder: {
                 downloadFolderName: getTextAreaValue('#folder_downloadFolderName'),

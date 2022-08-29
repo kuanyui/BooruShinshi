@@ -61,8 +61,15 @@ browser.runtime.onMessage.addListener((_msg: any, sender: browser.runtime.Messag
             url: msg.url,
             filename: safeFilename,
             saveAs: false,
-            conflictAction: 'uniquify',
+            conflictAction: STORAGE.options.fileName.overwriteExisted ? 'overwrite' : 'uniquify',
         }).then((id) => {
+            if (STORAGE.options.ui.autoCloseTabAfterDownload) {
+                setTimeout(() => {
+                   if (!sender.tab) { return }
+                   if (sender.tab.id === undefined) { return }
+                    browser.tabs.remove(sender.tab.id)
+                }, 500)
+            }
             storageManager.setRootSubsetPartially({
                 statistics: {
                     downloadCount: ++STORAGE.statistics.downloadCount

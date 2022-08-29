@@ -105,6 +105,7 @@ export interface MyOptions_Ui {
     buttonForCloseTab: boolean,
     /** Design for touchscreen */
     paginationButtons: boolean,
+    autoCloseTabAfterDownload: boolean
 }
 export interface MyOptions_FileName {
     /** include file ext.
@@ -119,6 +120,7 @@ export interface MyOptions_FileName {
     fileNameMaxCharacterLength: number,
     fileNameTemplate: string
     tagSeparator: ',' | ' '
+    overwriteExisted: boolean
     // filenameTemplate: filename_template_t,
 }
 export interface MyOptions_Folder {
@@ -147,11 +149,13 @@ export const MY_STORAGE_ROOT_DEFAULT: MyStorageRoot = {
             openLinkWithNewTab: false,
             buttonForCloseTab: false,
             paginationButtons: true,
+            autoCloseTabAfterDownload: false,
         },
         fileName: {
             fileNameMaxCharacterLength: 180,
             fileNameTemplate: '[%siteabbrev%](%postid%)[%artist%][%series%][%character%]%generals%',
-            tagSeparator: ','
+            tagSeparator: ',',
+            overwriteExisted: false,
         },
         folder: {
             downloadFolderName: '__BooruShinshi__',
