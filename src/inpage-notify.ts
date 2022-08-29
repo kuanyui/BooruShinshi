@@ -60,6 +60,7 @@ export function inPageNotify(title: string, msg: string, allowHtml: boolean = fa
     contentEl.style.color = '#283f4f'
     if (allowHtml) {
         contentEl.innerHTML = msg
+        contentEl.querySelectorAll('div, span').forEach((x) => { (x as HTMLDivElement).style.color = "#283f4f" })
     } else {
         contentEl.innerText = msg
     }
