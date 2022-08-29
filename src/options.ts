@@ -197,6 +197,12 @@ class StorageManager {
     setRoot(newRoot: MyStorageRoot) {
         this.area.set(newRoot as any)
     }
+    setRootSafely(newRoot: MyStorageRoot) {
+        return this.getRoot().then((existingRoot) => {
+            deepObjectShaper(newRoot, existingRoot)
+            this.area.set(newRoot as any)
+        })
+    }
     /** Without NO migrations */
     initAndGetRoot(): Promise<MyStorageRoot> {
         return this.area.get().then((_ori) => {

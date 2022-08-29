@@ -409,6 +409,8 @@ function preprocessDOM() {
     rootFolderNameInput.onchange = (ev) => {
         rootFolderNameInput.value = sanitizeFilePath(rootFolderNameInput.value.trim())
     }
+    q<HTMLButtonElement>('#exportCfg').onclick = exportCfgAsJsonFile
+    q<HTMLButtonElement>('#importCfg').onclick = importCfgFromJsonFile
 }
 
 function validateInput(el: HTMLInputElement) {
@@ -436,6 +438,42 @@ function setupAutoValidator() {
         }
     })
 }
+
+function exportCfgAsJsonFile() {
+    storageManager.getRoot().then(d => {
+        var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(d, null, 2));
+        var aEl = document.createElement('a');
+        aEl.setAttribute("href", dataStr);
+        aEl.setAttribute("download", "BooruShinshiSetting.json");
+        document.body.appendChild(aEl); // required for firefox
+        aEl.click();
+        aEl.remove();
+    })
+}
+
+function importCfgFromJsonFile() {
+    var input = document.createElement('input');
+    input.type = 'file';
+    input.addEventListener('change', function (ev) {
+        if (!ev) { return }
+        if (!ev.target) { return }
+        const evInput = ev.target as HTMLInputElement
+        if (!evInput.files) { return }
+        const file = evInput.files[0]
+        const reader = new FileReader()
+        reader.onload = (r) => {
+            if (!r.target) { return }
+            const rawStr = r.target.result
+            if (typeof rawStr !=='string') { return }
+            const jsonObj = JSON.parse(rawStr)
+            storageManager.setRootSafely(jsonObj)
+            location.reload()
+        }
+        reader.readAsText(file,'UTF-8')
+    })
+    input.click()
+}
+
 async function main() {
     preprocessDOM()
     setupAutoValidator()
