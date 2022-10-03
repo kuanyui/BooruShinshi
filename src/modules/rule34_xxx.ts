@@ -91,10 +91,10 @@ export class ModuleRule34XXX extends AbstractModule {
             const tagsOfCategory: Tag[] = []
             let els = sidebarEl.querySelectorAll(tagLiClass)
             els.forEach((el) => {
-                const a = el.querySelector('a')
+                const a = el.querySelectorAll('a')[1]
                 if (!a || !a.textContent) {return}
                 const enTag: string = a.textContent.trim().replaceAll(' ', '_')
-                const span = el.querySelector('span')
+                const span = el.querySelector('.tag-count')
                 if (!span || !span.textContent) {return}
                 const count: number = ~~span.textContent
                 tagsOfCategory.push({ en: enTag, count })
