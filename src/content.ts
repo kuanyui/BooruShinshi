@@ -6,6 +6,7 @@ import { inPageNotify } from "./inpage-notify";
 
 const ALL_MODULES: AbstractModule[] = ALL_MODULE_CLASS.map(kls => new kls())
 
+
 function getModuleInstance(): AbstractModule {
     for (const m of ALL_MODULES) {
         if (m.hostname() === location.hostname) {
@@ -181,17 +182,20 @@ function generateFolderPath(tagDict: FileTags): string {
     if (ROOT_DIR_NAME) { final.push(ROOT_DIR_NAME) }
     if (!OPTIONS.folder.enableClassify) { return final.join('/') }
     const FILE_ALL_TAGS: string[] = Object.values(tagDict).flat(1).map(x=>x.en)
-    const RULES = OPTIONS.folder.classifyRules
+    const userDefinedRules = OPTIONS.folder.classifyRules
     console.log('FILE_ALL_TAGS====', FILE_ALL_TAGS)
-    console.log('RULES====', RULES)
+    console.log('RULES====', userDefinedRules)
     rulesLoop:
-    for (const r of RULES) {
+    for (const r of userDefinedRules) {
         switch (r.ruleType) {
             case 'TagCategory': {
                 const tags = tagDict[r.tagCategory]
                 if (tags.length) {
+                    const enTag = tags[0].en
+                    // Avoid to use some tags in file path because they are undistinguishing in directory hierarchy.
+                    if ( (['original', 'origin', 'tagme', 'unknown'].includes(enTag)) ) { continue }
                     final.push(r.folderName)
-                    final.push(tags[0].en)
+                    final.push(enTag)
                     break rulesLoop
                 }
                 continue rulesLoop
