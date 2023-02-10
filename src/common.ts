@@ -204,6 +204,7 @@ export function deepMergeSubset<T>(originalRoot: T, subsetRoot: DeepPartial<T>):
 
 export function assertUnreachable (x: never) { x }
 export function objectAssignPerfectly<T>(target: T, newValue: T) {
+    // @ts-ignore
     return Object.assign(target, newValue)
 }
 export function deepCopy<T>(x: T): T {

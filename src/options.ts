@@ -194,7 +194,7 @@ class StorageManager {
             this.area.set(existingRoot as any)
         })
     }
-    setRoot(newRoot: MyStorageRoot) {
+    setRootArbitrary(newRoot: MyStorageRoot) {
         this.area.set(newRoot as any)
     }
     setRootSafely(newRoot: MyStorageRoot) {
@@ -218,7 +218,7 @@ class StorageManager {
             }
             console.log('[GET] browser.storage.sync.get() ORIGINAL', deepCopy(root))
             if (modified) {
-                this.setRoot(root)
+                this.setRootArbitrary(root)
             }
             return root
         })
