@@ -15,6 +15,9 @@ export class ModuleChanSankakuComplexCom extends AbstractModule {
     abbrev(): string {
         return 'SCX'
     }
+    containsHentai(): boolean {
+        return true
+    }
     inPostListPage(): boolean {
         return location.pathname === '/' ||
             !!location.pathname.match(/^[/]post[/]?$/) ||

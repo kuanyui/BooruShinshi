@@ -15,6 +15,9 @@ export class ModuleRule34PahealNet extends AbstractModule {
     abbrev (): string {
         return 'R3P'
     }
+    containsHentai(): boolean {
+        return true
+    }
     inPostListPage(): boolean {
         return !!location.pathname.match(/^[/]post[/]list[/][^/]+[/][0-9]+$/)
     }

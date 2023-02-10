@@ -15,6 +15,9 @@ export class ModuleAllthefallenMoe extends AbstractModule {
     abbrev (): string {
         return 'ATF'
     }
+    containsHentai(): boolean {
+        return true
+    }
     inPostListPage(): boolean {
         const params = new URLSearchParams(location.search)
         return !!location.pathname.match(/^[/]posts[/]?$/) &&

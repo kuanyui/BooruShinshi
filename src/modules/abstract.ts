@@ -4,6 +4,7 @@ export abstract class AbstractModule {
     public abstract hostname(): supported_hostname_t
     public abstract fullName(): string
     public abstract abbrev(): string
+    public abstract containsHentai(): boolean
     public abstract inPostListPage(): boolean
     public abstract inPostContentPage(): boolean
     /** return tag list (usually from GET params) if available (usually in post list page) */

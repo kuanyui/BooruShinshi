@@ -15,6 +15,9 @@ export class ModuleKonachanNet extends ModuleKonachanCom {
     abbrev (): string {
         return 'KCG'
     }
+    containsHentai(): boolean {
+        return false
+    }
     makeQueryUrl(queryList: string[]): string {
         const fmtted = queryList.filter(x => x).map(x=>x.trim()).join(' ')
         return `https://konachan.net/post?tags=${fmtted}`

@@ -15,6 +15,9 @@ export class ModuleDanbooruDonmaiUs extends AbstractModule {
     abbrev (): string {
         return 'DBR'
     }
+    containsHentai(): boolean {
+        return true
+    }
     inPostListPage(): boolean {
         return !!location.pathname.match(/^[/]posts[/]?$/)
     }

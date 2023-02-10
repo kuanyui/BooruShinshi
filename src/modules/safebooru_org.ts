@@ -15,6 +15,9 @@ export class ModuleSafebooruOrg extends AbstractModule {
     abbrev (): string {
         return 'SBR'
     }
+    containsHentai(): boolean {
+        return false
+    }
     inPostListPage(): boolean {
         const params = new URLSearchParams(location.search)
         return !!location.pathname.match(/^[/]index[.]php$/) &&

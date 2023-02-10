@@ -15,6 +15,9 @@ export class ModuleYandeRe extends AbstractModule {
     abbrev (): string {
         return 'YDR'
     }
+    containsHentai(): boolean {
+        return true
+    }
     inPostListPage(): boolean {
         return !!location.pathname.match(/^[/]post[/]?$/)
     }

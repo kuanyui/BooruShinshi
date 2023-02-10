@@ -15,6 +15,9 @@ export class ModuleKonachanCom extends AbstractModule {
     abbrev (): string {
         return 'KCR'
     }
+    containsHentai(): boolean {
+        return true
+    }
     inPostListPage(): boolean {
         return !!location.pathname.match(/^[/]post[/]?$/)
     }

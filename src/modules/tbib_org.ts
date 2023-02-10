@@ -15,6 +15,9 @@ export class ModuleTbibOrg extends AbstractModule {
     abbrev (): string {
         return 'TBI'
     }
+    containsHentai(): boolean {
+        return true
+    }
     inPostListPage(): boolean {
         const params = new URLSearchParams(location.search)
         return !!location.pathname.match(/^[/]index[.]php$/) &&

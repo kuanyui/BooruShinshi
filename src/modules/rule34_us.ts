@@ -15,6 +15,9 @@ export class ModuleRule34Us extends AbstractModule {
     abbrev (): string {
         return 'R3U'
     }
+    containsHentai(): boolean {
+        return true
+    }
     inPostListPage(): boolean {
         const params = new URLSearchParams(location.search)
         return !!location.pathname.match(/^[/]index[.]php$/) &&
