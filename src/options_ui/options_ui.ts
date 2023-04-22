@@ -331,6 +331,9 @@ function saveFormToLocalStorage() {
                 paginationButtons: getCheckboxValue('#ui_paginationButtons'),
                 autoCloseTabAfterDownload: getCheckboxValue('#ui_autoCloseTabAfterDownload')
             },
+            ux: {
+                excludeAiGenerated: getCheckboxValue('#ux_excludeAiGenerated'),
+            },
             fileName: {
                 fileNameMaxCharacterLength: ~~getTextAreaValue('#fileName_fileNameMaxCharacterLength'),
                 fileNameTemplate: getTextAreaValue('#fileName_fileNameTemplate'),
