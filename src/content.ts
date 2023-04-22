@@ -4,6 +4,7 @@ import ALL_MODULE_CLASS from './modules'
 import { AbstractModule } from "./modules/abstract";
 import { inPageNotify } from "./inpage-notify";
 import { tag_category_t } from "./common";
+import tippy from "tippy.js";
 
 const ALL_MODULES: AbstractModule[] = ALL_MODULE_CLASS.map(kls => new kls())
 
@@ -262,7 +263,7 @@ async function showPostTool(show: boolean) {
     for (const info of infoArr) {
         const buttonsRow = document.createElement('div')
         buttonsRow.className = 'ButtonsRow'
-        buttonsRow.appendChild(createDownloadButtonForImage(info.btnText, info.imgUrl))
+        buttonsRow.appendChild(createDirectDownloadButtonForImage(info.btnText, info.imgUrl))
         buttonsRow.appendChild(createActionsEntryButtonForImage(info.imgUrl))
         root.appendChild(buttonsRow)
     }
@@ -275,9 +276,10 @@ async function showPostTool(show: boolean) {
     document.body.appendChild(root)
 }
 
-function createDownloadButtonForImage(label: string, imgUrl: string): HTMLButtonElement {
+function createDirectDownloadButtonForImage(label: string, imgUrl: string): HTMLButtonElement {
     const btn = document.createElement('button')
     btn.textContent = label
+    tippy(btn, { delay: [500, 0], allowHTML: true, content: "Download directly according to the classify rules you've defined." })
     btn.onclick = async () => {
         await fetchOptions()
         const fileTags = curMod.collectTags()
@@ -297,6 +299,7 @@ function createActionsEntryButtonForImage(imgUrl: string): HTMLButtonElement {
     const entryBtn = document.createElement('button')
     entryBtn.textContent = "As..."
     entryBtn.className = "asBtn"
+    tippy(entryBtn, { delay: [500, 0], allowHTML: true, content: "Manually select classification directory.<br/>(Ignore your defined rules)" })
     entryBtn.onclick = () => {
         // Remove all buttons from root
         const rootEl = document.getElementById('BooruShinshi_PostToolsRoot')
