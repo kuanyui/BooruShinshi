@@ -74,8 +74,8 @@ export const ALL_OPTIONS_TAG_CATEGORY: options_tag_category_t[] =  ALL_TAG_CATEG
 export type FileTags = Record<tag_category_t, Tag[]>
 export type FileTagsElementClass = Record<tag_category_t, string>
 
-export function objectKeys<T, K extends keyof T>(obj: T): K {
-    return Object.keys(obj) as unknown as K
+export function objectKeys<T extends object>(obj: T): Array<keyof T> {
+    return Object.keys(obj) as Array<keyof T>
 }
 
 /** Used by SankakuComplex, Yande.re, Konachan. */
@@ -149,7 +149,7 @@ export function sanitizeFilePath(fileName: string) {
 /**
  * @return true if modified the originalRoot. Else, false.
  */
-export function deepObjectShaper<T, U>(originalRoot: T, wishedShape: U): boolean {
+export function deepObjectShaper<T extends object, U extends object>(originalRoot: T, wishedShape: U): boolean {
     let modified = false
     for (const k in originalRoot) {
         if (!Object.keys(wishedShape).includes(k)) {
