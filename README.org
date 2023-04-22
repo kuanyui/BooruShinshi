@@ -32,6 +32,7 @@ Currently supported sites:
 - =konachan.com=
 - =konachan.net=
 - =danbooru.donmai.us=
+- =betabooru.donmai.us=
 - =gelbooru.com=
 - =safebooru.org=
 - =tbib.org=

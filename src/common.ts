@@ -3,6 +3,7 @@ export type supported_hostname_t =
     'yande.re' |
     'konachan.com' |
     'konachan.net' |
+    'betabooru.donmai.us' |
     'danbooru.donmai.us' |
     'gelbooru.com' |
     'safebooru.org' |
