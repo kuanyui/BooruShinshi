@@ -119,6 +119,9 @@ For paranoid users such as me, these are all used permissions with its usages:
 - [ ] Stop observer after url grabbed
 - [x] +Show floating buttons after user switch to that tab.+ Show download buttons only when available.
 - [x] z-index of download buttons
-- [ ] Preview download path in tooltip.
+- [X] Preview download path in tooltip.
+  - [ ] An option to disable this tooltip?
+- [ ] Option to adjust font size of buttons
+- [ ] Colorize category types in buttons.
 * License
 MPL 2.0

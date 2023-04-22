@@ -242,6 +242,7 @@ function generateClassifiedDirPath(opts: {
     return final.filter(x=>x).join('/')
 }
 
+
 async function showPostTool(show: boolean) {
     await fetchOptions()
     const oriEl = document.getElementById('BooruShinshi_PostToolsRoot')
@@ -255,10 +256,7 @@ async function showPostTool(show: boolean) {
     root.id = "BooruShinshi_PostToolsRoot"
     const infoArr: ParsedImageInfo[] = curMod.collectImageInfoList()
     if (OPTIONS.ui.buttonForCloseTab) {
-        const closeTab = document.createElement('button')
-        closeTab.textContent = 'Close Tab'
-        closeTab.onclick = () => msgManager.sendToBg({ type: 'CloseTab' })
-        root.appendChild(closeTab)
+        root.appendChild(createCloseTabButton())
         root.appendChild(document.createElement('hr'))
     }
     for (const info of infoArr) {
@@ -275,6 +273,13 @@ async function showPostTool(show: boolean) {
     root.appendChild(hideBtn)
 
     document.body.appendChild(root)
+}
+
+function createCloseTabButton(): HTMLButtonElement {
+    const btn = document.createElement('button')
+    btn.textContent = 'Close Tab'
+    btn.onclick = () => msgManager.sendToBg({ type: 'CloseTab' })
+    return btn
 }
 
 function createDirectDownloadButtonForImage(label: string, imgUrl: string): HTMLButtonElement {
@@ -317,11 +322,11 @@ function createActionsEntryButtonForImage(imgUrl: string): HTMLButtonElement {
         const rootEl = document.getElementById('BooruShinshi_PostToolsRoot')
         if (!rootEl) { console.error('[To Developer] Impossible bug.'); return }
         rootEl.innerHTML = ''
+        if (OPTIONS.ui.buttonForCloseTab) {
+            rootEl.appendChild(createCloseTabButton())
+            rootEl.appendChild(document.createElement('hr'))
+        }
         const backBtn = document.createElement('button')
-        backBtn.textContent = `← Back`
-        backBtn.onclick = () => showPostTool(true)
-        rootEl.appendChild(backBtn)
-        rootEl.appendChild(document.createElement('hr'))
         // Create new buttons by tags
         for (const [_categoryId, tags] of Object.entries(curMod.collectTags())) {
             const categoryId = _categoryId as tag_category_t
@@ -365,6 +370,11 @@ function createActionsEntryButtonForImage(imgUrl: string): HTMLButtonElement {
                 }
             }
         }
+        rootEl.appendChild(document.createElement('hr'))
+        backBtn.textContent = `← Back`
+        backBtn.onclick = () => showPostTool(true)
+        rootEl.appendChild(backBtn)
+
 
     }
     return entryBtn
