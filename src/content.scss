@@ -1,4 +1,4 @@
-#BooruShinshi_DivForContentPage {
+#BooruShinshi_PostToolsRoot {
     position: fixed;
     right: 20px;
     top: 20px;
@@ -6,15 +6,23 @@
     border: solid 1px #aaa;
     padding: 6px;
     z-index: 9999;
+    .ButtonsRow {
+        display: flex;
+    }
     button {
+        font-size: 28px;
         cursor: pointer;
-        font-size: 2em;
         background: #E9E9ED;
         border: 1px solid #aaaaaa;
         color: #000000;
-        padding: 0.4em 1.2em;
+        padding: 10px 20px;
         display: block;
+        text-align: left;
         width: 100%;
+    }
+    .asBtn {
+        flex: 0 1;
+        // width: 0;
     }
 }
 #BooruShinshi_QueryJumper {
