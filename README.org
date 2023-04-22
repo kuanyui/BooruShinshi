@@ -57,10 +57,10 @@ For more information please see [[https://github.com/kuanyui/BooruShinshi][GitHu
 - Firefox for Android >= 61
 
 * Requirements for Development
-- Node
-- web-ext
+- Node <= 14  (Consider to use =nvm=)
+  - web-ext (consider to install globally via =npm i -g web-ext=)
 - GNU Make
-- Python 3 (For HTTP server)
+- Python 3 (Optional. For HTTP server only)
 
 * Development
 ** Prepare
