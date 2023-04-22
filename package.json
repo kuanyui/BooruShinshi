@@ -42,6 +42,10 @@
     "dev": "webpack --mode=development --watch",
     "build": "webpack --mode=production"
   },
+  "engines": {
+    "npm": ">=6.0.0 <9.0.0",
+    "node": ">=14.0.0 <=14.0.0"
+  },
   "keywords": [
     "webextension"
   ],
