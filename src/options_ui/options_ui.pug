@@ -65,6 +65,13 @@ html
       display: flex;
       flex-direction: column;
     }
+    .ruleTableScrollArea {
+      overflow-y: scroll;
+      display: block;
+      height: 300px;
+      border: 1px solid var(--in-content-scrollarea-border-color);
+      background-color: var(--in-content-scrollarea-background);
+    }
     .actionButtonContainer {
       display: flex;
       flex-direction: row;
@@ -163,15 +170,16 @@ html
           button.actBtn.moveDown(type="button") #[.emoji ⬇️] Down
           .spacer
           button.actBtn.moveBottom(type="button") #[.emoji ⏬] Bottom
-        table
-          thead
-            tr
-              th Rule Type
-              th(style="width: 100%;") Matcher
-              th Folder Name
-          tbody
-            tr
-              td: rule-type-select
+        .ruleTableScrollArea
+          table
+            thead
+              tr
+                th Rule Type
+                th(style="width: 100%;") Matcher
+                th Folder Name
+            tbody
+              tr
+                td: rule-type-select
         .alert #[b Be careful!] The rules are #[b order-sensitive]. The first one will be matched first.
     h2 Import / Export Settings
     button(type="button" id="exportCfg") Export as JSON
