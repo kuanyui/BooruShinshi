@@ -1,4 +1,4 @@
-import { AbstractModule } from "./abstract"
+import { AbstractModule, TaggedPostInPostsList } from "./abstract"
 import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, PaginationInfo, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
 
 
@@ -45,6 +45,20 @@ export class ModuleGelbooruCom extends AbstractModule {
         const mainArr = Array.from(document.querySelectorAll('.thumbnail-container a')) as HTMLAnchorElement[]
         const moreLikeThisArr = Array.from(document.querySelectorAll('.mainBodyPadding > div > a > img')).map(img=>img.parentElement) as HTMLAnchorElement[]
         return [...mainArr, ...moreLikeThisArr]
+    }
+    getTaggedPostsInPostsList(): TaggedPostInPostsList[] {
+        const fin: TaggedPostInPostsList[] = []
+        for (const wrapperEl of document.querySelectorAll<HTMLDivElement>('article.thumbnail-preview')) {
+            const imgEl = wrapperEl.querySelector<HTMLImageElement>('img')
+            if (!imgEl) { continue }
+            const tagsStr = imgEl.title
+            if (!tagsStr) { continue }
+            fin.push({
+                element: wrapperEl,
+                tags: tagsStr.split(' ')
+            })
+        }
+        return fin
     }
     ifPostContentPageIsReady(): boolean {
         return [

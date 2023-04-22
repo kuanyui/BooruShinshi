@@ -135,6 +135,8 @@ html
       +checkbox('ui_paginationButtons'): span Unified previous / next button in post list page. (Recommended for touchscreen)
       +checkbox('ui_autoCloseTabAfterDownload'): span Auto close tab after clicking download.
       .alert.uiSetting
+      h2 UX
+      +checkbox('ux_excludeAiGenerated'): span Exclude AI-generated images from search results. (according to tag like #[code ai_generated], not 100% accurate)
       h2 File Name
       -var id = 'fileName_fileNameMaxCharacterLength'
       +sub_block(id, "Max Filename Character Length"): input(id=id type="number" min="40" max="250" autovalidator)
@@ -181,6 +183,9 @@ html
               tr
                 td: rule-type-select
         .alert #[b Be careful!] The rules are #[b order-sensitive]. The first one will be matched first.
+      //- h3 Important Tags
+      //- .alert If image contains any of the following tags, the tag will be included in the downloaded filename as possible as it can. (Notice that this is may cause same image downloaded multiple times, if you modify this list too often)
+
     h2 Import / Export Settings
     button(type="button" id="exportCfg") Export as JSON
     button(type="button" id="importCfg") Import from JSON

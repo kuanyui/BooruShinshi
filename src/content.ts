@@ -346,6 +346,17 @@ function setupPostContentPage() {
     })
 }
 
+function removeResultFromPostsList() {
+    if (OPTIONS.ux.excludeAiGenerated) {
+        for (const x of curMod.getTaggedPostsInPostsList()) {
+            console.log(x.element, x.tags)
+            if (x.tags.includes('ai_generated')) {
+                x.element.remove()
+            }
+        }
+    }
+}
+
 function setupPostListPage() {
     console.log('[Post List] setup for post list page')
     let jumpButtonCreated = false
@@ -363,6 +374,7 @@ function setupPostListPage() {
             }
         }
         if (jumpButtonCreated && paginatorButtonCreated) {
+            removeResultFromPostsList()
             me.disconnect()
         }
     })
@@ -372,7 +384,8 @@ function setupPostListPage() {
     })
 }
 
-function main() {
+async function main() {
+    await fetchOptions()
     const isList = curMod.inPostListPage()
     const isContent = curMod.inPostContentPage()
     if (isList && isContent) {

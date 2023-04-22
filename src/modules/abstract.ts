@@ -1,5 +1,10 @@
 import { FileTags, PaginationInfo, ParsedImageInfo, supported_hostname_t } from "../common";
 
+export interface TaggedPostInPostsList {
+    element: HTMLElement,
+    tags: string[]
+}
+
 export abstract class AbstractModule {
     public abstract hostname(): supported_hostname_t
     public abstract fullName(): string
@@ -9,10 +14,17 @@ export abstract class AbstractModule {
     public abstract inPostContentPage(): boolean
     /** return tag list (usually from GET params) if available (usually in post list page) */
     public abstract getCurrentQueryList(): string[]
-    /** generate URL toward post list page. */
+    /** generate URL toward posts list page. */
     public abstract makeQueryUrl(queryList: string[]): string
-    /** for making all images links in post list page or post content page always be opened with new tab. */
+    /**
+     * - Called inpost page, or posts list page.
+     * - for making all images links in post list page or post content page always be opened with new tab. */
     public abstract getLinkElementsToPost(): HTMLAnchorElement[] | NodeListOf<HTMLAnchorElement>
+    /**
+     * - Called in posts list page.
+     * - Used to filter out / exclude some posts from posts list page. */
+    public abstract getTaggedPostsInPostsList(): TaggedPostInPostsList[]
+
     /** In post content page, do not parse page + insert floating buttons until
      * every elements are non-null.
      *

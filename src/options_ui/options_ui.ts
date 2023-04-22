@@ -306,6 +306,7 @@ async function loadFromLocalStorage() {
     setCheckboxValue('#ui_buttonForCloseTab', d.ui.buttonForCloseTab)
     setCheckboxValue('#ui_paginationButtons', d.ui.paginationButtons)
     setCheckboxValue('#ui_autoCloseTabAfterDownload', d.ui.autoCloseTabAfterDownload)
+    setCheckboxValue('#ux_excludeAiGenerated', d.ux.excludeAiGenerated)
     setTextAreaValue('#fileName_fileNameMaxCharacterLength', d.fileName.fileNameMaxCharacterLength+'')
     setTextAreaValue('#fileName_fileNameTemplate', d.fileName.fileNameTemplate)
     setCheckboxValue('#fileName_overwriteExisted', d.fileName.overwriteExisted)
@@ -401,6 +402,7 @@ function preprocessDOM() {
     q("#fileName_fileNameTemplate").after(resetFilenameTemplateBtn)
     tippy(q('#fileName_fileNameTemplate'), {content: 'Length range is 8 ~ 240. Required.'})
     q<HTMLButtonElement>('#resetAllBtn').onclick = resetToDefault
+    tippy(q("#ux_excludeAiGenerated"), {allowHTML: true, content: `If an image contains any of following tag, it will be hidden from images list.<br/>Tags should be separated by space.<br/>ex: <code>ai_generated</code>`})
     // Ui Help
     const uiHelp = q<HTMLElement>('.alert.uiSetting')
     uiHelp.innerHTML = `If you found it's annoying that Firefox always show the build-in download popup at top-right corner when download start, you can consider to change the setting <code>browser.download.alwaysOpenPanel</code> to <code>false</code> in <code>about:config</code>. See <a href="https://support.mozilla.org/en-US/questions/1370262">here</a> for more information.`

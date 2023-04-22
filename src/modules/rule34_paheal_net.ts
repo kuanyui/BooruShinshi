@@ -1,4 +1,4 @@
-import { AbstractModule } from "./abstract"
+import { AbstractModule, TaggedPostInPostsList } from "./abstract"
 import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, PaginationInfo, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
 
 
@@ -37,6 +37,20 @@ export class ModuleRule34PahealNet extends AbstractModule {
         const arr = document.querySelectorAll('a.shm-thumb-link') as NodeListOf<HTMLAnchorElement>
         arr.forEach((a) => a.onclick = null)  // TODO: Dirty hack. This code should not be written in here.
         return arr
+    }
+    getTaggedPostsInPostsList(): TaggedPostInPostsList[] {
+        const fin: TaggedPostInPostsList[] = []
+        for (const wrapperEl of document.querySelectorAll<HTMLDivElement>('#image-list .shm-thumb.thumb')) {
+            const imgEl = wrapperEl.querySelector<HTMLImageElement>('img')
+            if (!imgEl) { continue }
+            const tagsStr = imgEl.title
+            if (!tagsStr) { continue }
+            fin.push({
+                element: wrapperEl,
+                tags: tagsStr.toLowerCase().split(' ').filter(x=>x)
+            })
+        }
+        return fin
     }
     ifPostContentPageIsReady(): boolean {
         return [

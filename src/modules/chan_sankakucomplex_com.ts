@@ -1,4 +1,4 @@
-import { AbstractModule } from "./abstract"
+import { AbstractModule, TaggedPostInPostsList } from "./abstract"
 import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, PaginationInfo, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
 
 
@@ -39,6 +39,20 @@ export class ModuleChanSankakuComplexCom extends AbstractModule {
     }
     getLinkElementsToPost(): HTMLAnchorElement[] | NodeListOf<HTMLAnchorElement> {
         return document.querySelectorAll('span.thumb > a')
+    }
+    getTaggedPostsInPostsList(): TaggedPostInPostsList[] {
+        const fin: TaggedPostInPostsList[] = []
+        for (const wrapperEl of document.querySelectorAll<HTMLDivElement>('#post-list .thumb')) {
+            const imgEl = wrapperEl.querySelector<HTMLImageElement>('img')
+            if (!imgEl) { continue }
+            const tagsStr = imgEl.title
+            if (!tagsStr) { continue }
+            fin.push({
+                element: wrapperEl,
+                tags: tagsStr.split(' ')
+            })
+        }
+        return fin
     }
     ifPostContentPageIsReady(): boolean {
         return [

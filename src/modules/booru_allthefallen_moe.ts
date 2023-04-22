@@ -1,4 +1,4 @@
-import { AbstractModule } from "./abstract"
+import { AbstractModule, TaggedPostInPostsList } from "./abstract"
 import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, PaginationInfo, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
 
 
@@ -42,6 +42,18 @@ export class ModuleAllthefallenMoe extends AbstractModule {
             ...Array.from(document.querySelectorAll('#posts a.post-preview-link')),
             ...Array.from(document.querySelectorAll('.post-notice a[rel=nofollow]')),
         ]
+    }
+    getTaggedPostsInPostsList(): TaggedPostInPostsList[] {
+        const fin: TaggedPostInPostsList[] = []
+        for (const wrapperEl of document.querySelectorAll<HTMLDivElement>('article.post-preview')) {
+            const tagsStr = wrapperEl.dataset.tags
+            if (!tagsStr) { continue }
+            fin.push({
+                element: wrapperEl,
+                tags: tagsStr.split(' ')
+            })
+        }
+        return fin
     }
     ifPostContentPageIsReady(): boolean {
         return [

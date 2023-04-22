@@ -1,4 +1,4 @@
-import { AbstractModule } from "./abstract"
+import { AbstractModule, TaggedPostInPostsList } from "./abstract"
 import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, PaginationInfo, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
 
 
@@ -43,6 +43,20 @@ export class ModuleSafebooruOrg extends AbstractModule {
     }
     getLinkElementsToPost(): HTMLAnchorElement[] | NodeListOf<HTMLAnchorElement> {
         return document.querySelectorAll('#post-list .content .thumb a')
+    }
+    getTaggedPostsInPostsList(): TaggedPostInPostsList[] {
+        const fin: TaggedPostInPostsList[] = []
+        for (const wrapperEl of document.querySelectorAll<HTMLDivElement>('#post-list .thumb')) {
+            const imgEl = wrapperEl.querySelector<HTMLImageElement>('img.preview')
+            if (!imgEl) { continue }
+            const tagsStr = imgEl.title
+            if (!tagsStr) { continue }
+            fin.push({
+                element: wrapperEl,
+                tags: tagsStr.split(' ').filter(x=>x)
+            })
+        }
+        return fin
     }
     ifPostContentPageIsReady(): boolean {
         return [

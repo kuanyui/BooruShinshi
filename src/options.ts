@@ -94,6 +94,7 @@ export interface MyStatistics {
 
 export interface MyOptions {
     ui: MyOptions_Ui,
+    ux: MyOptions_Ux,
     fileName: MyOptions_FileName,
     folder: MyOptions_Folder,
 }
@@ -106,6 +107,11 @@ export interface MyOptions_Ui {
     /** Design for touchscreen */
     paginationButtons: boolean,
     autoCloseTabAfterDownload: boolean
+}
+export interface MyOptions_Ux {
+    /** If image contains "ai_generated", the image will be hidden.
+    */
+    excludeAiGenerated: boolean
 }
 export interface MyOptions_FileName {
     /** include file ext.
@@ -137,6 +143,7 @@ export interface MyOptions_Folder {
 
 export type options_ui_input_id_t =
 `ui_${keyof MyOptions_Ui}` |
+`ux_${keyof MyOptions_Ux}` |
 `fileName_${keyof MyOptions_FileName}` |
 `folder_${keyof MyOptions_Folder}`
 export type options_ui_input_query_t = `#${options_ui_input_id_t}`
@@ -150,6 +157,9 @@ export const MY_STORAGE_ROOT_DEFAULT: MyStorageRoot = {
             buttonForCloseTab: false,
             paginationButtons: true,
             autoCloseTabAfterDownload: false,
+        },
+        ux: {
+          excludeAiGenerated: false,
         },
         fileName: {
             fileNameMaxCharacterLength: 180,

@@ -1,4 +1,4 @@
-import { AbstractModule } from "./abstract"
+import { AbstractModule, TaggedPostInPostsList } from "./abstract"
 import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, PaginationInfo, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
 
 
@@ -40,6 +40,20 @@ export class ModuleRule34Us extends AbstractModule {
     }
     getLinkElementsToPost(): HTMLAnchorElement[] | NodeListOf<HTMLAnchorElement> {
         return document.querySelectorAll('.thumbail-container a')  // It really has a spelling mistake...
+    }
+    getTaggedPostsInPostsList(): TaggedPostInPostsList[] {
+        const fin: TaggedPostInPostsList[] = []
+        for (const wrapperEl of document.querySelectorAll<HTMLDivElement>('.thumbail-container > div')) {
+            const imgEl = wrapperEl.querySelector<HTMLImageElement>('img')
+            if (!imgEl) { continue }
+            const tagsStr = imgEl.title
+            if (!tagsStr) { continue }
+            fin.push({
+                element: wrapperEl,
+                tags: tagsStr.split(', ').map(s => s.replaceAll(' ', '_'))
+            })
+        }
+        return fin
     }
     ifPostContentPageIsReady(): boolean {
         return [
