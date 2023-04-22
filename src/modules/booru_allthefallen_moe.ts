@@ -39,9 +39,8 @@ export class ModuleAllthefallenMoe extends AbstractModule {
     getLinkElementsToPost(): HTMLAnchorElement[] | NodeListOf<HTMLAnchorElement> {
         // @ts-ignore
         return [
-            ...Array.from(document.querySelectorAll('#posts-container a')),
-            ...Array.from(document.querySelectorAll('#has-parent-relationship-preview a')),
-            ...Array.from(document.querySelectorAll('#has-children-relationship-preview a'))
+            ...Array.from(document.querySelectorAll('#posts a.post-preview-link')),
+            ...Array.from(document.querySelectorAll('.post-notice a[rel=nofollow]')),
         ]
     }
     ifPostContentPageIsReady(): boolean {
