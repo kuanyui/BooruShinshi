@@ -96,6 +96,11 @@ browser.runtime.onMessage.addListener((_msg: any, sender: browser.runtime.Messag
 let __OS__: browser.runtime.PlatformOs = 'android'
 browser.runtime.getPlatformInfo().then(d => {
     __OS__ = d.os
+
+})
+browser.browserAction.setTitle({ title: "Settings of Booru Shinshi" })
+browser.browserAction.onClicked.addListener((tab) => {
+    browser.runtime.openOptionsPage()
 })
 
 // Sanitize filename for Android.

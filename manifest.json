@@ -18,11 +18,14 @@
       },
       "default_title": "Download this image"
     },
+    "browser_action": {
+		"default_title": "Booru Shinshi"
+	},
     "options_ui": {
         "page": "dist/options_ui.html",
         "browser_style": true,
         "open_in_tab": false
-      },
+    },
     "background": {
         "scripts": ["dist/background.js"]
     },
