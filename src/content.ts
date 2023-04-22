@@ -336,7 +336,7 @@ function createActionsEntryButtonForImage(imgUrl: string): HTMLButtonElement {
             for (const tag of tags) {
                 const btn = document.createElement('button')
                 rootEl.appendChild(btn)
-                btn.textContent = `${categoryId} / ${tag.en}`
+                btn.innerHTML = `<span class="category__${categoryId}">${categoryId}</span> / ${toHtmlEntities(tag.en)}`
                 tippy(btn, {
                     delay: [0, 0], allowHTML: true,
                     content: () => {
