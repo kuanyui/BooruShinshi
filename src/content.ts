@@ -243,6 +243,7 @@ function generateClassifiedDirPath(opts: {
 }
 
 async function showPostTool(show: boolean) {
+    await fetchOptions()
     const oriEl = document.getElementById('BooruShinshi_PostToolsRoot')
     if (oriEl) {
         oriEl.remove()
@@ -253,7 +254,7 @@ async function showPostTool(show: boolean) {
     const root = document.createElement('div')
     root.id = "BooruShinshi_PostToolsRoot"
     const infoArr: ParsedImageInfo[] = curMod.collectImageInfoList()
-    if ((await storageManager.getData('options')).ui.buttonForCloseTab) {
+    if (OPTIONS.ui.buttonForCloseTab) {
         const closeTab = document.createElement('button')
         closeTab.textContent = 'Close Tab'
         closeTab.onclick = () => msgManager.sendToBg({ type: 'CloseTab' })
@@ -279,7 +280,18 @@ async function showPostTool(show: boolean) {
 function createDirectDownloadButtonForImage(label: string, imgUrl: string): HTMLButtonElement {
     const btn = document.createElement('button')
     btn.textContent = label
-    tippy(btn, { delay: [500, 0], allowHTML: true, content: "Download directly according to the classify rules you've defined." })
+    tippy(btn, {
+        delay: [0, 0], allowHTML: true,
+        content: () => {
+            const fileTags = curMod.collectTags()
+            const fileDirPath = generateClassifiedDirPath({ fileTags: fileTags })
+            let tmp = `<div style="font-size: 12px; opacity: 0.7; font-style: italic;">Download directly according to the classify rules you've defined.</div>`
+            tmp += `<b>`
+            tmp += fileDirPath.split('/').map(toHtmlEntities).join(`<span style="color: #59f;"> / </span>`)
+            tmp += `</b>`
+            return tmp
+        }
+    })
     btn.onclick = async () => {
         await fetchOptions()
         const fileTags = curMod.collectTags()
@@ -320,6 +332,21 @@ function createActionsEntryButtonForImage(imgUrl: string): HTMLButtonElement {
                 const btn = document.createElement('button')
                 rootEl.appendChild(btn)
                 btn.textContent = `${categoryId} / ${tag.en}`
+                tippy(btn, {
+                    delay: [0, 0], allowHTML: true,
+                    content: () => {
+                        const fileTags = curMod.collectTags()
+                        const fileDirPath = generateClassifiedDirPath({
+                            fileTags: fileTags,
+                            forceDirClassify: { tagCategory: categoryId, tagName: tag.en }
+                        })
+                        let tmp = `<div style="font-size: 12px; opacity: 0.7; font-style: italic;">Manually select classification directory.</div>`
+                        tmp += `<b>`
+                        tmp += fileDirPath.split('/').map(toHtmlEntities).join(`<span style="color: #59f;"> / </span>`)
+                        tmp += `</b>`
+                        return tmp
+                    }
+                })
                 btn.onclick = async () => {
                     await fetchOptions()
                     const fileTags = curMod.collectTags()
