@@ -291,12 +291,21 @@ function createCloseTabButton(): HTMLButtonElement {
     btn.onclick = () => msgManager.sendToBg({ type: 'CloseTab' })
     return btn
 }
+function getTooltipParentElement(): Element {
+    const EL_ID = '__BooruShinshi__Tooltips__'
+    let el = document.getElementById(EL_ID)
+    if (el) { return el }
+    el = document.createElement('div')
+    el.id = EL_ID
+    document.body.appendChild(el)
+    return el
+}
 
 function createDirectDownloadButtonForImage(label: string, imgUrl: string): HTMLButtonElement {
     const btn = document.createElement('button')
     btn.textContent = label
     tippy(btn, {
-        delay: [0, 0], allowHTML: true, placement: "left",
+        delay: [0, 0], allowHTML: true, placement: "left", appendTo: getTooltipParentElement(),
         content: () => {
             const fileTags = curMod.collectTags()
             const fileDirPath = generateClassifiedDirPath({ fileTags: fileTags })
@@ -326,7 +335,7 @@ function createActionsEntryButtonForImage(imgUrl: string): HTMLButtonElement {
     const entryBtn = document.createElement('button')
     entryBtn.textContent = "As..."
     entryBtn.className = "asBtn"
-    tippy(entryBtn, { delay: [500, 0], allowHTML: true, placement: "left", content: "Manually select classification directory.<br/>(Ignore your defined rules)" })
+    tippy(entryBtn, { delay: [500, 0], allowHTML: true, placement: "left", appendTo: getTooltipParentElement(), content: "Manually select classification directory.<br/>(Ignore your defined rules)" })
     entryBtn.onclick = () => {
         // Remove all buttons from root
         const rootEl = document.getElementById('BooruShinshi_PostToolsRoot')
@@ -350,7 +359,7 @@ function createActionsEntryButtonForImage(imgUrl: string): HTMLButtonElement {
                 rootEl.appendChild(btn)
                 btn.innerHTML = `<span class="categoryType">${categoryId}</span> / ${toHtmlEntities(tag.en)}`
                 tippy(btn, {
-                    delay: [0, 0], allowHTML: true, placement: "left",
+                    delay: [0, 0], allowHTML: true, placement: "left", appendTo: getTooltipParentElement(),
                     content: () => {
                         const fileTags = curMod.collectTags()
                         const fileDirPath = generateClassifiedDirPath({
@@ -449,7 +458,7 @@ function createJumpButton() {
         tippy(aEl, {
             zIndex: 999999999 + 1,
             placement: "right",
-            delay: [0, 0], allowHTML: true,
+            delay: [0, 0], allowHTML: true, appendTo: getTooltipParentElement(),
             content: () => {
                 return `<b>${mod.fullName()}</b><br/>
                 <span>Rating: ${mod.containsHentai() ? "🔞 へんたい" : "🔰 セーフ" }<span>`
