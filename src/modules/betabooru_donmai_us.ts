@@ -16,4 +16,8 @@ export class ModuleBetabooruDonmaiUs extends ModuleDanbooruDonmaiUs {
     abbrev (): string {
         return 'BBR'
     }
+    makeQueryUrl(queryList: string[]): string {
+        const fmtted = queryList.filter(x => x).map(x=>x.trim()).join(' ')
+        return `https://betabooru.donmai.us/posts?tags=${fmtted}`
+    }
 }
