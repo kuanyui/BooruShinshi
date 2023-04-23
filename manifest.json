@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Booru Shinshi",
-    "version": "0.10.4",
+    "version": "0.10.5",
     "applications": {
         "gecko": {
             "id": "{634d6532-4ae5-4a94-a232-37e81d4d7eec}"
