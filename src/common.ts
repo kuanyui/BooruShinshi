@@ -67,11 +67,9 @@ export interface PaginationInfo {
     nextPageUrl: string
 }
 
-export type tag_category_able_to_be_forced_specified_t = 'copyright' | 'character' | 'artist'
-export const ALL_TAG_CATEGORY_ABLE_TO_BE_FORCED_SPECIFIED: tag_category_able_to_be_forced_specified_t[] = ['copyright', 'character', 'artist']
-
 export type tag_category_t = 'copyright' | 'character' | 'artist' | 'studio' | 'general' | 'meta'
-export const ALL_TAG_CATEGORY: tag_category_t[] = ['copyright', 'character', 'artist', 'studio', 'general', 'meta']
+/** Order sensitive */
+export const ALL_TAG_CATEGORY: tag_category_t[] = ['artist', 'copyright', 'studio', 'character', 'general', 'meta']
 export type options_tag_category_t = tag_category_t
 export const ALL_OPTIONS_TAG_CATEGORY: options_tag_category_t[] =  ALL_TAG_CATEGORY
 
@@ -84,9 +82,9 @@ export function objectKeys<T extends object>(obj: T): Array<keyof T> {
 
 /** Used by SankakuComplex, Yande.re, Konachan. */
 export const COMMON_TAG_SELECTOR: FileTagsElementClass = {
+    artist: '.tag-type-artist',
     copyright: '.tag-type-copyright',
     character: '.tag-type-character',
-    artist: '.tag-type-artist',
     studio: '.tag-type-studio',
     general: '.tag-type-general',
     meta: '.tag-type-meta'

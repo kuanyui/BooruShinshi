@@ -1,4 +1,4 @@
-import { assertUnreachable, createDebounceFunction, createEl, FileTags, msgManager, MyMsg, ParsedImageInfo, supported_hostname_t, Tag, tag_category_able_to_be_forced_specified_t, toHtmlEntities } from "./common";
+import { ALL_TAG_CATEGORY, assertUnreachable, createDebounceFunction, createEl, FileTags, msgManager, MyMsg, ParsedImageInfo, supported_hostname_t, Tag, toHtmlEntities } from "./common";
 import { filename_template_token_t, MyOptions, MyStorageRoot, storageManager } from "./options";
 import ALL_MODULE_CLASS from './modules'
 import { AbstractModule } from "./modules/abstract";
@@ -89,7 +89,8 @@ async function downloadImage(req: DownloadRequest) {
 function templateReplacer(templateStr: string, token: filename_template_token_t, replaceValue: string): string {
     return templateStr.replaceAll(`%${token}%`, replaceValue)
 }
-function TAG_DESC_SORTER<T extends {count: number}> (a:T, b: T) { return b.count - a.count }
+function TAG_DESC_SORTER<T extends { count: number }>(a: T, b: T) { return b.count - a.count }
+function TAG_CATEGORY_SORTER(a: tag_category_t, b: tag_category_t) { return ALL_TAG_CATEGORY.indexOf(a) - ALL_TAG_CATEGORY.indexOf(b) }
 
 function generateFileBaseNameByTags(tagDict: FileTags): string {
     // template
@@ -144,9 +145,18 @@ interface FileDownloadTarget {
     filePath: string
 }
 
+/**
+ * TODO: if forceDirClassify is defined, it will be used to generate file name.
+ * This is usable, for example, an image has multiple characters, but you want
+ * only on character appears in the filename.
+ */
 function generateFileNameInfoByTags(opts: {
     imgFileUrl: string,
     fileTags: FileTags,
+    // forceDirClassify?: {
+    //     tagCategory: tag_category_t,
+    //     tagName: string
+    // }
 }): FileInfo {
     for (const [category, tags] of Object.entries(opts.fileTags)) {
         tags.sort(TAG_DESC_SORTER)
@@ -328,15 +338,17 @@ function createActionsEntryButtonForImage(imgUrl: string): HTMLButtonElement {
         }
         const backBtn = document.createElement('button')
         // Create new buttons by tags
-        for (const [_categoryId, tags] of Object.entries(curMod.collectTags())) {
-            const categoryId = _categoryId as tag_category_t
+        const categories = Object.entries(curMod.collectTags()) as [tag_category_t, Tag[]][]
+        categories.sort((a,b) => TAG_CATEGORY_SORTER(a[0], b[0]))
+        for (const [categoryId, tags] of categories) {
             if (tags.length === 0) { continue }
             if (categoryId === 'meta') { continue}
             if (categoryId === 'general') { continue }
             for (const tag of tags) {
                 const btn = document.createElement('button')
+                btn.className = `category__${categoryId}`
                 rootEl.appendChild(btn)
-                btn.innerHTML = `<span class="category__${categoryId}">${categoryId}</span> / ${toHtmlEntities(tag.en)}`
+                btn.innerHTML = `<span class="categoryType">${categoryId}</span> / ${toHtmlEntities(tag.en)}`
                 tippy(btn, {
                     delay: [0, 0], allowHTML: true,
                     content: () => {

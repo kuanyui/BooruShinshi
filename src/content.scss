@@ -24,10 +24,39 @@
         flex: 0 1;
         // width: 0;
     }
-    .category__copyright { color: #900; }
-    .category__character { color: #3a3; }
-    .category__artist { color: #09f; }
-    .category__studio { color: #990; }
+    .category__copyright {
+        background: #bdf;
+        border-color: #06c;
+        .categoryType {
+            color: #06c;
+        }
+        //background: #ebf;
+        //border-color: #609;
+        //.categoryType {
+        //    color: #609;
+        //}
+    }
+    .category__character {
+        background: #dfa;
+        border-color: #3a3;
+        .categoryType {
+            color: #3a3;
+        }
+    }
+    .category__artist {
+        background: #fdd;
+        border-color: #900;
+        .categoryType {
+            color: #900;
+        }
+    }
+    .category__studio {
+        background: #ffc;
+        border-color: #660;
+        .categoryType {
+            color: #660;
+        }
+    }
 }
 #BooruShinshi_QueryJumper {
     display: flex;
