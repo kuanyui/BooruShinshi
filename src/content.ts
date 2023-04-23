@@ -448,6 +448,7 @@ function createJumpButton() {
         faviconEl.className = "FaviconImage"
         faviconEl.src = browser.runtime.getURL(`img/favicons/${mod.favicon()}`)
         const textEl = document.createElement('span')
+        textEl.className = "WebsiteTitleText"
         textEl.textContent = mod.hostname()
         aEl.appendChild(faviconEl)
         aEl.appendChild(textEl)

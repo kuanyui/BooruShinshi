@@ -97,15 +97,15 @@
             text-decoration: none;
             font-size: 14px;
             padding: 8px 8px;
-            color: #3388ff;
+            .WebsiteTitleText { color: #3388ff; }
             &:hover:not(.currentSite) {
                 background: #eeeeee;
             }
             &:visited {
-                color: #8833ff;
+                .WebsiteTitleText { color: #8833ff; }
             }
             &.currentSite {
-                color: #aaaaaa;
+                .WebsiteTitleText { color: #aaaaaa; }
                 cursor: not-allowed;
             }
         }
