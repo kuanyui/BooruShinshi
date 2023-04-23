@@ -15,6 +15,9 @@ export class ModuleRule34PahealNet extends AbstractModule {
     abbrev (): string {
         return 'R3P'
     }
+    favicon(): string {
+        return 'rule34_paheal_net.ico'
+    }
     containsHentai(): boolean {
         return true
     }

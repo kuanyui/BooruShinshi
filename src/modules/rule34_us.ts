@@ -15,6 +15,9 @@ export class ModuleRule34Us extends AbstractModule {
     abbrev (): string {
         return 'R3U'
     }
+    favicon(): string {
+        return 'rule34_us.png'
+    }
     containsHentai(): boolean {
         return true
     }

@@ -51,5 +51,8 @@
             "css": ["dist/content.css"]
         }
     ],
+    "web_accessible_resources": [
+        "img/favicons/*"
+    ],
     "permissions": [ "tabs", "storage", "downloads" ]
 }

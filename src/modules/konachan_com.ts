@@ -15,6 +15,9 @@ export class ModuleKonachanCom extends AbstractModule {
     abbrev (): string {
         return 'KCR'
     }
+    favicon(): string {
+        return 'konachan_com.ico'
+    }
     containsHentai(): boolean {
         return true
     }

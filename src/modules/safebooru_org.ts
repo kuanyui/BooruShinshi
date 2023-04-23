@@ -15,6 +15,9 @@ export class ModuleSafebooruOrg extends AbstractModule {
     abbrev (): string {
         return 'SBR'
     }
+    favicon(): string {
+        return 'safebooru_org.ico'
+    }
     containsHentai(): boolean {
         return false
     }

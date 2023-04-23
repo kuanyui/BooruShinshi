@@ -15,6 +15,9 @@ export class ModuleGelbooruCom extends AbstractModule {
     abbrev (): string {
         return 'GBR'
     }
+    favicon(): string {
+        return 'gelbooru_com.png'
+    }
     containsHentai(): boolean {
         return true
     }

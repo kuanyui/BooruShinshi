@@ -15,6 +15,9 @@ export class ModuleAllthefallenMoe extends AbstractModule {
     abbrev (): string {
         return 'ATF'
     }
+    favicon(): string {
+        return 'booru_allthefallen_moe.svg'
+    }
     containsHentai(): boolean {
         return true
     }

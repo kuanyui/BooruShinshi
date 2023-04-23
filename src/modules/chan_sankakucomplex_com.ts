@@ -15,6 +15,9 @@ export class ModuleChanSankakuComplexCom extends AbstractModule {
     abbrev(): string {
         return 'SCX'
     }
+    favicon(): string {
+        return 'chan_sankakucomplex_com.png'
+    }
     containsHentai(): boolean {
         return true
     }

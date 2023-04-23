@@ -296,7 +296,7 @@ function createDirectDownloadButtonForImage(label: string, imgUrl: string): HTML
     const btn = document.createElement('button')
     btn.textContent = label
     tippy(btn, {
-        delay: [0, 0], allowHTML: true,
+        delay: [0, 0], allowHTML: true, placement: "left",
         content: () => {
             const fileTags = curMod.collectTags()
             const fileDirPath = generateClassifiedDirPath({ fileTags: fileTags })
@@ -326,7 +326,7 @@ function createActionsEntryButtonForImage(imgUrl: string): HTMLButtonElement {
     const entryBtn = document.createElement('button')
     entryBtn.textContent = "As..."
     entryBtn.className = "asBtn"
-    tippy(entryBtn, { delay: [500, 0], allowHTML: true, content: "Manually select classification directory.<br/>(Ignore your defined rules)" })
+    tippy(entryBtn, { delay: [500, 0], allowHTML: true, placement: "left", content: "Manually select classification directory.<br/>(Ignore your defined rules)" })
     entryBtn.onclick = () => {
         // Remove all buttons from root
         const rootEl = document.getElementById('BooruShinshi_PostToolsRoot')
@@ -350,7 +350,7 @@ function createActionsEntryButtonForImage(imgUrl: string): HTMLButtonElement {
                 rootEl.appendChild(btn)
                 btn.innerHTML = `<span class="categoryType">${categoryId}</span> / ${toHtmlEntities(tag.en)}`
                 tippy(btn, {
-                    delay: [0, 0], allowHTML: true,
+                    delay: [0, 0], allowHTML: true, placement: "left",
                     content: () => {
                         const fileTags = curMod.collectTags()
                         const fileDirPath = generateClassifiedDirPath({
@@ -433,14 +433,29 @@ function createJumpButton() {
 
     const queriedTags = curMod.getCurrentQueryList()
     for (const mod of ALL_MODULES) {
-        const a = document.createElement('a')
-        a.textContent = mod.hostname()
-        a.href = mod.makeQueryUrl(queriedTags)
+        const aEl = document.createElement('a')
+        aEl.href = mod.makeQueryUrl(queriedTags)
+        const faviconEl = document.createElement('img')
+        faviconEl.className = "FaviconImage"
+        faviconEl.src = browser.runtime.getURL(`img/favicons/${mod.favicon()}`)
+        const textEl = document.createElement('span')
+        textEl.textContent = mod.hostname()
+        aEl.appendChild(faviconEl)
+        aEl.appendChild(textEl)
         if (mod.hostname() === location.hostname) {
-            a.classList.add('currentSite')
-            a.textContent += ' (Current)'
+            aEl.classList.add('currentSite')
+            textEl.textContent += ' (Current)'
         }
-        linksContainer.appendChild(a)
+        tippy(aEl, {
+            zIndex: 999999999 + 1,
+            placement: "right",
+            delay: [0, 0], allowHTML: true,
+            content: () => {
+                return `<b>${mod.fullName()}</b><br/>
+                <span>Rating: ${mod.containsHentai() ? "🔞 へんたい" : "🔰 セーフ" }<span>`
+            }
+        })
+        linksContainer.appendChild(aEl)
     }
     let expanded = false
     foldBtn.onclick = () => {

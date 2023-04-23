@@ -15,6 +15,9 @@ export class ModuleYandeRe extends AbstractModule {
     abbrev (): string {
         return 'YDR'
     }
+    favicon(): string {
+        return 'yande_re.ico'
+    }
     containsHentai(): boolean {
         return true
     }

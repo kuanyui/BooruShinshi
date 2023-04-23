@@ -15,6 +15,9 @@ export class ModuleTbibOrg extends AbstractModule {
     abbrev (): string {
         return 'TBI'
     }
+    favicon(): string {
+        return 'tbib_org.ico'
+    }
     containsHentai(): boolean {
         return true
     }

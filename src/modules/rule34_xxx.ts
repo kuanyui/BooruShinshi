@@ -15,6 +15,9 @@ export class ModuleRule34XXX extends AbstractModule {
     abbrev (): string {
         return 'R3X'
     }
+    favicon(): string {
+        return 'rule34_xxx.ico'
+    }
     containsHentai(): boolean {
         return true
     }

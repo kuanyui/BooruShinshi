@@ -15,6 +15,9 @@ export class ModuleDanbooruDonmaiUs extends AbstractModule {
     abbrev (): string {
         return 'DBR'
     }
+    favicon(): string {
+        return 'danbooru_donmai_us.svg'
+    }
     containsHentai(): boolean {
         return true
     }
