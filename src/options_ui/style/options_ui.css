@@ -75,7 +75,7 @@ body {
     flex-direction: column;
     font: caption;
     margin: 0;
-    padding: 1em 1em 100%;
+    padding: 1em 1em 100px;
     user-select: none;
     -moz-user-select: none;
 }
