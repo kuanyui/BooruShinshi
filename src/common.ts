@@ -169,18 +169,23 @@ export type DeepPartial<T> = T extends object ? {
 export function deepObjectShaper<T extends object, U extends object>(originalRoot: T, wishedShape: U): boolean {
     let modified = false
     for (const k in originalRoot) {
-        if (!Object.keys(wishedShape).includes(k)) {
+        if (!originalRoot.hasOwnProperty(k)) { continue }
+        if (!wishedShape.hasOwnProperty(k)) {
             delete originalRoot[k]
             modified = true
         }
     }
     for (const k in wishedShape) {
         // @ts-ignore
+        console.warn(`originalRoot[${k}] = `, isObject(originalRoot[k]), originalRoot[k])
+        console.warn(`wishedShape[${k}] = `, isObject(wishedShape[k]), wishedShape[k])
+        if (!wishedShape.hasOwnProperty(k)) { continue }
+        // @ts-ignore
         const ori = originalRoot[k]
         const wish = wishedShape[k]
         if (isObject(ori) && isObject(wish)) {
             modified = modified || deepObjectShaper(ori, wish)
-        } else if (!Object.keys(originalRoot).includes(k)) {
+        } else if (!originalRoot.hasOwnProperty(k)) {
             // @ts-expect-error
             originalRoot[k] = wishedShape[k]
             modified = true

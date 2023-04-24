@@ -8,14 +8,21 @@ icon:
 	convert -background transparent -geometry 256x256 img/icon.svg img/icon.png
 
 watch: clear
-	npm run dev
+	${BIN}/webpack --mode=development --watch
+
 
 build: clear
-	npm run build
+	${BIN}/webpack --mode=production
 
 test:
 	clear
 	${BIN}/mocha --require ts-node/register test/*.ts --exit
+
+
+xpi-for-development: clear
+	${BIN}/webpack --mode=development
+	mkdir -p ${XPI_DIR}
+	zip -r -FS "${XPI_DIR}/${NAME}_DEVELOPMENT.xpi" dist/ img/ manifest.json README.org
 
 xpi: clear build
 	mkdir -p ${XPI_DIR}

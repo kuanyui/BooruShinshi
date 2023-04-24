@@ -49,6 +49,92 @@ mocha.describe('common.ts', () => {
         chai.assert.notDeepEqual(victimRoot, wishedShapedRoot)
         chai.assert.hasAllDeepKeys(victimRoot, wishedShapedRoot)
     })
+    mocha.it('deepObjectShaper()  [storage 0.9.x -> 0.10.x migration error]', () => {
+        const storage_0_9_x = {
+            "options": {
+                "ui": {
+                    "showNotificationWhenStartingToDownload": true,
+                    "openLinkWithNewTab": true,
+                    "buttonForCloseTab": true,
+                    "paginationButtons": true,
+                    "autoCloseTabAfterDownload": true
+                },
+                "fileName": {
+                    "fileNameMaxCharacterLength": 180,
+                    "fileNameTemplate": "[%siteabbrev%](%postid%)[%artist%][%series%][%character%]%generals%",
+                    "tagSeparator": ",",
+                    "overwriteExisted": false
+                },
+                "folder": {
+                    "downloadFolderName": "__BooruShinshi__",
+                    "enableClassify": true,
+                    "classifyRules": [
+                        {
+                            "ruleType": "CustomTagMatcher",
+                            "logicGate": "AND",
+                            "ifContainsTag": [
+                                "hayasaka_ai",
+                                "maid"
+                            ],
+                            "folderName": "hayasaka_ai/maid"
+                        }
+                    ]
+                }
+            },
+            "apiLevel": 2,
+            "statistics": {
+                "downloadCount": 0
+            }
+        }
+        const storage_0_10_x = {
+            "options": {
+                "ui": {
+                    "showNotificationWhenStartingToDownload": true,
+                    "openLinkWithNewTab": false,
+                    "buttonForCloseTab": false,
+                    "paginationButtons": true,
+                    "autoCloseTabAfterDownload": false
+                },
+                "ux": {                         // Added since 0.10.x
+                    "excludeAiGenerated": false
+                },
+                "fileName": {
+                    "fileNameMaxCharacterLength": 180,
+                    "fileNameTemplate": "[%siteabbrev%](%postid%)[%artist%][%series%][%character%]%generals%",
+                    "tagSeparator": ",",
+                    "overwriteExisted": false
+                },
+                "folder": {
+                    "downloadFolderName": "__BooruShinshi__",
+                    "enableClassify": true,
+                    "classifyRules": [
+                        {
+                            "ruleType": "CustomTagMatcher",
+                            "logicGate": "AND",
+                            "ifContainsTag": [
+                                "hayasaka_ai",
+                                "maid"
+                            ],
+                            "folderName": "hayasaka_ai/maid"
+                        }
+                    ]
+                }
+            },
+            "apiLevel": 2,
+            "statistics": {
+                "downloadCount": 0
+            }
+        }
+        // @ts-expect-error
+        chai.assert.isUndefined(storage_0_9_x.options.ux)
+        const shapeModified = deepObjectShaper(storage_0_9_x, storage_0_10_x)
+        chai.assert.isTrue(shapeModified)
+        // @ts-expect-error
+        chai.assert.isObject(storage_0_9_x.options.ux)
+        // @ts-expect-error
+        chai.assert.isBoolean(storage_0_9_x.options.ux.excludeAiGenerated)
+        chai.assert.hasAllDeepKeys(storage_0_9_x, storage_0_10_x)
+    })
     mocha.it('deepMergeSubset()', () => {
         const oriRoot: MyStorageRoot = deepCopy(MY_STORAGE_ROOT_DEFAULT)
         const expectedRoot: MyStorageRoot = deepCopy(MY_STORAGE_ROOT_DEFAULT)

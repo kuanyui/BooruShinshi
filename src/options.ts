@@ -176,7 +176,7 @@ export const MY_STORAGE_ROOT_DEFAULT: MyStorageRoot = {
     statistics: {
         downloadCount: 0,
     },
-}
+} as const
 
 class StorageManager {
     // tsconfig: useDefineForClassFields = false
@@ -191,24 +191,25 @@ class StorageManager {
         }
         this.initAndGetRoot()
     }
-    /** With NO migrations */
     private initAndGetRoot(): Promise<MyStorageRoot> {
-        return this.area.get().then((_ori) => {
-            /** may be malformed */
-            const DEFAULT_ROOT = this.getDefaultRoot()
+        const DEFAULT_ROOT = this.getDefaultRoot()
+        return this.area.get().then((_oriRoot) => {
+            let oriRoot = deepCopy(_oriRoot as unknown as MyStorageRoot)  // NOTE: I don't sure... So deep copy it anyway
             let modified: boolean
-            let root = _ori as unknown as MyStorageRoot
-            if (!root) {
-                root = DEFAULT_ROOT
+            if (!oriRoot) {
+                console.log('[initAndGetRoot] Existed settings not found, initialize a new one.')
+                oriRoot = DEFAULT_ROOT
                 modified = true
             } else {
-                modified = deepObjectShaper(root, DEFAULT_ROOT)
+                console.warn("Shaper=>", oriRoot, DEFAULT_ROOT)
+                modified = deepObjectShaper(oriRoot, DEFAULT_ROOT)
             }
-            console.log('[GET] browser.storage.sync.get() ORIGINAL', deepCopy(root))
+            console.log('[GET] browser.storage.sync.get() ORIGINAL', deepCopy(oriRoot))
             if (modified) {
-                this.setRootArbitrary(root)
+                console.log('[initAndGetRoot] browser.storage is migrated, migrated one:', oriRoot)
+                this.setRootArbitrary(oriRoot)
             }
-            return root
+            return oriRoot
         })
     }
     public getDefaultRoot(): MyStorageRoot {
