@@ -176,15 +176,16 @@ export function deepObjectShaper<T extends object, U extends object>(originalRoo
         }
     }
     for (const k in wishedShape) {
-        // @ts-ignore
-        console.warn(`originalRoot[${k}] = `, isObject(originalRoot[k]), originalRoot[k])
-        console.warn(`wishedShape[${k}] = `, isObject(wishedShape[k]), wishedShape[k])
         if (!wishedShape.hasOwnProperty(k)) { continue }
         // @ts-ignore
         const ori = originalRoot[k]
         const wish = wishedShape[k]
         if (isObject(ori) && isObject(wish)) {
-            modified = modified || deepObjectShaper(ori, wish)
+            // NOTE: Debugged for over 3 hours to find out that don't place `modified` before `||`
+            // NOTE: How did I find out this? => print out all `k` in `for (k in O)` loop, and found that new key under `options` are not printed out at all.
+            // That is to say, when `modified` is true, then the function in `modified || deepObjectShaper(ori, wish)` will never be executed...
+            // But currently I don't know how to write a test to figure this shit out.
+            modified = deepObjectShaper(ori, wish) || modified
         } else if (!originalRoot.hasOwnProperty(k)) {
             // @ts-expect-error
             originalRoot[k] = wishedShape[k]
