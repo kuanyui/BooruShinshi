@@ -148,7 +148,22 @@ export function sanitizeFilePath(fileName: string) {
         .replace(windowsReservedRe, '')
 }
 
+export function isObject<T extends object>(x: any): x is T {
+    return typeof x === 'object' &&
+        !Array.isArray(x) &&
+        x !== null
+}
+
+export type DeepPartial<T> = T extends object ? {
+    [P in keyof T]?: DeepPartial<T[P]>
+} : T
+
 /**
+ * A little like Object.assign(), but
+ * - originalRoot will be tried to transform info the type of "wishedShaped".
+ *   - Type of originalRoot will ALWAYS become same as wishedShape.
+ * @param originalRoot: A reference which may be modified -- "shaped" into "wishedShape"
+ * @param wishedShape: originalRoot will be tried to transform info the type of "wishedShaped".
  * @return true if modified the originalRoot. Else, false.
  */
 export function deepObjectShaper<T extends object, U extends object>(originalRoot: T, wishedShape: U): boolean {
@@ -180,16 +195,16 @@ export function deepObjectShaper<T extends object, U extends object>(originalRoo
     return modified
 }
 
-export function isObject<T extends object>(x: any): x is T {
-    return typeof x === 'object' &&
-        !Array.isArray(x) &&
-        x !== null
-}
 
-export type DeepPartial<T> = T extends object ? {
-    [P in keyof T]?: DeepPartial<T[P]>
-} : T
-
+/**
+ * Deep version of Object.assign(target, other), BUT:
+ * - The type of target will NEVER be changed.
+ * - Return void.
+ *
+ * @param originalRoot
+ * @param subsetRoot
+ * @returns
+ */
 export function deepMergeSubset<T>(originalRoot: T, subsetRoot: DeepPartial<T>): void {
     if (!originalRoot) { return }
     for (const k in subsetRoot) {

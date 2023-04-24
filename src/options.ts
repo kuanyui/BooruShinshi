@@ -191,30 +191,8 @@ class StorageManager {
         }
         this.initAndGetRoot()
     }
-    getDefaultRoot(): MyStorageRoot {
-        return deepCopy(MY_STORAGE_ROOT_DEFAULT)
-    }
-    /** Set data object (can be deeply partial) into LocalStorage. */
-    setRootSubsetPartially(subset: DeepPartial<MyStorageRoot>): Promise<void> {
-        const newRoot = deepCopy(subset)
-        return this.getRoot().then((existingRoot) => {
-            deepMergeSubset(existingRoot, newRoot)
-            console.log('[SET] STORAGE, subset (new) ===', newRoot)
-            console.log('[SET] STORAGE, merged (ori) ===', existingRoot)
-            this.area.set(existingRoot as any)
-        })
-    }
-    setRootArbitrary(newRoot: MyStorageRoot) {
-        this.area.set(newRoot as any)
-    }
-    setRootSafely(newRoot: MyStorageRoot) {
-        return this.getRoot().then((existingRoot) => {
-            deepObjectShaper(newRoot, existingRoot)
-            this.area.set(newRoot as any)
-        })
-    }
-    /** Without NO migrations */
-    initAndGetRoot(): Promise<MyStorageRoot> {
+    /** With NO migrations */
+    private initAndGetRoot(): Promise<MyStorageRoot> {
         return this.area.get().then((_ori) => {
             /** may be malformed */
             const DEFAULT_ROOT = this.getDefaultRoot()
@@ -233,21 +211,39 @@ class StorageManager {
             return root
         })
     }
-    /** Get data object from LocalStorage */
-    getRoot(): Promise<MyStorageRoot> {
-        return this.area.get().then((root) => {
-            return root as unknown as MyStorageRoot
-        }).catch((err) => {
-            console.error('Error when getting settings from browser.storage:', err)
-            return this.initAndGetRoot()
+    public getDefaultRoot(): MyStorageRoot {
+        return deepCopy(MY_STORAGE_ROOT_DEFAULT)
+    }
+    public setRootArbitrary(newRoot: MyStorageRoot) {
+        this.area.set(newRoot as any)
+    }
+    /** Set data object (can be deeply partial) into LocalStorage. */
+    public setRootSubsetPartially(subset: DeepPartial<MyStorageRoot>): Promise<void> {
+        const newRoot = deepCopy(subset)
+        return this.getRoot().then((existingRoot) => {
+            deepMergeSubset(existingRoot, newRoot)
+            console.log('[SET] STORAGE, subset (new) ===', newRoot)
+            console.log('[SET] STORAGE, merged (ori) ===', existingRoot)
+            this.area.set(existingRoot as any)
         })
     }
-    getData<K extends keyof MyStorageRoot>(category: K): Promise<MyStorageRoot[K]> {
+    public setRootSafelyIntoStorage(newRoot: MyStorageRoot) {
+        return this.getRoot().then((existingRoot) => {
+            deepObjectShaper(newRoot, existingRoot)
+            this.area.set(newRoot as any)
+        })
+    }
+    /** Get the whole LocalStorage data object */
+    public getRoot(): Promise<MyStorageRoot> {
+        return this.initAndGetRoot()
+    }
+    /** Get direct child of LocalStorage */
+    public getDataFromRoot<K extends keyof MyStorageRoot>(category: K): Promise<MyStorageRoot[K]> {
         return this.getRoot().then((root) => {
             return root[category]
         })
     }
-    onOptionsChanged(cb: (changes: TypedChangeDict<MyStorageRoot>) => void) {
+    public onOptionsChanged(cb: (changes: TypedChangeDict<MyStorageRoot>) => void) {
         browser.storage.onChanged.addListener((_changes, areaName) => {
             const changes = _changes as TypedChangeDict<MyStorageRoot>
             if (areaName === 'sync' || areaName === 'local') {

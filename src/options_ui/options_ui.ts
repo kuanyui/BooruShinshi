@@ -300,7 +300,7 @@ rth.onchange = (newVal) => {
 }
 
 async function loadFromLocalStorage() {
-    const d = await storageManager.getData('options')
+    const d = await storageManager.getDataFromRoot('options')
     setCheckboxValue('#ui_showNotificationWhenStartingToDownload', d.ui.showNotificationWhenStartingToDownload)
     setCheckboxValue('#ui_openLinkWithNewTab', d.ui.openLinkWithNewTab)
     setCheckboxValue('#ui_buttonForCloseTab', d.ui.buttonForCloseTab)
@@ -471,7 +471,7 @@ function importCfgFromJsonFile() {
             const rawStr = r.target.result
             if (typeof rawStr !=='string') { return }
             const jsonObj = JSON.parse(rawStr)
-            storageManager.setRootSafely(jsonObj)
+            storageManager.setRootSafelyIntoStorage(jsonObj)
             location.reload()
         }
         reader.readAsText(file,'UTF-8')

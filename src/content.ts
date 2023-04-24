@@ -27,14 +27,14 @@ browser.runtime.onMessage.addListener((_ev: any) => {
     }
 })
 let OPTIONS = storageManager.getDefaultRoot().options
-storageManager.getData('options').then((opts) => {
+storageManager.getDataFromRoot('options').then((opts) => {
     OPTIONS = opts
     if (opts.ui.openLinkWithNewTab) {
         makeImgAlwaysOpenedWithNewTab()
     }
 })
 function fetchOptions(): Promise<MyOptions> {
-    return storageManager.getData('options').then((opts) => {
+    return storageManager.getDataFromRoot('options').then((opts) => {
         return OPTIONS = opts
     })
 }
@@ -402,7 +402,7 @@ function createActionsEntryButtonForImage(imgUrl: string): HTMLButtonElement {
 }
 
 async function createPaginatorButton() {
-    if (!(await storageManager.getData('options')).ui.paginationButtons) {
+    if (!(await storageManager.getDataFromRoot('options')).ui.paginationButtons) {
         return
     }
     const oriEl = document.getElementById('BooruShinshi_Paginator')
