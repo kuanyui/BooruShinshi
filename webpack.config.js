@@ -1,5 +1,6 @@
 const CopyPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const TerserPlugin = require("terser-webpack-plugin");
 
 const config = {
     entry: {
@@ -79,6 +80,13 @@ const config = {
         new CopyPlugin([
             { from: 'src/options_ui/style/', to: 'options_ui_style/', force: true, toType: 'dir' },
         ]),
+        new TerserPlugin({
+            terserOptions: {
+                compress: {
+                    drop_console: true,
+                }
+            }
+        })
     ]
 }
 
