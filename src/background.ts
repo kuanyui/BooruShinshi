@@ -21,7 +21,7 @@ const STORAGE: MyStorageRoot = storageManager.getDefaultRoot()
 
 // Storage
 console.log('[background] first time to get config from storage')
-storageManager.getRoot().then((obj) => {
+storageManager.initAndGetRoot().then((obj) => {
     objectAssignPerfectly(STORAGE, obj)
     storageManager.onOptionsChanged(async (changes) => {
         console.log('[background] storage changed!', changes)

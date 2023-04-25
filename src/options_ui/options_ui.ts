@@ -445,11 +445,16 @@ function setupAutoValidator() {
 }
 
 function exportCfgAsJsonFile() {
-    storageManager.getRoot().then(d => {
-        var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(d, null, 2));
+    function pad(n: number) {
+        return (n+'').padStart(2, '0')
+    }
+    storageManager.getRoot().then(rootObj => {
+        var d = new Date()
+        var nowStr: string = `${pad(d.getFullYear())}${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`
+        var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(rootObj, null, 2));
         var aEl = document.createElement('a');
         aEl.setAttribute("href", dataStr);
-        aEl.setAttribute("download", "BooruShinshiSetting.json");
+        aEl.setAttribute("download", `BooruShinshiSettings_${nowStr}.json`);
         document.body.appendChild(aEl); // required for firefox
         aEl.click();
         aEl.remove();

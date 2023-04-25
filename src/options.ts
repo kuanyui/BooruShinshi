@@ -189,9 +189,15 @@ class StorageManager {
         } else {
             this.area = browser.storage.local
         }
-        this.initAndGetRoot()
+        this.initAndGetRoot()  // FIXME: redundant calling?
     }
-    private initAndGetRoot(): Promise<MyStorageRoot> {
+    /**
+     * - Call this and wait promise resolve at first time you initialize this
+     *   WebExtension. This function will initialize & migrate the data
+     *   structure of StorageArea (for user settings).
+     * - If already initialized, use `getRoot()` instead.
+     **/
+    public initAndGetRoot(): Promise<MyStorageRoot> {
         const copiedDefaultRoot = this.getDefaultRoot()
         return this.area.get().then((oriRoot) => {
             let copiedOriRoot = deepCopy(oriRoot as unknown as MyStorageRoot)
@@ -254,9 +260,18 @@ class StorageManager {
             this.area.set(newRoot as any)
         })
     }
-    /** Get the whole LocalStorage data object */
+    /**
+     * - Get the whole LocalStorage data object
+     * - You should call `initAndGetRoot()` at least one time (and wait it until
+     *   resolved) before you call this function.
+     * */
     public getRoot(): Promise<MyStorageRoot> {
-        return this.initAndGetRoot()
+        return this.area.get().then((root) => {
+            return root as unknown as MyStorageRoot
+        }).catch((err) => {
+            console.error('Error when getting settings from browser.storage:', err)
+            return this.initAndGetRoot()
+        })
     }
     /** Get direct child of LocalStorage */
     public getDataFromRoot<K extends keyof MyStorageRoot>(category: K): Promise<MyStorageRoot[K]> {
