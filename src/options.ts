@@ -201,11 +201,11 @@ class StorageManager {
         const copiedDefaultRoot = this.getDefaultRoot()
         return this.area.get().then((oriRoot) => {
             let copiedOriRoot = deepCopy(oriRoot as unknown as MyStorageRoot)
-            // console.log('[initAndGetRoot] browser.storage.sync.get() ORIGINAL', deepCopy(copiedOriRoot))
+            console.log('[initAndGetRoot] browser.storage.sync.get() ORIGINAL', deepCopy(copiedOriRoot))
             let modified: boolean
             // console.log('[initAndGetRoot] [BEFORE MIGRATION] DIFF =>', deepDiff(copiedOriRoot, copiedDefaultRoot))
             if (!copiedOriRoot) {
-                // console.log('[initAndGetRoot] No existed settings found, initialize a new one.')
+                console.log('[initAndGetRoot] No existed settings found, initialize a new one.')
                 copiedOriRoot = copiedDefaultRoot
                 modified = true
 
@@ -215,14 +215,14 @@ class StorageManager {
             }
             // console.log('[initAndGetRoot] [AFTER MIGRATION] DIFF =>', deepDiff(copiedOriRoot, copiedDefaultRoot))
             if (modified) {
-                // console.log('[initAndGetRoot] browser.storage is migrated, migrated one:', copiedOriRoot)
+                console.log('[initAndGetRoot] browser.storage is migrated; migration result ===', copiedOriRoot)
                 return this.removeDeprecatedRootKeys(copiedOriRoot).then(() => {
                     return this.setRootArbitrary(copiedOriRoot).then(() => {   // Wait for finished
                         return copiedOriRoot
                     })
                 })
             } else {
-                // console.log('[initAndGetRoot] Not modified.')
+                console.log('[initAndGetRoot] Not modified.')
                 return copiedOriRoot
             }
         })
