@@ -192,31 +192,51 @@ class StorageManager {
         this.initAndGetRoot()
     }
     private initAndGetRoot(): Promise<MyStorageRoot> {
-        const DEFAULT_ROOT = this.getDefaultRoot()
-        return this.area.get().then((_oriRoot) => {
-            let oriRoot = deepCopy(_oriRoot as unknown as MyStorageRoot)  // NOTE: I don't sure... So deep copy it anyway
+        const copiedDefaultRoot = this.getDefaultRoot()
+        return this.area.get().then((oriRoot) => {
+            let copiedOriRoot = deepCopy(oriRoot as unknown as MyStorageRoot)
+            // console.log('[initAndGetRoot] browser.storage.sync.get() ORIGINAL', deepCopy(copiedOriRoot))
             let modified: boolean
-            if (!oriRoot) {
-                console.log('[initAndGetRoot] Existed settings not found, initialize a new one.')
-                oriRoot = DEFAULT_ROOT
+            // console.log('[initAndGetRoot] [BEFORE MIGRATION] DIFF =>', deepDiff(copiedOriRoot, copiedDefaultRoot))
+            if (!copiedOriRoot) {
+                // console.log('[initAndGetRoot] No existed settings found, initialize a new one.')
+                copiedOriRoot = copiedDefaultRoot
                 modified = true
+
             } else {
-                console.warn("Shaper=>", oriRoot, DEFAULT_ROOT)
-                modified = deepObjectShaper(oriRoot, DEFAULT_ROOT)
+                modified = deepObjectShaper(copiedOriRoot, copiedDefaultRoot)
+                console.log("[initAndGetRoot] Shaper=>", oriRoot, copiedDefaultRoot)
             }
-            console.log('[GET] browser.storage.sync.get() ORIGINAL', deepCopy(oriRoot))
+            // console.log('[initAndGetRoot] [AFTER MIGRATION] DIFF =>', deepDiff(copiedOriRoot, copiedDefaultRoot))
             if (modified) {
-                console.log('[initAndGetRoot] browser.storage is migrated, migrated one:', oriRoot)
-                this.setRootArbitrary(oriRoot)
+                // console.log('[initAndGetRoot] browser.storage is migrated, migrated one:', copiedOriRoot)
+                return this.removeDeprecatedRootKeys(copiedOriRoot).then(() => {
+                    return this.setRootArbitrary(copiedOriRoot).then(() => {   // Wait for finished
+                        return copiedOriRoot
+                    })
+                })
+            } else {
+                // console.log('[initAndGetRoot] Not modified.')
+                return copiedOriRoot
             }
-            return oriRoot
         })
     }
     public getDefaultRoot(): MyStorageRoot {
         return deepCopy(MY_STORAGE_ROOT_DEFAULT)
     }
-    public setRootArbitrary(newRoot: MyStorageRoot) {
-        this.area.set(newRoot as any)
+    /** StorageArea.set() will only "update" according to keys, but will NOT delete already existed keys in StorageArea. So wee need to delete manually.
+     */
+    private removeDeprecatedRootKeys(newRoot: MyStorageRoot): Promise<void> {
+        return this.area.get().then((oldRoot) => {
+            const oldKeys = Object.keys(oldRoot)
+            const newKeys = Object.keys(newRoot)
+            const deprecatedKeys: string[] = oldKeys.filter(k => !newKeys.includes(k))
+            this.area.remove(deprecatedKeys)
+        })
+    }
+    public setRootArbitrary(newRoot: MyStorageRoot): Promise<void> {
+        // NOTE: StorageArea.set() will only "update" according to keys, but will NOT delete already existed keys in StorageArea. So wee need to delete manually.
+        return this.area.set(newRoot as any)
     }
     /** Set data object (can be deeply partial) into LocalStorage. */
     public setRootSubsetPartially(subset: DeepPartial<MyStorageRoot>): Promise<void> {

@@ -134,6 +134,9 @@ mocha.describe('common.ts', () => {
         // @ts-expect-error
         chai.assert.isBoolean(storage_0_9_x.options.ux.excludeAiGenerated)
         chai.assert.hasAllDeepKeys(storage_0_9_x, storage_0_10_x)
+        chai.assert.notDeepEqual(storage_0_9_x, storage_0_10_x)
+        const shapeModified1 = deepObjectShaper(storage_0_9_x, storage_0_10_x)
+        chai.assert.isFalse(shapeModified1)
     })
     mocha.it('deepMergeSubset()', () => {
         const oriRoot: MyStorageRoot = deepCopy(MY_STORAGE_ROOT_DEFAULT)
