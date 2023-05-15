@@ -79,8 +79,11 @@ export class ModuleChanSankakuComplexCom extends AbstractModule {
         }
     }
     getPostId(): number {
-        const u = new URL(location.href)
-        const m = u.pathname.match(/\/post\/show\/([0-9]+)/)
+        const meta = document.querySelector(`meta[property="og:url"]`)
+        if (!meta) { return -1 }
+        const url = meta.getAttribute('content')
+        if (!url) { return -1 }
+        const m = url.match(/\/post\/show\/([0-9]+)/)
         return m ? ~~m[1] : -1
     }
     collectImageInfoList(): ParsedImageInfo[] {
