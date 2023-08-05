@@ -93,7 +93,7 @@ export class ModuleChanSankakuComplexCom extends AbstractModule {
         const sidebarEl = document.querySelector('#tag-sidebar')
         const fileTags: FileTags = makeEmptyFileTags()
         if (!sidebarEl) {
-            console.error('[To Developer] Not found tag')
+            console.error('[DEBUG][To Developer] Not found tag')
             return fileTags
         }
         const meta: FileTagsElementClass = COMMON_TAG_SELECTOR
@@ -101,13 +101,22 @@ export class ModuleChanSankakuComplexCom extends AbstractModule {
             const tagLiClass = meta[tagCategory]
             const tagsOfCategory: Tag[] = []
             let els = sidebarEl.querySelectorAll(tagLiClass)
+            console.warn(`[DEBUG] ${tagCategory} (${tagLiClass})`, els)
             els.forEach((el) => {
                 const keyEl = el.querySelector('a[itemprop="keywords"]')
-                if (!keyEl || !keyEl.textContent) {return}
+                if (!keyEl || !keyEl.textContent) { console.error('[BooruShinshi Error] No tag el'); return }
                 const textContent = keyEl.textContent.trim().replace(/ /g, '_')  // replace space with underline
-                const countEl = el.querySelector('.post-count')
-                if (!countEl || !countEl.textContent) {return}
-                const count = ~~countEl.textContent
+                const tooltipEl = el.parentElement!.querySelector('.tooltip > span')
+                if (!tooltipEl || !tooltipEl.innerHTML) { console.error('[BooruShinshi Error] No tag tooltip el'); return }
+                const m = tooltipEl.innerHTML.match(/<br ?\/? ?>Posts: *(\d+(?:\.\d+)?)([KMG])?/)
+                if (!m) { console.error('[BooruShinshi Error] tooltip html not matched'); return }
+                let count = parseFloat(m[1])
+                const unit = m[2]
+                switch (unit) {
+                    case 'K': count *= 1000; break
+                    case 'M': count *= 1000000; break
+                    case 'G': count *= 1000000000; break
+                }
                 const title = keyEl.getAttribute('title') || ''
                 if (document.documentElement.lang === 'en') {
                     tagsOfCategory.push({ ja: title, en: textContent, count })

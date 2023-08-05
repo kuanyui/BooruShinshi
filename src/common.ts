@@ -88,7 +88,7 @@ export const COMMON_TAG_SELECTOR: FileTagsElementClass = {
     studio: '.tag-type-studio',
     general: '.tag-type-general',
     meta: '.tag-type-meta'
-}
+} as const
 
 /** Used by SankakuComplex, Yande.re, Konachan. */
 export function generalCollectImageInfoList(): ParsedImageInfo[] {

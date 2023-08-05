@@ -538,11 +538,12 @@ function setupPostListPage() {
 }
 
 async function main() {
+    console.log('[BooruShinshi] content.js main()')
     await fetchOptions()
     const isList = curMod.inPostListPage()
     const isContent = curMod.inPostContentPage()
     if (isList && isContent) {
-        console.error('[To Developer] This should not be happened. This may cause potential error.')
+        console.error('[BooruShinshi][To Developer] This should not be happened. This may cause potential error.')
     }
     if (isList) {
         setupPostListPage()
