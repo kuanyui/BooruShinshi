@@ -80,13 +80,7 @@ const config = {
         new CopyPlugin([
             { from: 'src/options_ui/style/', to: 'options_ui_style/', force: true, toType: 'dir' },
         ]),
-        new TerserPlugin({
-            terserOptions: {
-                compress: {
-                    drop_console: true,
-                }
-            }
-        })
+
     ]
 }
 
@@ -97,7 +91,15 @@ module.exports = (env, argv) => {
     }
 
     if (argv.mode === 'production') {
-        //...
+        config.plugins.push(
+            new TerserPlugin({
+                terserOptions: {
+                    compress: {
+                        drop_console: true,
+                    }
+                }
+            })
+        )
     }
 
     return config
