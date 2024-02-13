@@ -23,7 +23,7 @@ const curMod = getModuleInstance()
 browser.runtime.onMessage.addListener((_ev: any) => {
     const ev = _ev as MyMsg
     if (ev.type === "AskTabToDownload") {
-        showPostTool(true)
+        setPostTool({ show: true })
     }
 })
 let OPTIONS = storageManager.getDefaultRoot().options
@@ -253,13 +253,14 @@ function generateClassifiedDirPath(opts: {
 }
 
 
-async function showPostTool(show: boolean) {
+async function setPostTool(opts: { show: boolean }) {
     await fetchOptions()
+    console.log('opts', opts)
     const oriEl = document.getElementById('BooruShinshi_PostToolsRoot')
     if (oriEl) {
         oriEl.remove()
     }
-    if (!show) {
+    if (!opts.show) {
         return
     }
     const root = document.createElement('div')
@@ -393,7 +394,7 @@ function createActionsEntryButtonForImage(imgUrl: string): HTMLButtonElement {
         }
         rootEl.appendChild(document.createElement('hr'))
         backBtn.textContent = `← Back`
-        backBtn.onclick = () => showPostTool(true)
+        backBtn.onclick = () => setPostTool({ show: true })
         rootEl.appendChild(backBtn)
 
 
@@ -489,7 +490,7 @@ function setupPostContentPage() {
         if (curMod.ifPostContentPageIsReady()) {
             console.log('document with key elements rendered!')
             me.disconnect() // stop observing
-            showPostTool(true)
+            setPostTool({ show: true })
             return
         }
     })
