@@ -255,7 +255,6 @@ function generateClassifiedDirPath(opts: {
 
 async function setPostTool(opts: { show: boolean }) {
     await fetchOptions()
-    console.log('opts', opts)
     const oriEl = document.getElementById('BooruShinshi_PostToolsRoot')
     if (oriEl) {
         oriEl.remove()
@@ -485,10 +484,10 @@ function createJumpButton() {
 }
 
 function setupPostContentPage() {
-    console.log('[Post Content] setup for post content page')
+    console.log('[BooruShinshi][Post Content] setup MutationObserver for post content page')
     const observer = new MutationObserver(function (mutations, me) {
         if (curMod.ifPostContentPageIsReady()) {
-            console.log('document with key elements rendered!')
+            console.log('[BooruShinshi] document with key elements rendered! Insert HTML element and stop MutationObserver')
             me.disconnect() // stop observing
             setPostTool({ show: true })
             return
@@ -551,7 +550,7 @@ async function main() {
     } else if (isContent) {
         setupPostContentPage()
     } else {
-        console.warn(`[module::${curMod.hostname()}] Not supported page.`)
+        console.warn(`[BooruShinshi][module::${curMod.hostname()}] Not supported page. \n(If you see this message but this page is expected to be supported, this usually means this module needs to be updated.)`)
     }
 }
 
