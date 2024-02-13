@@ -404,7 +404,7 @@ function preprocessDOM() {
     }
     q("#fileName_fileNameTemplate").after(resetFilenameTemplateBtn)
     tippy(q('#fileName_fileNameTemplate'), {content: 'Length range is 8 ~ 240. Required.'})
-    q<HTMLButtonElement>('#resetAllBtn').onclick = resetToDefault
+    // q<HTMLButtonElement>('#resetAllBtn').onclick = resetToDefault
     tippy(q("#ux_excludeAiGenerated"), {allowHTML: true, content: `If an image contains any of following tag, it will be hidden from images list.<br/>Tags should be separated by space.<br/>ex: <code>ai_generated</code>`})
     // Ui Help
     const uiHelp = q<HTMLElement>('.alert.uiSetting')
