@@ -22,13 +22,11 @@ export class ModuleChanSankakuComplexCom extends AbstractModule {
         return true
     }
     inPostListPage(): boolean {
-        return location.pathname === '/' ||
-            !!location.pathname.match(/^[/]post[/]?$/) ||
-            !!location.pathname.match(/^[/]post[/]index[/]?$/)
+        return !!location.pathname.match(/^[/][a-z-]+[/]posts?$/)
 
     }
     inPostContentPage(): boolean {
-        return location.pathname.includes('/post/show/')
+        return !!location.pathname.match(/^[/][a-z-]+[/]posts[/][A-Za-z0-9_-]+/)
     }
     getCurrentQueryList(): string[] {
         const params = new URLSearchParams(location.search)
@@ -103,12 +101,10 @@ export class ModuleChanSankakuComplexCom extends AbstractModule {
             let els = sidebarEl.querySelectorAll(tagLiClass)
             console.warn(`[DEBUG] ${tagCategory} (${tagLiClass})`, els)
             els.forEach((el) => {
-                const keyEl = el.querySelector('a[itemprop="keywords"]')
+                const keyEl = el.querySelector<HTMLAnchorElement>('a[itemprop="keywords"]')
                 if (!keyEl || !keyEl.textContent) { console.error('[BooruShinshi Error] No tag el'); return }
                 const textContent = keyEl.textContent.trim().replace(/ /g, '_')  // replace space with underline
-                const tooltipEl = el.parentElement!.querySelector('.tooltip > span')
-                if (!tooltipEl || !tooltipEl.innerHTML) { console.error('[BooruShinshi Error] No tag tooltip el'); return }
-                const m = tooltipEl.innerHTML.match(/<br ?\/? ?>Posts: *(\d+(?:\.\d+)?)([KMG])?/)
+                const m = (keyEl.getAttribute('data-count') || '').match(/(\d+(?:\.\d+)?)([KMG])?/)
                 if (!m) { console.error('[BooruShinshi Error] tooltip html not matched'); return }
                 let count = parseFloat(m[1])
                 const unit = m[2]
