@@ -86,13 +86,13 @@ export class ModuleRule34PahealNet extends AbstractModule {
         const fin: ParsedImageInfo[] = generalCollectImageInfoList()
         const mainImg = document.querySelector('#main_image') as HTMLImageElement
         fin.push({ btnText: `Low (fallback)`, imgUrl: mainImg.src })
-        const infoEl = document.querySelector('#ImageInfo')!
-        const tds = Array.from(infoEl.querySelectorAll('td'))
-        const sizeTd = tds.find(td => td.textContent!.match(/[KMG]B/))
-        const size: string = !sizeTd ? 'Unknown Size' : sizeTd.textContent!.match(/([0-9.]+[KMG]B)/)![1]
-        const imgLinkTd = tds.find(td => td.textContent!.match(/File Only/))
-        const imgLink = imgLinkTd!.querySelector('a')!
-        fin.push({ btnText: `High (${size})`, imgUrl: imgLink.href })
+        // const infoEl = document.querySelector('#ImageInfo')!
+        // const tds = Array.from(infoEl.querySelectorAll('td'))
+        // const sizeTd = tds.find(td => td.textContent!.match(/[KMG]B/))
+        // const size: string = !sizeTd ? 'Unknown Size' : sizeTd.textContent!.match(/([0-9.]+[KMG]B)/)![1]
+        // const imgLinkTd = tds.find(td => td.textContent!.match(/File Only/))
+        // const imgLink = imgLinkTd!.querySelector('a')!
+        // fin.push({ btnText: `High (${size})`, imgUrl: imgLink.href })
         return fin
     }
     collectTags(): FileTags {
