@@ -331,6 +331,7 @@ function createDirectDownloadButtonForImage(label: string, imgUrl: string): HTML
         const fileTags = curMod.collectTags()
         const fileDirPath = generateClassifiedDirPath({ fileTags: fileTags })
         const fileNameInfo = generateFileNameInfoByTags({ imgFileUrl: imgUrl, fileTags: fileTags })
+        await curMod.prepareForFullSizeDownload()
         downloadImage({
             imageFileUrl: imgUrl,
             downloadFileFullPath: fileDirPath + '/' + fileNameInfo.fileFullName

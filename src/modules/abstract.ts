@@ -42,5 +42,7 @@ export abstract class AbstractModule {
     public abstract getPaginationInfo(): PaginationInfo
     /** content.ts will call this after <body> is ready. */
     public abstract onBodyReady(): void
+    /** A dirty hack for Danbooru. It requires a click on "view original" first before downloading full size image.*/
+    public async prepareForFullSizeDownload(): Promise<boolean> { return true }
 }
 

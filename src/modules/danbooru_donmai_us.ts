@@ -117,4 +117,10 @@ export class ModuleDanbooruDonmaiUs extends AbstractModule {
         return fileTags
     }
     onBodyReady(): void { }
+    override async prepareForFullSizeDownload(): Promise<boolean> {
+        const el = document.querySelector<HTMLAnchorElement>("#image-resize-notice a.image-view-original-link")
+        if (!el) { return true }
+        if (el) { el.click() }
+        return true
+    }
 }
