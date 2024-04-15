@@ -87,10 +87,20 @@ async function downloadImage(req: DownloadRequest) {
 }
 
 function templateReplacer(templateStr: string, token: filename_template_token_t, replaceValue: string): string {
+    replaceValue = extraSanitizerForFilePathSegment(replaceValue)
     return templateStr.replaceAll(`%${token}%`, replaceValue)
 }
 function TAG_DESC_SORTER<T extends { count: number }>(a: T, b: T) { return b.count - a.count }
 function TAG_CATEGORY_SORTER(a: tag_category_t, b: tag_category_t) { return ALL_TAG_CATEGORY.indexOf(a) - ALL_TAG_CATEGORY.indexOf(b) }
+
+/** Fix some strange extra special condition.
+ * To avoid error like `download failed: Error: filename must not contain illegal characters`
+ */
+function extraSanitizerForFilePathSegment(filePathSegmentation: string): string {
+    return filePathSegmentation
+        .replace(/[.]/g, "．") // ex: `n.g.`. Actually I think this is a bug of Firefox because this is allow in UNIX file name.
+        .replace(/[/]/g, "／") // ex: `ranma_1/2`
+}
 
 function generateFileBaseNameByTags(tagDict: FileTags): string {
     // template
@@ -249,7 +259,7 @@ function generateClassifiedDirPath(opts: {
             }
         }
     }
-    return final.filter(x=>x).join('/')
+    return final.filter(x=>x).map(x => extraSanitizerForFilePathSegment(x)).join('/')
 }
 
 
