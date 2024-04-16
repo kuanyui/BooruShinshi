@@ -112,6 +112,8 @@ export interface MyOptions_Ux {
     /** If image contains "ai_generated", the image will be hidden.
     */
     excludeAiGenerated: boolean
+    /** A block list can be applied across all booru sites. Separate each tag by space. */
+    blockedTags: string
 }
 export interface MyOptions_FileName {
     /** include file ext.
@@ -159,7 +161,10 @@ export const MY_STORAGE_ROOT_DEFAULT: MyStorageRoot = {
             autoCloseTabAfterDownload: false,
         },
         ux: {
-          excludeAiGenerated: false,
+            excludeAiGenerated: false,
+            blockedTags: [ "furry purple_skin orange_skin pink_skin green_skin blue_skin",
+            "bestiality insect giant_insect",
+            "guro murder corpse beheaded necrophilia headless" ].join('\n'),
         },
         fileName: {
             fileNameMaxCharacterLength: 180,

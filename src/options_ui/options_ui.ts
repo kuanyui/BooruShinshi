@@ -307,6 +307,7 @@ async function loadFromLocalStorage() {
     setCheckboxValue('#ui_paginationButtons', d.ui.paginationButtons)
     setCheckboxValue('#ui_autoCloseTabAfterDownload', d.ui.autoCloseTabAfterDownload)
     setCheckboxValue('#ux_excludeAiGenerated', d.ux.excludeAiGenerated)
+    setTextAreaValue('#ux_blockedTags', d.ux.blockedTags)
     setTextAreaValue('#fileName_fileNameMaxCharacterLength', d.fileName.fileNameMaxCharacterLength+'')
     setTextAreaValue('#fileName_fileNameTemplate', d.fileName.fileNameTemplate)
     setCheckboxValue('#fileName_overwriteExisted', d.fileName.overwriteExisted)
@@ -333,6 +334,7 @@ function saveFormToLocalStorage() {
             },
             ux: {
                 excludeAiGenerated: getCheckboxValue('#ux_excludeAiGenerated'),
+                blockedTags: getTextAreaValue("#ux_blockedTags"),
             },
             fileName: {
                 fileNameMaxCharacterLength: ~~getTextAreaValue('#fileName_fileNameMaxCharacterLength'),

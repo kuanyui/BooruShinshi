@@ -511,12 +511,16 @@ function setupPostContentPage() {
 }
 
 function removeResultFromPostsList() {
+    const blockedTags: string[] = OPTIONS.ux.blockedTags.split(/[ \n]+/)
     if (OPTIONS.ux.excludeAiGenerated) {
-        for (const x of curMod.getTaggedPostsInPostsList()) {
-            console.log(x.element, x.tags)
-            if (x.tags.includes('ai_generated')) {
-                x.element.remove()
-            }
+        blockedTags.push('ai_generated')
+    }
+    console.log("BLOCK LIST:", blockedTags)
+    const posts = curMod.getTaggedPostsInPostsList()
+    for (const post of posts) {
+        // console.log(post.element, post.tags)
+        if (post.tags.find((tag) => blockedTags.find(bTag => bTag === tag))) {
+            post.element.remove()
         }
     }
 }
