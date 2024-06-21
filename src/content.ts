@@ -78,7 +78,8 @@ async function downloadImage(req: DownloadRequest) {
     msgManager.sendToBg({
         type: 'DownloadLinkGotten',
         url: req.imageFileUrl,
-        filename: req.downloadFileFullPath
+        filename: req.downloadFileFullPath,
+        referer: window.location.origin,
     })
     if (OPTIONS.ui.showNotificationWhenStartingToDownload) {
         const fileNameHtml = `<div>${toHtmlEntities(req.downloadFileFullPath)}</div>`

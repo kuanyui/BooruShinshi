@@ -23,8 +23,11 @@ export interface MyMsg_AskTabToDownload { type: 'AskTabToDownload' }
 export interface MyMsg_CloseCurrentTab { type: 'CloseTab' }
 export interface MyMsg_DownloadLinkGotten {
     type: 'DownloadLinkGotten'
+    /** URL of image file */
     url: string
     filename: string
+    /** `Referer` in HTTP header */
+    referer: string
 }
 export interface MyMsg_OpenLinkInNewTab {
     type: 'OpenLinkInNewTab'

@@ -62,6 +62,13 @@ browser.runtime.onMessage.addListener((_msg: any, sender: browser.runtime.Messag
             filename: safeFilename,
             saveAs: false,
             conflictAction: STORAGE.options.fileName.overwriteExisted ? 'overwrite' : 'uniquify',
+            headers: [
+                // @ts-expect-error  (Wrong type definition of web-ext?)
+                {
+                    name: "Referer",
+                    value: msg.referer
+                },
+            ]
         }).then((id) => {
             if (STORAGE.options.ui.autoCloseTabAfterDownload) {
                 setTimeout(() => {
