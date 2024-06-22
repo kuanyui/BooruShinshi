@@ -224,6 +224,7 @@ function generateClassifiedDirPath(opts: {
     console.log('RULES====', userDefinedRules)
     rulesLoop:
     for (const r of userDefinedRules) {
+        const ruleFolderPathSegs: string[] = r.folderName.split('/')
         switch (r.ruleType) {
             case 'TagCategory': {
                 const tags = opts.fileTags[r.tagCategory]
@@ -231,7 +232,7 @@ function generateClassifiedDirPath(opts: {
                     const enTag = tags[0].en
                     // Avoid to use some tags in file path because they are undistinguishing in directory hierarchy.
                     if ( (['original', 'origin', 'tagme', 'unknown'].includes(enTag)) ) { continue }
-                    final.push(r.folderName)
+                    final.push(...ruleFolderPathSegs)
                     final.push(enTag)
                     break rulesLoop
                 }
@@ -249,13 +250,13 @@ function generateClassifiedDirPath(opts: {
                     })
                 }
                 if (matched) {
-                    final.push(r.folderName)
+                    final.push(...ruleFolderPathSegs)
                     break rulesLoop
                 }
                 continue rulesLoop
             }
             case 'Fallback': {
-                final.push(r.folderName)
+                final.push(...ruleFolderPathSegs)
                 break rulesLoop
             }
         }
