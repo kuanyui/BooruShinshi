@@ -230,8 +230,9 @@ function generateClassifiedDirPath(opts: {
                 const tags = opts.fileTags[r.tagCategory]
                 if (tags.length) {
                     const enTag = tags[0].en
-                    // Avoid to use some tags in file path because they are undistinguishing in directory hierarchy.
+                    // Avoid using some tags in file path because they are undistinguishing in directory hierarchy.
                     if ( (['original', 'origin', 'tagme', 'unknown'].includes(enTag)) ) { continue }
+                    if (enTag.match(/(copyright|character|artist)_request/)) { continue }
                     final.push(...ruleFolderPathSegs)
                     final.push(enTag)
                     break rulesLoop
