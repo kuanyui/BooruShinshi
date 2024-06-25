@@ -112,7 +112,7 @@ export interface MyOptions_Ux {
     /** If image contains "ai_generated", the image will be hidden.
     */
     excludeAiGenerated: boolean
-    /** A block list can be applied across all booru sites. Separate each tag by space. */
+    /** A block list can be applied across all booru sites. Separates each tag by space or newline. */
     blockedTags: string
 }
 export interface MyOptions_FileName {
@@ -129,7 +129,18 @@ export interface MyOptions_FileName {
     fileNameTemplate: string
     tagSeparator: ',' | ' '
     overwriteExisted: boolean
-    // filenameTemplate: filename_template_t,
+    /**
+     * If you want some preferred tags are contained in the filename as possible as it can, please specify at here.
+     * Separates each tag by space or newline.
+     *
+     * Notice:
+     * 1. This is mainly designed for searching file locally.
+     * 2. **This effects image file name itself only, instead of the folder where the image file will be saved.**
+     * 3. File name has length limit, so the tags will be matched by order, until file name limit reached.
+     * 4. This effects filename, so changing this may cause the same file be saved with different filenames.
+     * 5. If an image contains multiple characters, you can also specify the preferred one here (because a file name can include the name of only one character).
+     */
+    preferredTags: string
 }
 export interface MyOptions_Folder {
     /** Relative path in `~/Downloads` as the download root folder.
@@ -140,6 +151,7 @@ export interface MyOptions_Folder {
     downloadFolderName: string,
     /** If enabled, pictures will automatically be downloaded into different folders according to their tags. See classifyRules. */
     enableClassify: boolean,
+    /** **This effects the folder path where the files are saved, but does NO effect the image file name itself.** */
     classifyRules: FolderClassifyRule[],
 }
 
@@ -163,7 +175,7 @@ export const MY_STORAGE_ROOT_DEFAULT: MyStorageRoot = {
         ux: {
             excludeAiGenerated: false,
             blockedTags: ["furry fur purple_skin orange_skin pink_skin green_skin blue_skin",
-            "purple_body orange_body  pink_body green_body blue_body",
+            "purple_body orange_body pink_body green_body blue_body",
             "bestiality insect giant_insect zoophilia tentacle",
             "guro murder corpse beheaded necrophilia headless" ].join('\n'),
         },
@@ -172,6 +184,7 @@ export const MY_STORAGE_ROOT_DEFAULT: MyStorageRoot = {
             fileNameTemplate: '[%siteabbrev%](%postid%)[%artist%][%series%][%character%]%generals%',
             tagSeparator: ',',
             overwriteExisted: false,
+            preferredTags: 'twin_braids braids glasses shani',
         },
         folder: {
             downloadFolderName: '__BooruShinshi__',

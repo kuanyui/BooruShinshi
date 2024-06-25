@@ -312,6 +312,7 @@ async function loadFromLocalStorage() {
     setTextAreaValue('#fileName_fileNameTemplate', d.fileName.fileNameTemplate)
     setCheckboxValue('#fileName_overwriteExisted', d.fileName.overwriteExisted)
     setSelectValue('#fileName_tagSeparator', d.fileName.tagSeparator)
+    setTextAreaValue('#fileName_preferredTags', d.fileName.preferredTags)
     setSelectValue('#folder_downloadFolderName', d.folder.downloadFolderName)
     setCheckboxValue('#folder_enableClassify', d.folder.enableClassify)
     rth.setModel(d.folder.classifyRules)
@@ -339,8 +340,9 @@ function saveFormToLocalStorage() {
             fileName: {
                 fileNameMaxCharacterLength: ~~getTextAreaValue('#fileName_fileNameMaxCharacterLength'),
                 fileNameTemplate: getTextAreaValue('#fileName_fileNameTemplate'),
-                tagSeparator: getSelectValue('#fileName_tagSeparator') as any,
                 overwriteExisted: getCheckboxValue('#fileName_overwriteExisted'),
+                tagSeparator: getSelectValue('#fileName_tagSeparator') as any,
+                preferredTags: getTextAreaValue('#fileName_preferredTags'),
             },
             folder: {
                 downloadFolderName: getTextAreaValue('#folder_downloadFolderName'),
@@ -407,7 +409,24 @@ function preprocessDOM() {
     q("#fileName_fileNameTemplate").after(resetFilenameTemplateBtn)
     tippy(q('#fileName_fileNameTemplate'), {content: 'Length range is 8 ~ 240. Required.'})
     // q<HTMLButtonElement>('#resetAllBtn').onclick = resetToDefault
-    tippy(q("#ux_excludeAiGenerated"), {allowHTML: true, content: `If an image contains any of following tag, it will be hidden from images list.<br/>Tags should be separated by space.<br/>ex: <code>ai_generated</code>`})
+    tippy(q("#ux_excludeAiGenerated"), { allowHTML: true, content: `If an image contains any of following tag, it will be hidden from images list.<br/>Tags should be separated by space.<br/>ex: <code>ai_generated</code>` })
+    tippy(q("#ux_blockedTags"), { allowHTML: true, content: `A block list can be applied across all booru sites. Separates each tag by space or newline.` })
+
+    tippy(q("#fileName_preferredTags"), {
+        allowHTML: true, content: `
+        <p>A list of preferred tags (Separated by space or newline.)
+        The tags in this list will be included in the downloaded filename as possible as it can.</p>
+        <p>Separates each tag by space or newline.</p>
+
+        <b>Notice:</b>
+        <ol>
+        <li><b>This effects image file name itself only, instead of the folder where the image file will be saved.</b></li>
+        <li>This is mainly designed for searching file locally.</li>
+        <li>File name has length limit, so the tags will be matched <b>by order</b>, until file name limit reached.</li>
+        <li>This effects filename, so changing this may cause the same file be saved with different filenames.</li>
+        <li>If an image contains multiple characters, you can also specify the preferred one here (because a file name can include the name of only one character).</li>
+        </ol>
+    `})
     // Ui Help
     const uiHelp = q<HTMLElement>('.alert.uiSetting')
     uiHelp.innerHTML = `If you found it's annoying that Firefox always show the build-in download popup at top-right corner when download start, you can consider to change the setting <code>browser.download.alwaysOpenPanel</code> to <code>false</code> in <code>about:config</code>. See <a href="https://support.mozilla.org/en-US/questions/1370262">here</a> for more information.`

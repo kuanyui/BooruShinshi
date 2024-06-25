@@ -138,8 +138,8 @@ html
       h2 UX
       +checkbox('ux_excludeAiGenerated'): span Exclude AI-generated images from search results. (according to tag like #[code ai_generated], not 100% accurate)
       -var id = 'ux_blockedTags'
-      +sub_block(id, "Tag block list (Separated by space. The posts containing any of following tags will be hidden.)")
-        textarea.monospace(id=id type="text" spellcheck="false" style="height: 4rem")
+      +sub_block(id, "Tag block list (Separated by space or newline. The posts containing any of following tags will be hidden.)")
+        textarea.monospace(id=id type="text" spellcheck="false" style="height: 8rem")
       h2 File Name
       -var id = 'fileName_fileNameMaxCharacterLength'
       +sub_block(id, "Max Filename Character Length"): input(id=id type="number" min="40" max="250" autovalidator)
@@ -152,6 +152,9 @@ html
       -var id = 'fileName_tagSeparator'
       +tablerow_select(id, {' ': '(Space)', ',': ','}): span Tag Separator
       +checkbox('fileName_overwriteExisted'): span If a file with same filename has existed, overwrite the existed one directly.
+      -var id = 'fileName_preferredTags'
+      +sub_block(id, "Preferred Tags")
+        textarea.monospace(id=id type="text" spellcheck="false" style="height: 6rem")
       h2 Folder
       h3 Basic
       -var id = 'folder_downloadFolderName'
