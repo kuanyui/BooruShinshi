@@ -114,20 +114,20 @@ function generateFileBaseNameByTags(tagDict: FileTags): string {
     // tags
     const postId = curMod.getPostId()
     fname = templateReplacer(fname, 'postid', postId + '')
-    const artist: string = tagDict.artist[0] ? tagDict.artist[0].en : ''
-    const studio: string = tagDict.studio[0] ? tagDict.studio[0].en : ''
-    fname = templateReplacer(fname, 'artist', artist || studio || 'unknown_artist')
-    const copyright: string = tagDict.copyright[0] ? tagDict.copyright[0].en : 'no series'
-    fname = templateReplacer(fname, 'series', copyright)
-    const character: string = tagDict.character[0] ? tagDict.character[0].en : ''
-    fname = templateReplacer(fname, 'character', character)
+    const artistInFn: string = tagDict.artist[0] ? tagDict.artist[0].en : ''
+    const studioInFn: string = tagDict.studio[0] ? tagDict.studio[0].en : ''
+    fname = templateReplacer(fname, 'artist', artistInFn || studioInFn || 'unknown_artist')
+    const copyrightInFn: string = tagDict.copyright[0] ? tagDict.copyright[0].en : 'no series'
+    fname = templateReplacer(fname, 'series', copyrightInFn)
+    const characterInFn: string = tagDict.character[0] ? tagDict.character[0].en : ''
+    fname = templateReplacer(fname, 'character', characterInFn)
     const generalsArr: string[] = []
-    for (const x of tagDict.general) {
+    for (const tag of tagDict.general) {
         if (generalsArr.join(tagSeparator).length + fname.length > fnLenLimit) {
             generalsArr.pop()
             break
          }
-        generalsArr.push(x.en)
+        generalsArr.push(tag.en)
     }
     const generals = generalsArr.join(tagSeparator)
     fname = templateReplacer(fname, 'generals', generals)
