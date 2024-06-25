@@ -153,7 +153,7 @@ html
       +tablerow_select(id, {' ': '(Space)', ',': ','}): span Tag Separator
       +checkbox('fileName_overwriteExisted'): span If a file with same filename has existed, overwrite the existed one directly.
       -var id = 'fileName_preferredTags'
-      +sub_block(id, "Preferred Tags")
+      +sub_block(id, "Preferred Tags (Separated by space or newline.)")
         textarea.monospace(id=id type="text" spellcheck="false" style="height: 6rem")
       h2 Folder
       h3 Basic

@@ -410,13 +410,20 @@ function preprocessDOM() {
     tippy(q('#fileName_fileNameTemplate'), {content: 'Length range is 8 ~ 240. Required.'})
     // q<HTMLButtonElement>('#resetAllBtn').onclick = resetToDefault
     tippy(q("#ux_excludeAiGenerated"), { allowHTML: true, content: `If an image contains any of following tag, it will be hidden from images list.<br/>Tags should be separated by space.<br/>ex: <code>ai_generated</code>` })
-    tippy(q("#ux_blockedTags"), { allowHTML: true, content: `A block list can be applied across all booru sites. Separates each tag by space or newline.` })
+    tippy(q("#ux_blockedTags"), {
+        allowHTML: true,
+        content: `<p>A block list can be applied across all booru sites. The posts containing any of following tags will be hidden from search results.</p>
+        <p>Separates each tag by space or newline.</p>
+        <p>Example: <code>*braids glasses shani</code>; the <code>*</code> means RegExp <code>.*</code>, so <code>*braids</code> matches both <code>braids</code> and <code>twin_braids</code>)
+        `
+    })
 
     tippy(q("#fileName_preferredTags"), {
         allowHTML: true, content: `
         <p>A list of preferred tags (Separated by space or newline.)
         The tags in this list will be included in the downloaded filename as possible as it can.</p>
         <p>Separates each tag by space or newline.</p>
+        <p>Example: <code>*braids glasses shani</code>; the <code>*</code> means RegExp <code>.*</code>, so <code>*braids</code> matches both <code>braids</code> and <code>twin_braids</code>)
 
         <b>Notice:</b>
         <ol>

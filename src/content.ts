@@ -172,6 +172,7 @@ function generateFileNameInfoByTags(opts: {
 }): FileInfo {
     for (const [category, tags] of Object.entries(opts.fileTags)) {
         tags.sort(TAG_DESC_SORTER)
+        sortTagsByPreferredTags(tags)
         // To ensure maximum compatibility across different booru sites, lower case all tags.
         for (const tag of tags) {
             tag.en = tag.en.toLowerCase()
@@ -189,9 +190,21 @@ function generateFileNameInfoByTags(opts: {
     }
 }
 
+function sortTagsByPreferredTags(tags: Tag[]): void {
+    const patternRegexList: RegExp[] = OPTIONS.fileName.preferredTags.split(/[ \n]+/).map((tagPat) => {
+        return tagPatternToRegexp(tagPat)
+    })
+    tags.sort((tagA, tagB) => {
+        let a = patternRegexList.findIndex((preferredRegex) => tagA.en.match(preferredRegex))
+        let b = patternRegexList.findIndex((preferredRegex) => tagB.en.match(preferredRegex))
+        return a - b
+    })
+}
+
 function tagPatternToRegexp(tagPattern: string): RegExp {
     const tmp = tagPattern
         .trim()
+        .replaceAll('\\*', '[*]')
         .replaceAll('.', '[.]')
         .replaceAll('(', '\\(')
         .replaceAll(')', '\\)')
@@ -519,10 +532,11 @@ function removeResultFromPostsList() {
         blockedTags.push('ai_generated')
     }
     console.log("BLOCK LIST:", blockedTags)
+    const blockedTagRegexpList: RegExp[] = blockedTags.map((tagPatt) => tagPatternToRegexp(tagPatt))
     const posts = curMod.getTaggedPostsInPostsList()
     for (const post of posts) {
         // console.log(post.element, post.tags)
-        if (post.tags.find((tag) => blockedTags.find(bTag => bTag === tag))) {
+        if (post.tags.find((tag) => blockedTagRegexpList.find(bTagRE => tag.match(bTagRE)))) {
             post.element.remove()
         }
     }

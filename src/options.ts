@@ -184,7 +184,7 @@ export const MY_STORAGE_ROOT_DEFAULT: MyStorageRoot = {
             fileNameTemplate: '[%siteabbrev%](%postid%)[%artist%][%series%][%character%]%generals%',
             tagSeparator: ',',
             overwriteExisted: false,
-            preferredTags: 'twin_braids braids glasses shani',
+            preferredTags: '',
         },
         folder: {
             downloadFolderName: '__BooruShinshi__',
