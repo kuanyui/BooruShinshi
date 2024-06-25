@@ -99,8 +99,9 @@ function TAG_CATEGORY_SORTER(a: tag_category_t, b: tag_category_t) { return ALL_
  */
 function extraSanitizerForFilePathSegment(filePathSegmentation: string): string {
     return filePathSegmentation
-        .replace(/[.]/g, "．") // ex: `n.g.`. Actually I think this is a bug of Firefox because this is allow in UNIX file name.
-        .replace(/[/]/g, "／") // ex: `ranma_1/2`
+        .replace(/[.]/g, "．") // (ex: `n.g.`) Actually I think this is a bug of Firefox because this is allow in UNIX file name.
+        .replace(/[/]/g, "／") // (ex: `ranma_1/2`)
+        .replace(/[:]/g, "：") // (ex: `16:9`) For Windows, Android file system compatibility
 }
 
 function generateFileBaseNameByTags(tagDict: FileTags): string {
