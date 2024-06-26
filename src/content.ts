@@ -91,7 +91,6 @@ function templateReplacer(templateStr: string, token: filename_template_token_t,
     replaceValue = extraSanitizerForFilePathSegment(replaceValue)
     return templateStr.replaceAll(`%${token}%`, replaceValue)
 }
-function TAG_DESC_SORTER<T extends { count: number }>(a: T, b: T) { return b.count - a.count }
 function TAG_CATEGORY_SORTER(a: tag_category_t, b: tag_category_t) { return ALL_TAG_CATEGORY.indexOf(a) - ALL_TAG_CATEGORY.indexOf(b) }
 
 /** Fix some strange extra special condition.
@@ -171,14 +170,13 @@ function generateFileNameInfoByTags(opts: {
     // }
 }): FileInfo {
     for (const [category, tags] of Object.entries(opts.fileTags)) {
-        tags.sort(TAG_DESC_SORTER)
-        sortTagsByPreferredTags(tags)
         // To ensure maximum compatibility across different booru sites, lower case all tags.
         for (const tag of tags) {
             tag.en = tag.en.toLowerCase()
         }
+        tags.sort((a,b) => b.count - a.count)   // 5,4,3,2,1...
+        sortTagsByPreferredTags(tags)
     }
-    opts.fileTags.general.reverse()
 
     const basename = generateFileBaseNameByTags(opts.fileTags)
     const ext = guessExt(opts.imgFileUrl) || 'jpg'
@@ -191,12 +189,15 @@ function generateFileNameInfoByTags(opts: {
 }
 
 function sortTagsByPreferredTags(tags: Tag[]): void {
-    const patternRegexList: RegExp[] = OPTIONS.fileName.preferredTags.split(/[ \n]+/).map((tagPat) => {
+    const patternRegexList: RegExp[] = OPTIONS.fileName.preferredTags.trim().split(/[ \n]+/).filter(x => x).map((tagPat) => {
         return tagPatternToRegexp(tagPat)
     })
     tags.sort((tagA, tagB) => {
-        let a = patternRegexList.findIndex((preferredRegex) => tagA.en.match(preferredRegex))
-        let b = patternRegexList.findIndex((preferredRegex) => tagB.en.match(preferredRegex))
+        const a = patternRegexList.findIndex((preferredRegex) => !!tagA.en.match(preferredRegex))
+        const b = patternRegexList.findIndex((preferredRegex) => !!tagB.en.match(preferredRegex))
+        if (a === -1 && b === -1) { return 0 }
+        if (a !== -1 && b === -1) { return -1 }   // a is preferred (it's inside preferredTags)
+        if (a === -1 && b !== -1) { return 1 }    // b is preferred (it's inside preferredTags)
         return a - b
     })
 }
@@ -527,7 +528,7 @@ function setupPostContentPage() {
 }
 
 function removeResultFromPostsList() {
-    const blockedTags: string[] = OPTIONS.ux.blockedTags.split(/[ \n]+/)
+    const blockedTags: string[] = OPTIONS.ux.blockedTags.trim().split(/[ \n]+/).filter(x => x)
     if (OPTIONS.ux.excludeAiGenerated) {
         blockedTags.push('ai_generated')
     }
