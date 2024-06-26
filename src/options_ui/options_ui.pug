@@ -140,6 +140,7 @@ html
       -var id = 'ux_blockedTags'
       +sub_block(id, "Tag block list (Separated by space or newline. The posts containing any of following tags will be hidden.)")
         textarea.monospace(id=id type="text" spellcheck="false" style="height: 8rem")
+        button(id="copyBlockedTagsDefaultValue") Copy Default Value to Clipboard
       h2 File Name
       -var id = 'fileName_fileNameMaxCharacterLength'
       +sub_block(id, "Max Filename Character Length"): input(id=id type="number" min="40" max="250" autovalidator)
@@ -149,6 +150,7 @@ html
         div.alert
           div: i Available Tokens:
           #availableTokensContainer
+          div (Note: When multiple tags are matched in the same file, the tag with most count will be used. (for example, if one image contains multiple characters, the most popular character will be taken as #[code %character%]). If you want to change this behavior, please use #[b Preferred Tags])
       -var id = 'fileName_tagSeparator'
       +tablerow_select(id, {' ': '(Space)', ',': ','}): span Tag Separator
       +checkbox('fileName_overwriteExisted'): span If a file with same filename has existed, overwrite the existed one directly.

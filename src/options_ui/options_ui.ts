@@ -384,6 +384,7 @@ function preprocessDOM() {
         tippy(btn, { allowHTML: true, content: doc + '<br/><br/>Click to copy to clipboard.' })
         container.append(btn)
     }
+    q("#copyBlockedTagsDefaultValue").onclick = () => navigator.clipboard.writeText(storageManager.getDefaultRoot().options.ux.blockedTags)
     tippy(q('#fileName_fileNameMaxCharacterLength'),
         {
             allowHTML: true, content: `
