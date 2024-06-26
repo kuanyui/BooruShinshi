@@ -174,7 +174,7 @@ export const MY_STORAGE_ROOT_DEFAULT: MyStorageRoot = {
         },
         ux: {
             excludeAiGenerated: false,
-            blockedTags: ["furry fur purple_skin orange_skin pink_skin green_skin blue_skin",
+            blockedTags: ["furry fur anthro purple_skin orange_skin pink_skin green_skin blue_skin",
             "purple_body orange_body pink_body green_body blue_body",
             "bestiality insect giant_insect zoophilia tentacle",
             "guro murder corpse beheaded necrophilia headless" ].join('\n'),

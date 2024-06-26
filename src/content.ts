@@ -212,7 +212,7 @@ function tagPatternToRegexp(tagPattern: string): RegExp {
         .replaceAll('[', '\\[')
         .replaceAll(']', '\\]')
         .replaceAll('*', '.*')
-    return new RegExp('^' + tmp + '$', '')
+    return new RegExp('^' + tmp + '$', 'i')
 }
 
 
@@ -430,6 +430,7 @@ function createActionsEntryButtonForImage(imgUrl: string): HTMLButtonElement {
 }
 
 async function createPaginatorButton() {
+    console.log('[BooruShinshi] createPaginatorButton()')
     if (!(await storageManager.getDataFromRoot('options')).ui.paginationButtons) {
         return
     }
@@ -446,6 +447,7 @@ async function createPaginatorButton() {
     document.body.appendChild(root)
 }
 function createJumpButton() {
+    console.log('[BooruShinshi] createJumpButton()')
     const oriEl = document.getElementById('BooruShinshi_QueryJumper')
     if (oriEl) {
         oriEl.remove()
@@ -528,9 +530,10 @@ function setupPostContentPage() {
 }
 
 function removeResultFromPostsList() {
+    console.log('[BooruShinshi] removeResultFromPostsList()')
     const blockedTags: string[] = OPTIONS.ux.blockedTags.trim().split(/[ \n]+/).filter(x => x)
     if (OPTIONS.ux.excludeAiGenerated) {
-        blockedTags.push('ai_generated')
+        blockedTags.push('ai_generated', 'sankaku_ai', 'ai-created')
     }
     console.log("BLOCK LIST:", blockedTags)
     const blockedTagRegexpList: RegExp[] = blockedTags.map((tagPatt) => tagPatternToRegexp(tagPatt))
@@ -544,7 +547,7 @@ function removeResultFromPostsList() {
 }
 
 function setupPostListPage() {
-    console.log('[Post List] setup for post list page')
+    console.log('[BooruShinshi][Post List] setup for post list page')
     let jumpButtonCreated = false
     let paginatorButtonCreated = false
     const observer = new MutationObserver(function (mutations, me) {
@@ -561,7 +564,9 @@ function setupPostListPage() {
         }
         if (jumpButtonCreated && paginatorButtonCreated) {
             removeResultFromPostsList()
-            me.disconnect()
+            if (!curMod.isPostListAutoPaging()) {
+                me.disconnect()
+            }
         }
     })
     observer.observe(document, {

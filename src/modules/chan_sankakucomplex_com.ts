@@ -22,8 +22,11 @@ export class ModuleChanSankakuComplexCom extends AbstractModule {
         return true
     }
     inPostListPage(): boolean {
-        return !!location.pathname.match(/^[/][a-z-]+[/]posts?$/)
-
+        return !!location.pathname.match(/^[/][a-z-]+[/]posts?([?]tags)?/) &&
+        !location.pathname.match(/^[/][a-z-]+[/]posts[/][A-Za-z0-9_-]/)
+    }
+    public isPostListAutoPaging(): boolean {
+        return true
     }
     inPostContentPage(): boolean {
         return !!location.pathname.match(/^[/][a-z-]+[/]posts[/][A-Za-z0-9_-]+/)
@@ -43,16 +46,17 @@ export class ModuleChanSankakuComplexCom extends AbstractModule {
     }
     getTaggedPostsInPostsList(): TaggedPostInPostsList[] {
         const fin: TaggedPostInPostsList[] = []
-        for (const wrapperEl of document.querySelectorAll<HTMLDivElement>('#post-list .thumb')) {
+        for (const wrapperEl of document.querySelectorAll<HTMLDivElement>('#post-list .posts-container article')) {
             const imgEl = wrapperEl.querySelector<HTMLImageElement>('img')
             if (!imgEl) { continue }
-            const tagsStr = imgEl.title
+            const tagsStr = imgEl.dataset.auto_page
             if (!tagsStr) { continue }
             fin.push({
                 element: wrapperEl,
-                tags: tagsStr.split(' ')
+                tags: tagsStr.split(' ').filter((x) => !x.match(/^(Rating|Score|Size|ID|User):/))
             })
         }
+        console.log('[BooruShinshi][SCX] getTaggedPostsInPostsList()', fin)
         return fin
     }
     ifPostContentPageIsReady(): boolean {
@@ -64,7 +68,8 @@ export class ModuleChanSankakuComplexCom extends AbstractModule {
     }
     ifPostLinkPageIsReady(): boolean {
         return [
-            document.querySelector('#paginator')
+            document.querySelector('.posts-container'),
+            document.querySelector('#sc-auto-toggle'),
         ].every(x=>!!x)
     }
     getPaginationInfo(): PaginationInfo {

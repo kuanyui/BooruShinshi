@@ -13,6 +13,7 @@ export abstract class AbstractModule {
     public abstract containsHentai(): boolean
     public abstract inPostListPage(): boolean
     public abstract inPostContentPage(): boolean
+    public isPostListAutoPaging(): boolean { return false }
     /** return tag list (usually from GET params) if available (usually in post list page) */
     public abstract getCurrentQueryList(): string[]
     /** generate URL toward posts list page. */
