@@ -517,7 +517,7 @@ function setupPostContentPage() {
     console.log('[BooruShinshi][Post Content] setup MutationObserver for post content page')
     const observer = new MutationObserver(function (mutations, me) {
         if (curMod.ifPostContentPageIsReady()) {
-            console.log('[BooruShinshi] document with key elements rendered! Insert HTML element and stop MutationObserver')
+            console.log('[BooruShinshi][Post Content Page] document with key elements rendered! Insert HTML element and stop MutationObserver')
             me.disconnect() // stop observing
             setPostTool({ show: true })
             return

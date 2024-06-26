@@ -36,7 +36,7 @@ export abstract class AbstractModule {
     public abstract ifPostContentPageIsReady(): boolean
     /** After the pending elements ready, then call getPaginationInfo. */
     public abstract ifPostLinkPageIsReady(): boolean
-    public abstract getPostId(): number
+    public abstract getPostId(): number | string
     public abstract collectImageInfoList(): ParsedImageInfo[]
     /** Remember to `str.trim().replaceAll(' ', '_')` */
     public abstract collectTags(): FileTags

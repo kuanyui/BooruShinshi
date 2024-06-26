@@ -22,14 +22,13 @@ export class ModuleChanSankakuComplexCom extends AbstractModule {
         return true
     }
     inPostListPage(): boolean {
-        return !!location.pathname.match(/^[/][a-z-]+[/]posts?([?]tags)?/) &&
-        !location.pathname.match(/^[/][a-z-]+[/]posts[/][A-Za-z0-9_-]/)
-    }
-    public isPostListAutoPaging(): boolean {
-        return true
+        return  !this.inPostContentPage()
     }
     inPostContentPage(): boolean {
         return !!location.pathname.match(/^[/][a-z-]+[/]posts[/][A-Za-z0-9_-]+/)
+    }
+    public isPostListAutoPaging(): boolean {
+        return true
     }
     getCurrentQueryList(): string[] {
         const params = new URLSearchParams(location.search)
@@ -81,13 +80,9 @@ export class ModuleChanSankakuComplexCom extends AbstractModule {
             nextPageUrl: n ? n.href : ''
         }
     }
-    getPostId(): number {
-        const meta = document.querySelector(`meta[property="og:url"]`)
-        if (!meta) { return -1 }
-        const url = meta.getAttribute('content')
-        if (!url) { return -1 }
-        const m = url.match(/\/post\/show\/([0-9]+)/)
-        return m ? ~~m[1] : -1
+    getPostId(): string {
+        const m = location.pathname.match(/\/posts\/([A-Za-z0-9_-]+)$/)
+        return m ? m[1] : 'no_id'
     }
     collectImageInfoList(): ParsedImageInfo[] {
         return generalCollectImageInfoList()
@@ -108,7 +103,7 @@ export class ModuleChanSankakuComplexCom extends AbstractModule {
             els.forEach((el) => {
                 const keyEl = el.querySelector<HTMLAnchorElement>('a[itemprop="keywords"]')
                 if (!keyEl || !keyEl.textContent) { console.error('[BooruShinshi Error] No tag el'); return }
-                const textContent = keyEl.textContent.trim().replace(/ /g, '_')  // replace space with underline
+                const textContent = keyEl.textContent.trim().replace(/ /g, '_').toLowerCase()  // replace space with underline
                 const m = (keyEl.getAttribute('data-count') || '').match(/(\d+(?:\.\d+)?)([KMG])?/)
                 if (!m) { console.error('[BooruShinshi Error] tooltip html not matched'); return }
                 let count = parseFloat(m[1])
@@ -127,6 +122,7 @@ export class ModuleChanSankakuComplexCom extends AbstractModule {
             })
             fileTags[tagCategory] = tagsOfCategory
         }
+        console.log("[BooruShinshi][SCX] collectTags()", fileTags)
         return fileTags
     }
     onBodyReady(): void {
