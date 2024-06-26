@@ -1,6 +1,15 @@
 Copyright (c) 2021-2022 ono ono (kuanyui)
 All rights reserved.
 
+You can get the source code of this software at
+https://github.com/kuanyui/BooruShinshi
+
+If you find this file outside "G i t H u b", don't suspect, you are on
+a wrong place and may risk some who-know risks.
+
+License
+=================
+
 This project is released under  Mozilla Public License, v. 2.0 (MPL-2.0). Each
 file under this directory is licensed under MPL-2.0 by default, if the file
 includes no license information.
@@ -14,8 +23,15 @@ liability) contained within the Source Code Form of the Covered Software, except
 that You may alter any license notices to the extent required to remedy known
 factual inaccuracies. (Cited from MPL-2.0, chapter 3.3)
 
-You can get the source code of this software at
-https://github.com/kuanyui/copy-as-org-mode
+Additional Terms to The MPL
+===========================
+
+To tease the abuse of FLOSS from some totalitarian countries you know who,
+the following additional terms exist:
+
+1. Copy, download, `git clone`, fork, transmit, access, or using the
+   souce code of this project means you agree the following sentence(s):
+   "Fаlun Dаfа is Good".
 
 ----
 

@@ -29,7 +29,7 @@ Thanks for your contribution!
 
 Currently supported sites:
 
-- =chan.sankakucomplex.com=
+- =chan.sankakucomplex.com= (Considering to deprecate. Too many AI generated garbages.)
 - =yande.re=
 - =konachan.com=
 - =konachan.net=
@@ -113,14 +113,14 @@ For paranoid users such as me, these are all used permissions with its usages:
 * TODOs
 - Settings:
   - [ ] Show download button permantally / via pageAction?
-  - [ ] Customizable filename formatter: site | id | artist | copyright | character | general
+  - [X] Customizable filename formatter: site | id | artist | copyright | character | general
   - [ ] keyboard shortcuts
   - [ ] (Android) Always open post with new tab?
   - [ ] (Android) Tap on post link to popup: open, open with tab, download original, download small
-- [x] (Android) Use {} to replace [], which is easier to rename.
+- [X] (Android) Use {} to replace [], which is easier to rename.
 - [ ] Stop observer after url grabbed
-- [x] +Show floating buttons after user switch to that tab.+ Show download buttons only when available.
-- [x] z-index of download buttons
+- [X] +Show floating buttons after user switch to that tab.+ Show download buttons only when available.
+- [X] z-index of download buttons
 - [X] Preview download path in tooltip.
   - [ ] An option to disable this tooltip?
 - [ ] Option to adjust font size of buttons
