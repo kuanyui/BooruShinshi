@@ -174,7 +174,7 @@ function generateFileNameInfoByTags(opts: {
         for (const tag of tags) {
             tag.en = tag.en.toLowerCase()
         }
-        tags.sort((a,b) => b.count - a.count)   // 5,4,3,2,1...
+        sortTags(tags, TagSortingMethod.ByCount_Descending)
         sortTagsByPreferredTags(tags)
     }
 
@@ -328,6 +328,25 @@ function getTooltipParentElement(): Element {
     document.body.appendChild(el)
     return el
 }
+enum TagSortingMethod {
+    ByCount_Descending = 1,
+    ByCount_Ascending = 2,
+}
+
+function sortTags(tags: Tag[], sortMethod: TagSortingMethod): Tag[] {
+    switch (sortMethod) {
+        case TagSortingMethod.ByCount_Ascending: return tags.sort((a,b) => a.count - b.count)
+        case TagSortingMethod.ByCount_Descending: return tags.sort((a,b) => b.count - a.count)
+    }
+}
+
+function sortFileTags(fileTags: FileTags, sortMethod: TagSortingMethod): FileTags {
+    for (const k of Object.keys(fileTags) as tag_category_t[]) {
+        const tags = fileTags[k]
+        sortTags(tags, sortMethod)
+    }
+    return fileTags
+}
 
 function createDirectDownloadButtonForImage(label: string, imgUrl: string): HTMLButtonElement {
     const btn = document.createElement('button')
@@ -335,7 +354,7 @@ function createDirectDownloadButtonForImage(label: string, imgUrl: string): HTML
     tippy(btn, {
         delay: [0, 0], allowHTML: true, placement: "left", appendTo: getTooltipParentElement(),
         content: () => {
-            const fileTags = curMod.collectTags()
+            const fileTags = sortFileTags(curMod.collectTags(), TagSortingMethod.ByCount_Descending)
             const fileDirPath = generateClassifiedDirPath({ fileTags: fileTags })
             let tmp = `<div style="font-size: 12px; opacity: 0.7; font-style: italic;">Download directly according to the classify rules you've defined.</div>`
             tmp += `<b>`
@@ -346,7 +365,7 @@ function createDirectDownloadButtonForImage(label: string, imgUrl: string): HTML
     })
     btn.onclick = async () => {
         await fetchOptions()
-        const fileTags = curMod.collectTags()
+        const fileTags = sortFileTags(curMod.collectTags(), TagSortingMethod.ByCount_Descending)
         const fileDirPath = generateClassifiedDirPath({ fileTags: fileTags })
         const fileNameInfo = generateFileNameInfoByTags({ imgFileUrl: imgUrl, fileTags: fileTags })
         downloadImage({
