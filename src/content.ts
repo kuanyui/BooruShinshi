@@ -552,7 +552,12 @@ function removeResultFromPostsList() {
     console.log('[BooruShinshi] removeResultFromPostsList()')
     const blockedTags: string[] = OPTIONS.ux.blockedTags.trim().split(/[ \n]+/).filter(x => x)
     if (OPTIONS.ux.excludeAiGenerated) {
-        blockedTags.push('ai_generated', 'sankaku_ai', 'ai-created')
+        blockedTags.push(
+            '*ai_generator*',
+            '*ai_generated*',
+            '*ai-created*',
+            'sankaku_ai',
+        )
     }
     console.log("BLOCK LIST:", blockedTags)
     const blockedTagRegexpList: RegExp[] = blockedTags.map((tagPatt) => tagPatternToRegexp(tagPatt))
