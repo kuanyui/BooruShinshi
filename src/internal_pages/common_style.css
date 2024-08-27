@@ -20,10 +20,28 @@
     font-size: 2rem;
 }
 
+blockquote {
+    border: 1px solid #775500;
+    background: #ffeedd;
+    border-radius: 4px;
+    padding: 16px;
+    h3, p {
+        margin: 0;
+    }
+    a {
+        text-decoration: underline;
+    }
+}
+
+.openOptionsUi {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
 a {
     display: inline-flex;
     align-items: center;
-    color: #1B4279;
+    color: #1B62cc;
     text-decoration: none;
 }
 

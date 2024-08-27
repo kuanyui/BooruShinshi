@@ -54,5 +54,5 @@
     "web_accessible_resources": [
         "img/favicons/*"
     ],
-    "permissions": [ "tabs", "storage", "downloads" ]
+    "permissions": [ "tabs", "storage", "downloads", "unlimitedStorage" ]
 }

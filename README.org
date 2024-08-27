@@ -99,13 +99,16 @@ make zip-repo
 For paranoid users such as me, these are all used permissions with its usages:
 
 - =downloads=:
-  - Download.
+  - Download image files.
 
 - =tabs=:
   - Detect if currently is in supported site, to decide to show/hide =pageAction=. (It's impossible to achive this via only =manifest.json= on Firefox for Android)
 
 - =storage=:
-  - (Not Implemented Yet) For saving user preferences in your Mozilla account (=storage.sync=)
+  - For saving user preferences in your Mozilla account (=storage.sync= is deprecated [[https://github.com/kuanyui/BooruShinshi/issues/8][since BooruShinshi 0.12.0]] due to [[https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage/sync][the storage quotas limitation]]. Now relies on =storage.local= instead.)
+
+- =unlimitedStorage=:
+  - [[https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage/local][Increase the size quotas of =storage.local=]].
 
 - =konachan.net=, ...
   - Insert script & CSS to grab tags, grab image's link, insert HTML & CSS to show dowbload buttons.
@@ -124,6 +127,6 @@ For paranoid users such as me, these are all used permissions with its usages:
 - [X] Preview download path in tooltip.
   - [ ] An option to disable this tooltip?
 - [ ] Option to adjust font size of buttons
-- [ ] Colorize category types in buttons.
+- [X] Colorize category types in buttons.
 * License
 MPL 2.0

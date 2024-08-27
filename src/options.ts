@@ -200,18 +200,35 @@ export const MY_STORAGE_ROOT_DEFAULT: MyStorageRoot = {
     },
 } as const
 
+
 class StorageManager {
     // tsconfig: useDefineForClassFields = false
     area: browser.storage.StorageArea
     constructor() {
-        // Firefox for Android (90) doesn't support `sync` area yet,
-        // so write a fallback for it.
-        if (browser.storage.sync) {
-            this.area = browser.storage.sync
-        } else {
-            this.area = browser.storage.local
-        }
+        this.area = browser.storage.local
         this.initAndGetRoot()  // FIXME: redundant calling?
+    }
+    /**
+     * [Update 20240827] storage.sync has size quota, so migrate to storage.local.
+     * See:
+     * - https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/storage/sync
+     * - https://github.com/kuanyui/BooruShinshi/issues/8
+     */
+    private async migrateSyncToLocal(): Promise<boolean> {
+        try {
+            const syncData = await browser.storage.sync.get()
+            const localData = await browser.storage.local.get()
+            console.warn('[migrateSyncToLocal] syncData.options ===', (syncData || {}).options)
+            console.warn('[migrateSyncToLocal] localData.options ===', (localData || {}).options)
+            if (Object.keys(syncData).length > 0 && Object.keys(localData).length === 0) {
+                console.log('[migrateSyncToLocal] Migrating browser.storage.sync to browser.storage.local...')
+                await browser.storage.local.set(syncData)
+                // await browser.storage.sync.clear  // For safety, do not clear sync data.
+            }
+            return true
+        } catch (err) {
+            return false
+        }
     }
     /**
      * - Call this and wait promise resolve at first time you initialize this
@@ -219,7 +236,8 @@ class StorageManager {
      *   structure of StorageArea (for user settings).
      * - If already initialized, use `getRoot()` instead.
      **/
-    public initAndGetRoot(): Promise<MyStorageRoot> {
+    public async initAndGetRoot(): Promise<MyStorageRoot> {
+        await this.migrateSyncToLocal()
         const copiedDefaultRoot = this.getDefaultRoot()
         return this.area.get().then((oriRoot) => {
             let copiedOriRoot = deepCopy(oriRoot as unknown as MyStorageRoot)
@@ -259,7 +277,7 @@ class StorageManager {
             const oldKeys = Object.keys(oldRoot)
             const newKeys = Object.keys(newRoot)
             const deprecatedKeys: string[] = oldKeys.filter(k => !newKeys.includes(k))
-            this.area.remove(deprecatedKeys)
+            return this.area.remove(deprecatedKeys)
         })
     }
     public setRootArbitrary(newRoot: MyStorageRoot): Promise<void> {
@@ -273,13 +291,13 @@ class StorageManager {
             deepMergeSubset(existingRoot, newRoot)
             console.log('[SET] STORAGE, subset (new) ===', newRoot)
             console.log('[SET] STORAGE, merged (ori) ===', existingRoot)
-            this.area.set(existingRoot as any)
+            return this.area.set(existingRoot as any)
         })
     }
     public setRootSafelyIntoStorage(newRoot: MyStorageRoot) {
         return this.getRoot().then((existingRoot) => {
             deepObjectShaper(newRoot, existingRoot)
-            this.area.set(newRoot as any)
+            return this.area.set(newRoot as any)
         })
     }
     /**

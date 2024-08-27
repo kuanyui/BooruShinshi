@@ -350,8 +350,11 @@ function saveFormToLocalStorage() {
                 classifyRules: rth.model
             }
         }
+    }).then(() => {
+        inPageNotify('Settings Saved', 'Modifications to settings are saved.')
+    }).catch((e) => {
+        inPageNotify('Error occurred', `Error occurred when saving settings. ${e.message}`, false, 1000 * 100, 'error')
     })
-    inPageNotify('Settings Saved', 'Modifications to settings are saved.')
 }
 
 function handleVisibilityOfTable() {
@@ -445,6 +448,10 @@ function preprocessDOM() {
     }
     q<HTMLButtonElement>('#exportCfg').onclick = exportCfgAsJsonFile
     q<HTMLButtonElement>('#importCfg').onclick = importCfgFromJsonFile
+    q<HTMLButtonElement>('#exportSyncCfg').onclick = exportSyncCfgAsJsonFile
+    if (!browser.storage.sync) { // @deprecated don't use storage.sync. See StorageManager
+        q<HTMLDivElement>('#migrationTool').style.display = 'none'
+    }
 }
 
 function validateInput(el: HTMLInputElement) {
@@ -472,21 +479,45 @@ function setupAutoValidator() {
         }
     })
 }
+/** @deprecated */
+function exportSyncCfgAsJsonFile() {
+    function pad(n: number) {
+        return (n+'').padStart(2, '0')
+    }
+    Promise.resolve(browser.storage.sync).then(rootObj => {   // @deprecated don't use storage.sync. See StorageManager
+        var d = new Date()
+        var nowStr: string = `${pad(d.getFullYear())}${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`
+        var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(rootObj, null, 2));
+        var aEl = document.createElement('a');
+        aEl.setAttribute("href", dataStr);
+        aEl.setAttribute("download", `OLD__BooruShinshiSettings_${nowStr}.json`);
+        document.body.appendChild(aEl); // required for firefox
+        aEl.click();
+        aEl.remove();
+    })
+}
 
 function exportCfgAsJsonFile() {
     function pad(n: number) {
         return (n+'').padStart(2, '0')
     }
     storageManager.getRoot().then(rootObj => {
+        const jsonFileContent = JSON.stringify(rootObj, null, 2)
         var d = new Date()
-        var nowStr: string = `${pad(d.getFullYear())}${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`
-        var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(rootObj, null, 2));
-        var aEl = document.createElement('a');
-        aEl.setAttribute("href", dataStr);
-        aEl.setAttribute("download", `BooruShinshiSettings_${nowStr}.json`);
-        document.body.appendChild(aEl); // required for firefox
-        aEl.click();
-        aEl.remove();
+        var nowStr: string = `${pad(d.getFullYear())}${pad(d.getMonth() + 1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`
+        var blob = new Blob([jsonFileContent], {type: "text/csv;charset=utf-8"})
+        browser.downloads.download({
+            url: URL.createObjectURL(blob),
+            filename: `${rootObj.options.folder.downloadFolderName}/_BooruShinshiSettings/BooruShinshiSettings_${nowStr}.json`,
+        })
+        // return
+        // var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(jsonFileContent);
+        // var aEl = document.createElement('a');
+        // aEl.setAttribute("href", dataStr);
+        // aEl.setAttribute("download", `BooruShinshiSettings_${nowStr}.json`);
+        // document.body.appendChild(aEl); // required for firefox
+        // aEl.click();
+        // aEl.remove();
     })
 }
 

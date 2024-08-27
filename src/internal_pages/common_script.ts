@@ -20,4 +20,19 @@ function setupI18n() {
     })
 }
 
+if (browser.runtime.getManifest().version !== '0.12.0') {
+    const els = document.querySelectorAll('.syncLocalStorageMigrationWarning')
+    for (const _el of els) {
+        const el = _el as HTMLElement
+        el.style.display = 'none'
+    }
+}
+
+document.querySelectorAll('.openOptionsUi').forEach((el) => {
+    el.addEventListener('click', (event) => {
+        event.preventDefault()
+        browser.runtime.openOptionsPage()
+    })
+})
+
 setupI18n()

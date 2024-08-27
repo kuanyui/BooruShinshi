@@ -1,4 +1,4 @@
-export function inPageNotify(title: string, msg: string, allowHtml: boolean = false, durMs: number = 2000) {
+export function inPageNotify(title: string, msg: string, allowHtml: boolean = false, durMs: number = 2000, type: 'info' | 'warn' | 'error' = 'info') {
     console.log('inPageNotify', title, msg)
     const oriEl = document.getElementById('copyAsOrgModeNotify')
     if (oriEl) {
@@ -14,9 +14,23 @@ export function inPageNotify(title: string, msg: string, allowHtml: boolean = fa
     rootEl.style.width = '500px'
     rootEl.style.minHeight = '80px'
     rootEl.style.padding = '8px'
-    rootEl.style.backgroundColor = '#c3def0'
-    rootEl.style.color = '#283f4f'
-    rootEl.style.borderColor = '#283f4f'
+    switch (type) {
+        case 'info':
+            rootEl.style.backgroundColor = '#c3def0'
+            rootEl.style.color = '#283f4f'
+            rootEl.style.borderColor = '#283f4f'
+            break
+        case 'warn':
+            rootEl.style.backgroundColor = '#ffffcc'
+            rootEl.style.color = '#554400'
+            rootEl.style.borderColor = '#554400'
+            break
+        case 'error':
+            rootEl.style.backgroundColor = '#ffcccc'
+            rootEl.style.color = '#660000'
+            rootEl.style.borderColor = '#660000'
+            break
+    }
     rootEl.style.borderStyle = 'solid'
     rootEl.style.borderWidth = '1px'
     rootEl.style.cursor = 'pointer'

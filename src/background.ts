@@ -16,6 +16,7 @@ browser.runtime.onInstalled.addListener(function(details){
     }
 })
 
+
 /** This can be modify */
 const STORAGE: MyStorageRoot = storageManager.getDefaultRoot()
 
