@@ -51,7 +51,6 @@ browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
     //    }
     //}
 });
-
 browser.runtime.onMessage.addListener((_msg: any, sender: browser.runtime.MessageSender) => {
     const msg = _msg as MyMsg
     console.log('msg from content_script: ', msg)
@@ -80,9 +79,9 @@ browser.runtime.onMessage.addListener((_msg: any, sender: browser.runtime.Messag
             }
             storageManager.getSync('statistics_downloadCount').then((count) => {
                 storageManager.setSync('statistics_downloadCount', ++count)
-                if (count === 1000) {
+                if (count > 0 && count % 1000 === 0) {
                     browser.tabs.create({
-                        url: browser.runtime.getURL('dist/internal_pages/download_count_1000.html')
+                        url: browser.runtime.getURL('dist/internal_pages/download_count.html')
                     })
                 }
             })

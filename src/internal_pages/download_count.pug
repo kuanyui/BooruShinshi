@@ -10,11 +10,11 @@ html
   .root.i18nArea(lang="ja")
     .banner
       .logo: img(src="../../img/icon.png")
-      .title: h4 君はもうボール紳士で #[b 1000 枚目]の画像 / 動画がダウンロードされました！
+      .title: h4 君はもうボール紳士で #[b #[span.downloadCount 1000] 枚目]の画像 / 動画がダウンロードされました！
       .subtitle: i どう？ボール紳士が悪くないでしょう〜
     article
       hr
-      p 私は#ひどく#[b 珍しい休日の時間]を費やして、#[b 無料で自由]の Firefox のアドオンを作ってきました。
+      p 私はひどく#[b 珍しい休日の時間]を費やして、#[b 無料で自由]の Firefox のアドオンを作ってきました。
       p: u もし、このアドオンが役に立ったと思われたなら、もっと素晴らしいアドオンの開発のために、#[b 少額の寄付]はよろしいじゃないかしら：
         +donate_links()
       hr
@@ -22,8 +22,8 @@ html
   .root.i18nArea(lang="en")
     .banner
       .logo: img(src="../../img/icon.png")
-      .title: h4 You have just downloaded #[b the 1000 th] image / video via Booru Shinshi!
-      .subtitle: i Booru Shinshi (ボール紳士) is not that bad, is it?
+      .title: h4 You have just downloaded #[b the #[span.downloadCount 1000] th] image / video via Booru Shinshi!
+      .subtitle: i Booru Shinshi (ボール紳士) is not bad, is it?
     article
       hr
       p I have spent many of my #[b valuable holiday hours] working on these #[b free and libre] Firefox plugins without any repay.
@@ -34,7 +34,7 @@ html
   .root.i18nArea(lang="zh")
     .banner
       .logo: img(src="../../img/icon.png")
-      .title: h4 你已經用了ボール紳士下載了#[b 第 1000 張]圖片＆影片！
+      .title: h4 你已經用了ボール紳士下載了#[b 第 #[span.downloadCount 1000] 張]圖片＆影片！
       .subtitle: i 如何？ボール紳士還不錯用吧？
     article
       hr

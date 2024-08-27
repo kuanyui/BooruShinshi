@@ -70,8 +70,8 @@ const config = {
             chunks: [],  // IMPORTANT: If you don't add this manually, this shitty HtmlWebpackPlugin will add ALL entries into <script>
         }),
         new HtmlWebpackPlugin({
-            template: './src/internal_pages/download_count_1000.pug',
-            filename: 'internal_pages/download_count_1000.html',
+            template: './src/internal_pages/download_count.pug',
+            filename: 'internal_pages/download_count.html',
             chunks: [],  // IMPORTANT: If you don't add this manually, this shitty HtmlWebpackPlugin will add ALL entries into <script>
         }),
         new CopyPlugin([

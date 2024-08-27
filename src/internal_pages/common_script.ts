@@ -1,3 +1,5 @@
+import { storageManager } from "../options"
+
 const ALL_LANG = ['en', 'ja', 'zh'] as const
 type lang_id_t = typeof ALL_LANG[number]
 
@@ -36,3 +38,11 @@ document.querySelectorAll('.openOptionsUi').forEach((el) => {
 })
 
 setupI18n()
+
+storageManager.getSync('statistics_downloadCount').then((count) => {
+    const els = document.querySelectorAll('.downloadCount')
+    for (const _el of els) {
+        const el = _el as HTMLElement
+        el.innerText = count.toString()
+    }
+})
