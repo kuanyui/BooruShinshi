@@ -452,7 +452,9 @@ function preprocessDOM() {
     q<HTMLButtonElement>('#clearSyncCfg').onclick = clearSyncCfg
     browser.storage.sync.get({ "options": undefined }).then((res) => {
         console.log('sync options', res)
-        if (!res) {    // Since version `0.12.0`, `options` is no longer stored in `sync`.
+        if (res.options) {    // < 0.12.0
+            q<HTMLDivElement>('#migrationTool').style.display = 'block'
+        } else { // Since version `0.12.0`, `options` is no longer stored in `sync`.
             q<HTMLDivElement>('#migrationTool').style.display = 'none'
         }
     })
@@ -483,12 +485,13 @@ function setupAutoValidator() {
         }
     })
 }
-/** @deprecated */
+/** @deprecated Only for migrating sync to local */
 function exportSyncCfgAsJsonFile() {
     function pad(n: number) {
         return (n+'').padStart(2, '0')
     }
-    Promise.resolve(browser.storage.sync).then(rootObj => {   // @deprecated don't use storage.sync. See StorageManager
+    browser.storage.sync.get().then(rootObj => {   // @deprecated don't use storage.sync. See StorageManager
+        console.warn('sync GET rootObj ===========================>', rootObj)
         var d = new Date()
         var nowStr: string = `${pad(d.getFullYear())}${pad(d.getMonth()+1)}${pad(d.getDate())}_${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`
         var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(rootObj, null, 2));
@@ -500,7 +503,7 @@ function exportSyncCfgAsJsonFile() {
         aEl.remove();
     })
 }
-/** @deprecated */
+/** @deprecated Only for migrating sync to local */
 function clearSyncCfg() {
     const ans = window.confirm([
         "Are you sure to clear the old format settings in sync storage?",
@@ -509,7 +512,7 @@ function clearSyncCfg() {
         "Please ensure you have backup the old settings before you proceed."
     ].join('\n'))
     if (!ans) { return }
-    Promise.resolve(browser.storage.sync).then(rootObj => {   // @deprecated don't use storage.sync. See StorageManager
+    browser.storage.sync.get().then(rootObj => {   // @deprecated don't use storage.sync. See StorageManager
         browser.storage.sync.remove('options').then(() => {
             location.reload()
         })

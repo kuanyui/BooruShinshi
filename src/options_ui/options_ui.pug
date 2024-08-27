@@ -105,6 +105,13 @@ html
       border-radius: 4px;
       padding: 5px 20px;
       margin: 8px;
+      code {
+        background-color: var(--alert-info-bg-color);
+        color: var(--alert-info-fg-color);
+        border: 1px solid var(--alert-info-fg-color);
+        border-radius: 2px;
+        padding: 0px 4px;
+      }
     }
     .availableFilenameToken {
       margin-right: 2px;
@@ -203,7 +210,7 @@ html
       p Please ensure that your settings are all well or something missing after upgrading to #[code 0.12.0] first. Then following the following steps according to your situation:
       .alert
         h4 #[u Condition 1]: Everything is OK in the existing settings
-        div If there's nothing missing in your settings after upgrading to #[code 0.12.0], recommended you to:
+        div If there's nothing missing in your settings after upgrading to #[code 0.12.0], you can ignore this. But still recommended you to:
         ol
           li Backup your settings via #[code 💾 Export as JSON (Backup Settings)]
           li (Optional) Click #[code 🗑️ Clear Old JSON on Mozilla Sync] to remove this warning.
@@ -211,7 +218,7 @@ html
         h4 #[u Condition 2]: Some of my settings are broken / missing!
         div If you find your old settings are missing after the upgrading to #[code 0.12.0], please following the following step-by-step to restore your old settings:
         ol
-          li Click the following #[code ⛑️ Export old JSON (Backup old settings)] button to export your old settings as JSON file.
+          li Click the #[code ⛑️ Export old JSON (Backup old settings)] button below to export your old settings as JSON file.
           li Then use #[code 📂 Import from JSON (Restore Settings)], choose the backup file you've exported, then click OK. If everything goes well, you should see your old settings are restored.
           li (Optional) If your settings are restored successfully,cClick #[code 🗑️ Clear Old JSON on Mozilla Sync] to remove this warning.
       hr
