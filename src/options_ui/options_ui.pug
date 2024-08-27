@@ -200,19 +200,23 @@ html
     .alert#migrationTool
       h3 ⚠️ Special Operations When Upgrading from version 0.11.1 -> 0.12.0
       p If you are reading this, this means you've already upgraded BooruShinshi from version #[code 0.11.1] to #[code 0.12.0], which contains some major changes because this #[code 0.12.0] is to solve a potential bug described #[a(href="https://github.com/kuanyui/BooruShinshi/issues/8") here.], But in some scenarios, it's possible to lose the existing settings due to the mechanism of Firefox's extension upgrading. This warning is to prevent you from losing your settings.
-      ul
-        li #[u Condition 1]: If there's nothing missing in your settings after upgrading to #[code 0.12.0], recommended you to:
-          ol
-            li Backup your settings via #[code 💾 Export as JSON (Backup Settings)]
-            li Uninstall and reinstall this extension (BooruShinshi)
-            li Then use #[code 📂 Import from JSON (Restore Settings)], choose the backup file you've exported, then click OK.
-        li #[u Condition 2]: If you find your old settings are missing after the upgrading to #[code 0.12.0], please following the following step-by-step to restore your old settings:
-          ol
-            li Click the following #[code ⛑️ Export old JSON (Backup old settings)] button to export your old settings as JSON file.
-            li Uninstall and reinstall this extension (BooruShinshi)
-            li Then use #[code 📂 Import from JSON (Restore Settings)], choose the backup file you've exported, then click OK.
+      p Please ensure that your settings are all well or something missing after upgrading to #[code 0.12.0] first. Then following the following steps according to your situation:
+      .alert
+        h4 #[u Condition 1]: Everything is OK in the existing settings
+        div If there's nothing missing in your settings after upgrading to #[code 0.12.0], recommended you to:
+        ol
+          li Backup your settings via #[code 💾 Export as JSON (Backup Settings)]
+          li (Optional) Click #[code 🗑️ Clear Old JSON on Mozilla Sync] to remove this warning.
+      .alert
+        h4 #[u Condition 2]: Some of my settings are broken / missing!
+        div If you find your old settings are missing after the upgrading to #[code 0.12.0], please following the following step-by-step to restore your old settings:
+        ol
+          li Click the following #[code ⛑️ Export old JSON (Backup old settings)] button to export your old settings as JSON file.
+          li Then use #[code 📂 Import from JSON (Restore Settings)], choose the backup file you've exported, then click OK. If everything goes well, you should see your old settings are restored.
+          li (Optional) If your settings are restored successfully,cClick #[code 🗑️ Clear Old JSON on Mozilla Sync] to remove this warning.
       hr
-      button(type="button" id="exportSyncCfg") ⛑️ Export old JSON (Backup old settings)
+      button(type="button" id="exportSyncCfg") ⛑️ Export Old JSON on Mozilla Sync (Backup old settings)
+      button(type="button" id="clearSyncCfg") 🗑️ Clear Old JSON on Mozilla Sync (Optional, to remove this upgrade warning)
     //- h2 Default Values
     // button(id="resetAllBtn") Reset to Defaults
   script(src='./options_ui.js')

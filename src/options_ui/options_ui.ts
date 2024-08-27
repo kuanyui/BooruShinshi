@@ -449,9 +449,13 @@ function preprocessDOM() {
     q<HTMLButtonElement>('#exportCfg').onclick = exportCfgAsJsonFile
     q<HTMLButtonElement>('#importCfg').onclick = importCfgFromJsonFile
     q<HTMLButtonElement>('#exportSyncCfg').onclick = exportSyncCfgAsJsonFile
-    if (!browser.storage.sync) { // @deprecated don't use storage.sync. See StorageManager
-        q<HTMLDivElement>('#migrationTool').style.display = 'none'
-    }
+    q<HTMLButtonElement>('#clearSyncCfg').onclick = clearSyncCfg
+    browser.storage.sync.get({ "options": undefined }).then((res) => {
+        console.log('sync options', res)
+        if (!res) {    // Since version `0.12.0`, `options` is no longer stored in `sync`.
+            q<HTMLDivElement>('#migrationTool').style.display = 'none'
+        }
+    })
 }
 
 function validateInput(el: HTMLInputElement) {
@@ -496,7 +500,21 @@ function exportSyncCfgAsJsonFile() {
         aEl.remove();
     })
 }
-
+/** @deprecated */
+function clearSyncCfg() {
+    const ans = window.confirm([
+        "Are you sure to clear the old format settings in sync storage?",
+        "⚠️ This action cannot be undone! ⚠️",
+        "But if you have already backup old settings, it's safe to go on.",
+        "Please ensure you have backup the old settings before you proceed."
+    ].join('\n'))
+    if (!ans) { return }
+    Promise.resolve(browser.storage.sync).then(rootObj => {   // @deprecated don't use storage.sync. See StorageManager
+        browser.storage.sync.remove('options').then(() => {
+            location.reload()
+        })
+    })
+}
 function exportCfgAsJsonFile() {
     function pad(n: number) {
         return (n+'').padStart(2, '0')

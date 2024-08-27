@@ -1,6 +1,6 @@
 import { msgManager, MyMsg, MyMsg_DownloadLinkGotten, objectAssignPerfectly, sanitizeFilePath } from "./common"
 // import sanitizeFilename from 'sanitize-filename'
-import { MyStorageRoot, storageManager } from "./options"
+import { MyLocalStorageRoot, storageManager } from "./options"
 
 browser.runtime.onInstalled.addListener(function(details){
     if (details.reason === "install"){
@@ -18,7 +18,7 @@ browser.runtime.onInstalled.addListener(function(details){
 
 
 /** This can be modify */
-const STORAGE: MyStorageRoot = storageManager.getDefaultRoot()
+const STORAGE: MyLocalStorageRoot = storageManager.getDefaultRoot()
 
 // Storage
 console.log('[background] first time to get config from storage')
@@ -78,16 +78,14 @@ browser.runtime.onMessage.addListener((_msg: any, sender: browser.runtime.Messag
                     browser.tabs.remove(sender.tab.id)
                 }, 500)
             }
-            storageManager.setRootSubsetPartially({
-                statistics: {
-                    downloadCount: ++STORAGE.statistics.downloadCount
+            storageManager.getSync('statistics_downloadCount').then((count) => {
+                storageManager.setSync('statistics_downloadCount', ++count)
+                if (count === 1000) {
+                    browser.tabs.create({
+                        url: browser.runtime.getURL('dist/internal_pages/download_count_1000.html')
+                    })
                 }
             })
-            if (STORAGE.statistics.downloadCount === 1000) {
-                browser.tabs.create({
-                    url: browser.runtime.getURL('dist/internal_pages/download_count_1000.html')
-                })
-            }
             console.log('download success, id =', id)
         }).catch((err) => {
             console.error('download failed:', err)

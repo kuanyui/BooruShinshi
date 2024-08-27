@@ -1,5 +1,5 @@
 import { ALL_TAG_CATEGORY, assertUnreachable, createDebounceFunction, createEl, FileTags, msgManager, MyMsg, ParsedImageInfo, supported_hostname_t, Tag, toHtmlEntities } from "./common";
-import { filename_template_token_t, MyOptions, MyStorageRoot, storageManager } from "./options";
+import { filename_template_token_t, MyLocalOptions, MyLocalStorageRoot, storageManager } from "./options";
 import ALL_MODULE_CLASS from './modules'
 import { AbstractModule } from "./modules/abstract";
 import { inPageNotify } from "./inpage-notify";
@@ -33,7 +33,7 @@ storageManager.getDataFromRoot('options').then((opts) => {
         makeImgAlwaysOpenedWithNewTab()
     }
 })
-function fetchOptions(): Promise<MyOptions> {
+function fetchOptions(): Promise<MyLocalOptions> {
     return storageManager.getDataFromRoot('options').then((opts) => {
         return OPTIONS = opts
     })

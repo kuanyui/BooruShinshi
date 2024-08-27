@@ -81,24 +81,29 @@ export const DEFAULT_FOLDER_CLASSIFY_RULES: FolderClassifyRule[] = [
 ]
 
 
-type api_level_t = 1 | 2
-export interface MyStorageRoot {
+type api_level_t = 1 | 2 | 3
+
+const SYNC_STORAGE_ENTRIES_DEFAULT = {
+    apiLevel: 3 as api_level_t,
+    statistics_downloadCount: 0 as number
+} as const
+
+type sync_entry_key_t = keyof typeof SYNC_STORAGE_ENTRIES_DEFAULT
+type GetSyncEntryValueType<K extends sync_entry_key_t> = (typeof SYNC_STORAGE_ENTRIES_DEFAULT)[K]
+
+export interface MyLocalStorageRoot {
     apiLevel: api_level_t,
-    options: MyOptions,
-    statistics: MyStatistics
+    options: MyLocalOptions,
 }
 
-export interface MyStatistics {
-    downloadCount: number
-}
 
-export interface MyOptions {
-    ui: MyOptions_Ui,
-    ux: MyOptions_Ux,
-    fileName: MyOptions_FileName,
-    folder: MyOptions_Folder,
+export interface MyLocalOptions {
+    ui: MyLocalOptions_Ui,
+    ux: MyLocalOptions_Ux,
+    fileName: MyLocalOptions_FileName,
+    folder: MyLocalOptions_Folder,
 }
-export interface MyOptions_Ui {
+export interface MyLocalOptions_Ui {
     showNotificationWhenStartingToDownload: boolean,
     /** Design for touchscreen */
     openLinkWithNewTab: boolean,
@@ -108,14 +113,14 @@ export interface MyOptions_Ui {
     paginationButtons: boolean,
     autoCloseTabAfterDownload: boolean
 }
-export interface MyOptions_Ux {
+export interface MyLocalOptions_Ux {
     /** If image contains "ai_generated", the image will be hidden.
     */
     excludeAiGenerated: boolean
     /** A block list can be applied across all booru sites. Separates each tag by space or newline. */
     blockedTags: string
 }
-export interface MyOptions_FileName {
+export interface MyLocalOptions_FileName {
     /** include file ext.
      *
      * - `BTRFS`   255 bytes
@@ -142,7 +147,7 @@ export interface MyOptions_FileName {
      */
     preferredTags: string
 }
-export interface MyOptions_Folder {
+export interface MyLocalOptions_Folder {
     /** Relative path in `~/Downloads` as the download root folder.
      * For example, `foo/bar` will create folder `~/Downloads/foo/bar/`.
      *
@@ -156,14 +161,14 @@ export interface MyOptions_Folder {
 }
 
 export type options_ui_input_id_t =
-`ui_${keyof MyOptions_Ui}` |
-`ux_${keyof MyOptions_Ux}` |
-`fileName_${keyof MyOptions_FileName}` |
-`folder_${keyof MyOptions_Folder}`
+`ui_${keyof MyLocalOptions_Ui}` |
+`ux_${keyof MyLocalOptions_Ux}` |
+`fileName_${keyof MyLocalOptions_FileName}` |
+`folder_${keyof MyLocalOptions_Folder}`
 export type options_ui_input_query_t = `#${options_ui_input_id_t}`
 
-export const MY_STORAGE_ROOT_DEFAULT: MyStorageRoot = {
-    apiLevel: 2,
+export const MY_LOCAL_STORAGE_ROOT_DEFAULT: MyLocalStorageRoot = {
+    apiLevel: 3,
     options: {
         ui: {
             showNotificationWhenStartingToDownload: true,
@@ -195,17 +200,16 @@ export const MY_STORAGE_ROOT_DEFAULT: MyStorageRoot = {
             classifyRules: DEFAULT_FOLDER_CLASSIFY_RULES,
         }
     },
-    statistics: {
-        downloadCount: 0,
-    },
 } as const
 
 
 class StorageManager {
     // tsconfig: useDefineForClassFields = false
-    area: browser.storage.StorageArea
+    localArea: browser.storage.StorageArea
+    syncArea: browser.storage.StorageArea
     constructor() {
-        this.area = browser.storage.local
+        this.localArea = browser.storage.local
+        this.syncArea = browser.storage.sync
         this.initAndGetRoot()  // FIXME: redundant calling?
     }
     /**
@@ -223,12 +227,33 @@ class StorageManager {
             if (Object.keys(syncData).length > 0 && Object.keys(localData).length === 0) {
                 console.log('[migrateSyncToLocal] Migrating browser.storage.sync to browser.storage.local...')
                 await browser.storage.local.set(syncData)
+                this.setSync('apiLevel', 3)
+                // @ts-expect-error
+                if (syncData && syncData.statictics && typeof syncData.statictics.downloadCount === 'number') {
+                    // @ts-expect-error
+                    this.setSync('statistics_downloadCount', syncData.statictics.downloadCount)
+                }
                 // await browser.storage.sync.clear  // For safety, do not clear sync data.
+                console.log('migrate browser.storage.sync -> browser.storage.local done.')
             }
             return true
         } catch (err) {
+            console.error('migrate browser.storage.sync -> browser.storage.local failed.')
             return false
         }
+    }
+    public getSyncAll(): Promise<typeof SYNC_STORAGE_ENTRIES_DEFAULT> {
+        return this.syncArea.get().then((allObj) => {
+            return allObj !== undefined ? allObj : SYNC_STORAGE_ENTRIES_DEFAULT as any
+        })
+    }
+    public getSync<K extends sync_entry_key_t>(key: K): Promise<GetSyncEntryValueType<K>> {
+        return this.syncArea.get(key).then((allObj) => {
+            return allObj[key] !== undefined ? allObj[key] : SYNC_STORAGE_ENTRIES_DEFAULT[key] as any
+        })
+    }
+    public setSync<K extends sync_entry_key_t>(key: K, val: GetSyncEntryValueType<K>): Promise<void> {
+        return this.syncArea.set({ [key]: val })
     }
     /**
      * - Call this and wait promise resolve at first time you initialize this
@@ -236,11 +261,11 @@ class StorageManager {
      *   structure of StorageArea (for user settings).
      * - If already initialized, use `getRoot()` instead.
      **/
-    public async initAndGetRoot(): Promise<MyStorageRoot> {
+    public async initAndGetRoot(): Promise<MyLocalStorageRoot> {
         await this.migrateSyncToLocal()
         const copiedDefaultRoot = this.getDefaultRoot()
-        return this.area.get().then((oriRoot) => {
-            let copiedOriRoot = deepCopy(oriRoot as unknown as MyStorageRoot)
+        return this.localArea.get().then((oriRoot) => {
+            let copiedOriRoot = deepCopy(oriRoot as unknown as MyLocalStorageRoot)
             console.log('[initAndGetRoot] browser.storage.sync.get() ORIGINAL', deepCopy(copiedOriRoot))
             let modified: boolean
             // console.log('[initAndGetRoot] [BEFORE MIGRATION] DIFF =>', deepDiff(copiedOriRoot, copiedDefaultRoot))
@@ -267,37 +292,37 @@ class StorageManager {
             }
         })
     }
-    public getDefaultRoot(): MyStorageRoot {
-        return deepCopy(MY_STORAGE_ROOT_DEFAULT)
+    public getDefaultRoot(): MyLocalStorageRoot {
+        return deepCopy(MY_LOCAL_STORAGE_ROOT_DEFAULT)
     }
     /** StorageArea.set() will only "update" according to keys, but will NOT delete already existed keys in StorageArea. So wee need to delete manually.
      */
-    private removeDeprecatedRootKeys(newRoot: MyStorageRoot): Promise<void> {
-        return this.area.get().then((oldRoot) => {
+    private removeDeprecatedRootKeys(newRoot: MyLocalStorageRoot): Promise<void> {
+        return this.localArea.get().then((oldRoot) => {
             const oldKeys = Object.keys(oldRoot)
             const newKeys = Object.keys(newRoot)
             const deprecatedKeys: string[] = oldKeys.filter(k => !newKeys.includes(k))
-            return this.area.remove(deprecatedKeys)
+            return this.localArea.remove(deprecatedKeys)
         })
     }
-    public setRootArbitrary(newRoot: MyStorageRoot): Promise<void> {
+    public setRootArbitrary(newRoot: MyLocalStorageRoot): Promise<void> {
         // NOTE: StorageArea.set() will only "update" according to keys, but will NOT delete already existed keys in StorageArea. So wee need to delete manually.
-        return this.area.set(newRoot as any)
+        return this.localArea.set(newRoot as any)
     }
     /** Set data object (can be deeply partial) into LocalStorage. */
-    public setRootSubsetPartially(subset: DeepPartial<MyStorageRoot>): Promise<void> {
+    public setRootSubsetPartially(subset: DeepPartial<MyLocalStorageRoot>): Promise<void> {
         const newRoot = deepCopy(subset)
         return this.getRoot().then((existingRoot) => {
             deepMergeSubset(existingRoot, newRoot)
             console.log('[SET] STORAGE, subset (new) ===', newRoot)
             console.log('[SET] STORAGE, merged (ori) ===', existingRoot)
-            return this.area.set(existingRoot as any)
+            return this.localArea.set(existingRoot as any)
         })
     }
-    public setRootSafelyIntoStorage(newRoot: MyStorageRoot) {
+    public setRootSafelyIntoStorage(newRoot: MyLocalStorageRoot) {
         return this.getRoot().then((existingRoot) => {
             deepObjectShaper(newRoot, existingRoot)
-            return this.area.set(newRoot as any)
+            return this.localArea.set(newRoot as any)
         })
     }
     /**
@@ -305,23 +330,23 @@ class StorageManager {
      * - You should call `initAndGetRoot()` at least one time (and wait it until
      *   resolved) before you call this function.
      * */
-    public getRoot(): Promise<MyStorageRoot> {
-        return this.area.get().then((root) => {
-            return root as unknown as MyStorageRoot
+    public getRoot(): Promise<MyLocalStorageRoot> {
+        return this.localArea.get().then((root) => {
+            return root as unknown as MyLocalStorageRoot
         }).catch((err) => {
             console.error('Error when getting settings from browser.storage:', err)
             return this.initAndGetRoot()
         })
     }
     /** Get direct child of LocalStorage */
-    public getDataFromRoot<K extends keyof MyStorageRoot>(category: K): Promise<MyStorageRoot[K]> {
+    public getDataFromRoot<K extends keyof MyLocalStorageRoot>(category: K): Promise<MyLocalStorageRoot[K]> {
         return this.getRoot().then((root) => {
             return root[category]
         })
     }
-    public onOptionsChanged(cb: (changes: TypedChangeDict<MyStorageRoot>) => void) {
+    public onOptionsChanged(cb: (changes: TypedChangeDict<MyLocalStorageRoot>) => void) {
         browser.storage.onChanged.addListener((_changes, areaName) => {
-            const changes = _changes as TypedChangeDict<MyStorageRoot>
+            const changes = _changes as TypedChangeDict<MyLocalStorageRoot>
             if (areaName === 'sync' || areaName === 'local') {
                 if (changes.options) {
                     cb(changes)
