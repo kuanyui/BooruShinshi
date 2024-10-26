@@ -1,4 +1,4 @@
-import { ALL_TAG_CATEGORY, assertUnreachable, createDebounceFunction, createEl, FileTags, msgManager, MyMsg, ParsedImageInfo, supported_hostname_t, Tag, toHtmlEntities } from "./common";
+import { ALL_TAG_CATEGORY, assertUnreachable, createDebounceFunction, createEl, FileTags, msgManager, MyMsg, ParsedImageInfo, ParsedImageResolutionClass, supported_hostname_t, Tag, toHtmlEntities } from "./common";
 import { filename_template_token_t, MyLocalOptions, MyLocalStorageRoot, storageManager } from "./options";
 import ALL_MODULE_CLASS from './modules'
 import { AbstractModule } from "./modules/abstract";
@@ -300,8 +300,8 @@ async function setPostTool(opts: { show: boolean }) {
     for (const info of infoArr) {
         const buttonsRow = document.createElement('div')
         buttonsRow.className = 'ButtonsRow'
-        buttonsRow.appendChild(createDirectDownloadButtonForImage(info.btnText, info.imgUrl))
-        buttonsRow.appendChild(createActionsEntryButtonForImage(info.imgUrl))
+        buttonsRow.appendChild(createDirectDownloadButtonForImage(info))
+        buttonsRow.appendChild(createActionsEntryButtonForImage(info))
         root.appendChild(buttonsRow)
     }
     root.appendChild(document.createElement('hr'))
@@ -348,7 +348,9 @@ function sortFileTags(fileTags: FileTags, sortMethod: TagSortingMethod): FileTag
     return fileTags
 }
 
-function createDirectDownloadButtonForImage(label: string, imgUrl: string): HTMLButtonElement {
+function createDirectDownloadButtonForImage(imgInfo: ParsedImageInfo): HTMLButtonElement {
+    const label: string = imgInfo.btnText
+    const imgUrl: string = imgInfo.imgUrl
     const btn = document.createElement('button')
     btn.textContent = label
     tippy(btn, {
@@ -368,6 +370,11 @@ function createDirectDownloadButtonForImage(label: string, imgUrl: string): HTML
         const fileTags = sortFileTags(curMod.collectTags(), TagSortingMethod.ByCount_Descending)
         const fileDirPath = generateClassifiedDirPath({ fileTags: fileTags })
         const fileNameInfo = generateFileNameInfoByTags({ imgFileUrl: imgUrl, fileTags: fileTags })
+        if (imgInfo.resClass === ParsedImageResolutionClass.HighRes) {
+            btn.textContent = '⏳' + btn.textContent
+            await curMod.prepareForFullSizeDownload()
+            btn.textContent = btn.textContent.slice('⏳'.length)
+        }
         downloadImage({
             imageFileUrl: imgUrl,
             downloadFileFullPath: fileDirPath + '/' + fileNameInfo.fileFullName
@@ -378,7 +385,7 @@ function createDirectDownloadButtonForImage(label: string, imgUrl: string): HTML
     }
     return btn
 }
-function createActionsEntryButtonForImage(imgUrl: string): HTMLButtonElement {
+function createActionsEntryButtonForImage(imgInfo: ParsedImageInfo): HTMLButtonElement {
     const entryBtn = document.createElement('button')
     entryBtn.textContent = "As..."
     entryBtn.className = "asBtn"
@@ -427,9 +434,14 @@ function createActionsEntryButtonForImage(imgUrl: string): HTMLButtonElement {
                         fileTags: fileTags,
                         forceDirClassify: { tagCategory: categoryId, tagName: tag.en }
                     })
-                    const fileNameInfo = generateFileNameInfoByTags({ imgFileUrl: imgUrl, fileTags: fileTags })
+                    const fileNameInfo = generateFileNameInfoByTags({ imgFileUrl: imgInfo.imgUrl, fileTags: fileTags })
+                    if (imgInfo.resClass === ParsedImageResolutionClass.HighRes) {
+                        btn.textContent = '⏳' + btn.textContent
+                        await curMod.prepareForFullSizeDownload()
+                        btn.textContent = btn.textContent.slice('⏳'.length)
+                    }
                     downloadImage({
-                        imageFileUrl: imgUrl,
+                        imageFileUrl: imgInfo.imgUrl,
                         downloadFileFullPath: fileDirPath + '/' + fileNameInfo.fileBaseName
                     })
                     if (!btn.textContent!.startsWith('✔')) {

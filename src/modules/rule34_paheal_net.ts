@@ -1,5 +1,5 @@
 import { AbstractModule, TaggedPostInPostsList } from "./abstract"
-import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, PaginationInfo, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
+import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, PaginationInfo, ParsedImageInfo, ParsedImageResolutionClass, supported_hostname_t, Tag } from "../common"
 
 
 export class ModuleRule34PahealNet extends AbstractModule {
@@ -85,7 +85,7 @@ export class ModuleRule34PahealNet extends AbstractModule {
     collectImageInfoList(): ParsedImageInfo[] {
         const fin: ParsedImageInfo[] = generalCollectImageInfoList()
         const mainImg = document.querySelector('#main_image') as HTMLImageElement
-        fin.push({ btnText: `Low (fallback)`, imgUrl: mainImg.src })
+        fin.push({ btnText: `Low (fallback)`, imgUrl: mainImg.src, resClass: ParsedImageResolutionClass.LowRes })
         // const infoEl = document.querySelector('#ImageInfo')!
         // const tds = Array.from(infoEl.querySelectorAll('td'))
         // const sizeTd = tds.find(td => td.textContent!.match(/[KMG]B/))

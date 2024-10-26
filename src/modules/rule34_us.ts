@@ -1,5 +1,5 @@
 import { AbstractModule, TaggedPostInPostsList } from "./abstract"
-import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, PaginationInfo, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
+import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, PaginationInfo, ParsedImageInfo, ParsedImageResolutionClass, supported_hostname_t, Tag } from "../common"
 
 
 export class ModuleRule34Us extends AbstractModule {
@@ -95,15 +95,15 @@ export class ModuleRule34Us extends AbstractModule {
                 let fmt = 'webm'
                 if (src.includes('.webm')) { fmt = 'webm' }
                 else if (src.includes('.mp4')) { fmt = 'mp4' }
-                fin.push({ btnText: `High (.${fmt})`, imgUrl: src })
+                fin.push({ btnText: `High (.${fmt})`, imgUrl: src, resClass: ParsedImageResolutionClass.HighRes })
             }
         } else if (imgEl) {
-            fin.push({ btnText: 'Low (fallback)', imgUrl: imgEl.src })
+            fin.push({ btnText: 'Low (fallback)', imgUrl: imgEl.src, resClass: ParsedImageResolutionClass.LowRes })
             document.querySelectorAll('#tag-list\\  > a').forEach((_a) => {
                 const a = _a as HTMLAnchorElement
                 if (!a.textContent) { return }
                 if (a.textContent.trim() === 'Original') {
-                    fin.push({ btnText: 'High (Original)', imgUrl: a.href })
+                    fin.push({ btnText: 'High (Original)', imgUrl: a.href, resClass: ParsedImageResolutionClass.HighRes })
                 }
             })
         }

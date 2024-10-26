@@ -1,5 +1,5 @@
 import { AbstractModule, TaggedPostInPostsList } from "./abstract"
-import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, PaginationInfo, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
+import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, PaginationInfo, ParsedImageInfo, ParsedImageResolutionClass, supported_hostname_t, Tag } from "../common"
 
 
 export class ModuleRule34XXX extends AbstractModule {
@@ -92,7 +92,7 @@ export class ModuleRule34XXX extends AbstractModule {
             if (!a.textContent) { continue }
             if (a.textContent.includes('Original image')) {
                 const size: string = Array.from(document.querySelector('#stats')!.querySelectorAll('li')).find(x=>x.textContent && x.textContent.includes('Size: '))!.textContent!
-                fin.push({ btnText: `High (${size})`, imgUrl: a.href })
+                fin.push({ btnText: `High (${size})`, imgUrl: a.href, resClass: ParsedImageResolutionClass.HighRes })
             }
         }
         return fin

@@ -1,5 +1,5 @@
 import { AbstractModule, TaggedPostInPostsList } from "./abstract"
-import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, isTagCategory, makeEmptyFileTags, PaginationInfo, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
+import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, isTagCategory, makeEmptyFileTags, PaginationInfo, ParsedImageInfo, sleep, supported_hostname_t, Tag } from "../common"
 
 
 export class ModuleChanSankakuComplexCom extends AbstractModule {
@@ -127,4 +127,12 @@ export class ModuleChanSankakuComplexCom extends AbstractModule {
             a.click()
         }
     }
+    override async prepareForFullSizeDownload(): Promise<boolean> {
+        const el = document.querySelector<HTMLAnchorElement>("#image")
+        if (!el) { return true }
+        if (el) { el.click() }
+        await sleep(2000)
+        return true
+    }
+
 }

@@ -43,6 +43,11 @@ export interface Tag {
     count: number
 }
 
+export enum ParsedImageResolutionClass {
+    LowRes,
+    HighRes,
+}
+
 export interface ParsedImageInfo {
     /** Low, High, High PNG, Low (fallback) */
     btnText: string,
@@ -50,7 +55,9 @@ export interface ParsedImageInfo {
     geometry?: string,
     /** ex: 600 KB */
     byteSize?: string,
-    imgUrl: string
+    imgUrl: string,
+    /** Resolution class. Some site requires extra handling / workaround to download a hi-res image. */
+    resClass: ParsedImageResolutionClass
 }
 
 export function makeEmptyFileTags(): FileTags {
@@ -103,22 +110,22 @@ export function generalCollectImageInfoList(): ParsedImageInfo[] {
     const png = document.querySelector('#png') as HTMLLinkElement | null
     const imgEl = document.querySelector('#image') as HTMLImageElement | null
     if (lo) {
-        fin.push({ btnText: 'Low', imgUrl: lo.href })
+        fin.push({ btnText: 'Low', imgUrl: lo.href, resClass: ParsedImageResolutionClass.LowRes })
     }
     if (hi) {
         const rawSize = hi.innerText.match(/\((.+)\)/)
         let size: string = ''
         if (rawSize) { size = rawSize[1] }
-        fin.push({ btnText: `High (${size})`, imgUrl: hi.href })
+        fin.push({ btnText: `High (${size})`, imgUrl: hi.href, resClass: ParsedImageResolutionClass.HighRes })
     }
     if (png) {
         const rawSize = png.innerText.match(/\((.+)\)/)
         let size: string = ''
         if (rawSize) { size = rawSize[1] }
-        fin.push({ btnText: `High PNG (${size})`, imgUrl: png.href })
+        fin.push({ btnText: `High PNG (${size})`, imgUrl: png.href, resClass: ParsedImageResolutionClass.HighRes })
     }
     if ((!lo && !hi && !png) && imgEl) {
-        fin.push({ btnText: 'Low (fallback)', imgUrl: imgEl.src })
+        fin.push({ btnText: 'Low (fallback)', imgUrl: imgEl.src, resClass: ParsedImageResolutionClass.LowRes })
     }
     return fin
 }
@@ -282,3 +289,8 @@ export function createEl<K extends keyof HTMLElementTagNameMap>(tagName: K, attr
     return el
 }
 
+export function sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => {
+        window.setTimeout(resolve, ms)
+    })
+}

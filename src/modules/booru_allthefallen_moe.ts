@@ -1,5 +1,5 @@
 import { AbstractModule, TaggedPostInPostsList } from "./abstract"
-import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, PaginationInfo, ParsedImageInfo, supported_hostname_t, Tag } from "../common"
+import { ALL_TAG_CATEGORY, COMMON_TAG_SELECTOR, FileTags, FileTagsElementClass, generalCollectImageInfoList, makeEmptyFileTags, PaginationInfo, ParsedImageInfo, ParsedImageResolutionClass, supported_hostname_t, Tag } from "../common"
 
 
 export class ModuleAllthefallenMoe extends AbstractModule {
@@ -89,7 +89,7 @@ export class ModuleAllthefallenMoe extends AbstractModule {
         const sizeEl = document.querySelector('#post-info-size')!
         const sizeStr = sizeEl.textContent!.match(/([0-9.]+ *[KMG]B)/)![1]
         const a = sizeEl.querySelector('a')!
-        fin.push({ btnText: `High (${sizeStr})`, imgUrl: a.href })
+        fin.push({ btnText: `High (${sizeStr})`, imgUrl: a.href, resClass: ParsedImageResolutionClass.HighRes })
         return fin
     }
     collectTags(): FileTags {
