@@ -75,7 +75,9 @@ export type tag_category_t = 'copyright' | 'character' | 'artist' | 'studio' | '
 export const ALL_TAG_CATEGORY: tag_category_t[] = ['artist', 'copyright', 'studio', 'character', 'general', 'meta']
 export type options_tag_category_t = tag_category_t
 export const ALL_OPTIONS_TAG_CATEGORY: options_tag_category_t[] =  ALL_TAG_CATEGORY
-
+export function isTagCategory(x: string): x is tag_category_t {
+    return ALL_TAG_CATEGORY.includes(x as tag_category_t)
+}
 export type FileTags = Record<tag_category_t, Tag[]>
 export type FileTagsElementClass = Record<tag_category_t, string>
 
