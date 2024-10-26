@@ -22,8 +22,9 @@ function setupI18n() {
     })
 }
 
-if (browser.runtime.getManifest().version !== '0.12.0') {
-    const els = document.querySelectorAll('.syncLocalStorageMigrationWarning')
+// The releases of 0.12.x should always show this warning.
+if (!browser.runtime.getManifest().version.startsWith('0.12.')) {
+    const els = document.querySelectorAll('.syncLocalStorageMigrationWithin_0_12_x_Warning')
     for (const _el of els) {
         const el = _el as HTMLElement
         el.style.display = 'none'

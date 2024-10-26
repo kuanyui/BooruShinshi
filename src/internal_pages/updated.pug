@@ -12,9 +12,10 @@ html
       .logo: img(src="../../img/icon.png")
       .title ボール紳士
       .subtitle ボール紳士が成功にアップデートされました！
-    blockquote.syncLocalStorageMigrationWarning
-      h3 ⚠️ バージョン #[code 0.12.0] の重要なお知らせ
-      p これをお読みの方は、BooruShinshi をバージョン #[code 0.11.1] から #[code 0.12.0] にアップグレードされたことになります。このバージョンには大きな変更が含まれています。これは #[code 0.12.0] が #[a(href="https://github.com/kuanyui/BooruShinshi/issues/8") ある潜在的なバグ]を解決するためです。ただし、Firefox の拡張機能アップグレードの仕組みにより、一部のシナリオでは既存の設定が失われる可能性があります。この警告は設定の損失を防ぐためのものです。#[b.openOptionsUi 設定データの損失を避けるため、今すぐ設定ページを開いて底までスクロールし、対応してください。]
+    blockquote.syncLocalStorageMigrationWithin_0_12_x_Warning
+      h3 ⚠️ バージョン #[code 0.12.x] の重要なお知らせ
+      p これをお読みの方は、BooruShinshi をバージョン #[code 0.11.1] から #[code 0.12.x] にアップグレードされたことになります。このバージョンには大きな変更が含まれています。これは #[code 0.12.x] が #[a(href="https://github.com/kuanyui/BooruShinshi/issues/8") ある潜在的なバグ]を解決するためです。ただし、Firefox の拡張機能アップグレードの仕組みにより、一部のシナリオでは既存の設定が失われる可能性があります。この警告は設定の損失を防ぐためのものです。#[b.openOptionsUi 設定データの損失を避けるため、今すぐ設定ページを開いて底までスクロールし、対応してください。]
+      p 簡単に言えば、要するに、#[b #[code 0.12.x] から、BooruShinshi の設定は Mozilla アカウントのクラウドに保存されず、同期も行われなくなり、ローカル端末にのみ保存されます。そのため、Firefox あるいは BooruShinshi の再インストール時に設定が失われないように、BooruShinshi の設定ファイルをユーザー自身でバックアップし、適切に保管してください。]この警告は #[code 0.13.x] から表示されなくなります。できるだけ早く対応してください。既に対応済みの場合は、この警告を無視していただいて構いません。
     article
       hr
       p #[b 今回の更新では新機能があるかもしれない]、#[b.openOptionsUi このアドオンの設定画面を開いて、新機能をご確認しよう。]
@@ -30,9 +31,10 @@ html
       .logo: img(src="../../img/icon.png")
       .title Booru Shinshi
       .subtitle Booru Shinsi (ボール紳士) is just upgraded successfully!
-    blockquote.syncLocalStorageMigrationWarning
-      h3 ⚠️ Important Notice of Version #[code 0.12.0]
-      p If you are reading this, this means you've already upgraded BooruShinshi from version #[code 0.11.1] to #[code 0.12.0], which contains some major changes because this #[code 0.12.0] is to solve a potential bug described #[a(href="https://github.com/kuanyui/BooruShinshi/issues/8") here]. But in some scenarios, it's possible to lose the existing settings due to the mechanism of Firefox's extension upgrading. This warning is to prevent you from losing your settings. #[b.openOptionsUi Please open the settings page and scroll to bottom to take action right now to avoid setting data loss.]
+    blockquote.syncLocalStorageMigrationWithin_0_12_x_Warning
+      h3 ⚠️ Important Notice of Version #[code 0.12.x]
+      p If you are reading this, this means you've already upgraded BooruShinshi from version #[code 0.11.1] to #[code 0.12.x], which contains some major changes because this #[code 0.12.x] is to solve a potential bug described #[a(href="https://github.com/kuanyui/BooruShinshi/issues/8") here]. But in some scenarios, it's possible to lose the existing settings due to the mechanism of Firefox's extension upgrading. This warning is to prevent you from losing your settings. #[b.openOptionsUi Please open the settings page and scroll to bottom to take action right now to avoid setting data loss.]
+      p Simply put, in summary, #[b starting from #[code 0.12.x], BooruShinshi's settings will no longer be stored nor synchronized through Mozilla Accounts; instead, will only be saved locally on your machine. Therefore, please back up and properly store your BooruShinshi settings file by yourself to avoid losing settings when reinstalling Firefox or BooruShinshi.] This warning will disappeared from #[code 0.13.x], please take action as soon as possible, you can ignore this warning if you've taken action.
     article
       hr
       p #[b New features and changes may be contained in this update], you can #[b.openOptionsUi open this Addon's setting page to see whats' new.]
@@ -48,9 +50,10 @@ html
       .logo: img(src="../../img/icon.png")
       .title ボール紳士
       .subtitle ボール紳士 (Booru Shinshi) 已經成功更新！
-    blockquote.syncLocalStorageMigrationWarning
-      h3 ⚠️ 版本 #[code 0.12.0] 重要通知
-      p 如果您正在閱讀這個訊息，表示您已經將 BooruShinshi 從版本 #[code 0.11.1] 升級到 #[code 0.12.0]。這個版本包含了一些重大變更，因為 #[code 0.12.0] 解決了#[a(href="https://github.com/kuanyui/BooruShinshi/issues/8") 一些潛在錯誤]。但在某些情況下，由於 Firefox 擴充套件升級機制的原因，可能會導致現有設定遺失。此警告是為了防止您遺失現有設定資料的提醒。#[b.openOptionsUi 請立即打開設定頁面並滾動到底部採取行動，以避免設定資料遺失。]
+    blockquote.syncLocalStorageMigrationWithin_0_12_x_Warning
+      h3 ⚠️ 版本 #[code 0.12.x] 重要通知
+      p 如果您正在閱讀這個訊息，表示您已經將 BooruShinshi 從版本 #[code 0.11.1] 升級到 #[code 0.12.x]，在 #[code 0.12.x] 版本包含了一些重大變更，因為 #[code 0.12.x] 解決了#[a(href="https://github.com/kuanyui/BooruShinshi/issues/8") 一些潛在錯誤]。但在某些情況下，由於 Firefox 擴充套件升級機制的原因，可能會導致現有設定遺失。此警告是為了防止您遺失現有設定資料的提醒。#[b.openOptionsUi 請立即打開設定頁面並滾動到底部採取行動，以避免設定資料遺失。]
+      p 簡單來說，總而言之，#[b 從 #[code 0.12.x] 開始，BooruShinshi 的設定將不再存在 Mozilla 雲端帳號、也不會透過它同步，而是僅僅只保存在你的本機，因此，請自行備份並妥善保存你的 BooruShinshi 設定檔，以避免重新安裝 Firefox 或 BooruShinshi 時設定遺失。] 此警告將會在 #[code 0.13.x] 版本後消失，請盡快採取行動，如果您已經採取行動則可以忽略此警告。
     article
       hr
       p #[b 這次更新可能新增了功能]，可以#[b.openOptionsUi 打開 Addon 的設定畫面看看多加了哪些新功能。]
