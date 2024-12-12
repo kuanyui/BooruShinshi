@@ -117,9 +117,9 @@ export class ModuleSafebooruOrg extends AbstractModule {
             const tagsOfCategory: Tag[] = []
             let els = sidebarEl.querySelectorAll(tagLiClass)
             els.forEach((el) => {
-                const tagLink = el.querySelector('a')!
+                const tagLink = el.querySelectorAll('a')[1]
                 const enTag = tagLink.textContent!.trim().replaceAll(' ', '_')
-                const count: number = parseInt(tagLink.nextElementSibling!.textContent!.trim())
+                const count: number = parseInt(el.querySelector('.tag-count')!.textContent!.trim())
                 tagsOfCategory.push({ en: enTag, count })
             })
             fileTags[tagCategory] = tagsOfCategory
