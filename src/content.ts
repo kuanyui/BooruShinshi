@@ -116,6 +116,10 @@ function generateFileBaseNameByTags(tagDict: FileTags): string {
     const artistInFn: string = tagDict.artist[0] ? tagDict.artist[0].en : ''
     const studioInFn: string = tagDict.studio[0] ? tagDict.studio[0].en : ''
     fname = templateReplacer(fname, 'artist', artistInFn || studioInFn || 'unknown_artist')
+    const artistsInFn: string = tagDict.artist[0] ? tagDict.artist.map((tag) => tag.en).join(',') : 'unknown_artists'
+    fname = templateReplacer(fname, 'artists', artistsInFn)
+    const studiosInFn: string = tagDict.studio[0] ? tagDict.studio.map((tag) => tag.en).join(',') : 'no_studios'
+    fname = templateReplacer(fname, 'studios', studiosInFn)
     const copyrightInFn: string = tagDict.copyright[0] ? tagDict.copyright[0].en : 'no series'
     fname = templateReplacer(fname, 'series', copyrightInFn)
     const characterInFn: string = tagDict.character[0] ? tagDict.character[0].en : ''

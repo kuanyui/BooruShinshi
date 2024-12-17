@@ -13,6 +13,8 @@ export const FilenameTemplateTokenDict = {
     'sitefullname': "Site's full name. For example, <code>SankakuComplex</code>",
     'postid': "Post's ID number it that site. For example: <code>123456</code>",
     'artist': `The tag "artist" or "studio". If not found, show <code>unknown_artist</code>. If found multiple, use artist first, or use the one with the most posts count.`,
+    'artists': `The full list of "artist"s. If not found, show <code>unkown_artists</code>.`,
+    'studios': `The full list of "studio"s. If not found, show <code>no_studios</code>.`,
     'series': `The canonical Booru tag is "copyright", that is "series" (ex: <code>k-on!</code>). If not found, show <code>no_series</code>. If found multiple, use the one with the most posts count.`,
     'character': `The tag "character". If not found, show <code>no_character</code>. If found multiple, use the one with the most posts count.`,
     'generals': `The tag "generals". This always pick multiple tags with <b>least</b> posts count, until the file name length limit reached.`,
