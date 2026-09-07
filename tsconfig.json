@@ -6,7 +6,6 @@
     "src/*.ts",
     "src/**/*.ts",
     "src/options_ui/*.ts",
-    "src/options_ui/*.vue",
   ],
   "exclude": [
     "node_modules"

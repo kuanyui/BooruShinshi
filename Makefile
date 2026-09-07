@@ -4,15 +4,19 @@ NAME="BooruShinshi"
 BIN:="node_modules/.bin"
 XPI_DIR=../xpi
 
+# Fix error message `Error: error:0308010C:digital envelope routines::unsupported`.
+# webpack 4 hashes chunks with MD4, which was deprecated since Node 17.
+WEBPACK:=NODE_OPTIONS=--openssl-legacy-provider ${BIN}/webpack
+
 icon:
 	convert -background transparent -geometry 256x256 img/icon.svg img/icon.png
 
 watch: clear
-	${BIN}/webpack --mode=development --watch
+	${WEBPACK} --mode=development --watch
 
 
 build: clear
-	${BIN}/webpack --mode=production
+	${WEBPACK} --mode=production
 
 test:
 	clear
@@ -20,7 +24,7 @@ test:
 
 
 xpi-for-development: clear
-	${BIN}/webpack --mode=development
+	${WEBPACK} --mode=development
 	mkdir -p ${XPI_DIR}
 	zip -r -FS "${XPI_DIR}/${NAME}_DEVELOPMENT.xpi" dist/ img/ manifest.json README.org
 

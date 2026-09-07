@@ -43,12 +43,12 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "webpack --mode=development --watch",
-    "build": "webpack --mode=production"
+    "dev": "NODE_OPTIONS=--openssl-legacy-provider webpack --mode=development --watch",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider webpack --mode=production"
   },
   "engines": {
-    "npm": ">=6.0.0 <9.0.0",
-    "node": ">=14.0.0 <=14.0.0"
+    "npm": ">=9",
+    "node": ">=20"
   },
   "keywords": [
     "webextension"
